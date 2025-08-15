@@ -22,8 +22,7 @@ Dashboard interactivo con gráficos en React y exportación a PDF/Excel.
 
 ## Casos de Uso Relacionados
 
-- CU-07: Visualizar Dashboard
-- CU-08: Generar Reporte
+- CU-05: Generar Reporte
 
 ## Criterios de Aceptación
 
