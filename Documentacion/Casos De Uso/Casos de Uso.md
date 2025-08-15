@@ -43,8 +43,8 @@ Entrada	Salida Esperada
 Credenciales válidas	Acceso concedido
 Credenciales inválidas	Mensaje de error y registro de intento fallido
 
-Documento Preparado Por: Mariano Durán
-Fecha: 2025-08-15
+- Documento Preparado Por: Mariano Durán
+- Fecha: 2025-08-15
 
 ---
 
@@ -91,8 +91,8 @@ Entrada	Salida Esperada
 Formulario completo	Solicitud registrada correctamente
 Formulario incompleto	Mensaje de error
 
-Documento Preparado Por: Jaziel Rojas
-Fecha: 2025-08-15
+- Documento Preparado Por: Jaziel Rojas
+- Fecha: 2025-08-15
 
 ---
 
@@ -137,8 +137,8 @@ Entrada	Salida Esperada
 Solicitud pendiente	Aprobada y notificación enviada
 Solicitud pendiente	Rechazada y notificación enviada
 
-Documento Preparado Por: Mariano Durán
-Fecha: 2025-08-15
+- Documento Preparado Por: Mariano Durán
+- Fecha: 2025-08-15
 
 ---
 
@@ -182,8 +182,8 @@ Entrada	Salida Esperada
 Solicitud pendiente modificada	Actualización reflejada en historial
 Solicitud pendiente cancelada	Solicitud eliminada del listado activo
 
-Documento Preparado Por: Jaziel Rojas
-Fecha: 2025-08-15
+- Documento Preparado Por: Jaziel Rojas
+- Fecha: 2025-08-15
 
 ---
 
@@ -227,8 +227,8 @@ Entrada	Salida Esperada
 Periodo con datos	Reporte generado correctamente
 Periodo sin datos	Reporte vacío con mensaje aclaratorio
 
-Documento Preparado Por: Mariano Durán
-Fecha: 2025-08-15
+- Documento Preparado Por: Mariano Durán
+- Fecha: 2025-08-15
 
 ---
 
@@ -275,5 +275,5 @@ Entrada	Salida Esperada
 Filtro por fechas	Lista de acciones en el rango seleccionado
 Filtro por colaborador	Lista de acciones realizadas por ese colaborador
 
-Documento Preparado Por: Jaziel Rojas
-Fecha: 2025-08-15
+- Documento Preparado Por: Jaziel Rojas
+- Fecha: 2025-08-15
