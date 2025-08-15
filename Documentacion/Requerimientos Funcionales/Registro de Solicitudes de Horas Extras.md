@@ -23,9 +23,9 @@ Formulario web con validaciones en frontend (React) que envíe la solicitud al b
 
 ## Casos de Uso Relacionados
 
-- CU-02: Registrar Solicitud de Overtime  
-- CU-06: Notificar Cambio de Estado de Solicitud (notificación tras registro)  
-- CU-09: Consultar Historial de Solicitudes (historial de solicitudes registradas)
+- CU-02: Registrar Solicitud de Overtime
+- CU-06: Consultar Historial de Solicitudes (historial de solicitudes registradas)
+- CU-07: Notificar Cambio de Estado de Solicitud (notificación tras registro)  
 
 ## Criterios de Aceptación
 
