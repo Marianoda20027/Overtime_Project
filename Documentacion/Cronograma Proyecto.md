@@ -29,24 +29,24 @@ La solución propuesta consta de una aplicación web con backend en .NET 8 y fro
 
 ## 4. Cronograma Detallado
 
-| Semana | Objetivo / Módulos                 | Descripción y Horas aproximadas (20h/semana)                                                                                                                                 |
-| ------ | ---------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **1**  | Análisis y diseño inicial          | - Requerimientos funcionales y no funcionales (8h)<br>- Diagramas UML: Casos de uso (5h), Diagrama de actividades (3h)<br>- Revisión con stakeholders (4h)                   |
-| **2**  | Configuración base y autenticación | - Setup proyecto backend y frontend (4h)<br>- Implementación autenticación JWT, login, roles (8h)<br>- Frontend login/registro con validaciones (6h)<br>- Documentación (2h) |
-| **3**  | Gestión usuarios y roles           | - Backend CRUD usuarios y roles (8h)<br>- Frontend panel usuarios y roles (7h)<br>- Validaciones y control de acceso (3h)<br>- Documentación (2h)                            |
-| **4**  | CRUD solicitudes overtime          | - Backend modelo y endpoints solicitudes (10h)<br>- Frontend formularios y listados (7h)<br>- Documentación módulo solicitudes (3h)                                          |
-| **5**  | Flujo de aprobación básico         | - Endpoints aprobación/rechazo (8h)<br>- Frontend vista aprobación con feedback visual (8h)<br>- Documentación flujo aprobación (4h)                                         |
-| **6**  | Notificaciones por email           | - Integración SMTP/SendGrid, plantillas HTML (7h)<br>- Backend disparo notificaciones automáticas (6h)<br>- Frontend mensajes de estado (4h)<br>- Documentación (3h)         |
-| **7**  | Dashboard seguimiento              | - Backend APIs estadísticas (8h)<br>- Frontend gráficos con Chart.js/Recharts (8h)<br>- Documentación (4h)                                                                   |
-| **8**  | Historial y auditoría              | - Backend registro completo acciones (9h)<br>- Frontend historial detallado (7h)<br>- Documentación (4h)                                                                     |
-| **9**  | Validaciones reglas negocio        | - Backend reglas negocio (máximos, solapamientos) (10h)<br>- Frontend validaciones y mensajes (6h)<br>- Documentación (4h)                                                   |
-| **10** | Recomendaciones inteligentes       | - Backend algoritmo sugerencias (10h)<br>- Frontend recomendaciones y alertas (6h)<br>- Documentación (4h)                                                                   |
-| **11** | Integración calendarios            | - Backend integración Google Calendar y Outlook (9h)<br>- Frontend exportar y vista calendario (7h)<br>- Documentación (4h)                                                  |
-| **12** | Reportes avanzados                 | - Backend generación y filtrado reportes (8h)<br>- Exportación a PDF, Excel (7h)<br>- Frontend interfaz reportes (3h)<br>- Documentación (2h)                                |
-| **13** | Optimización rendimiento           | - Backend optimización consultas, indexación DB (6h)<br>- Frontend optimización carga y UX (6h)<br>- Documentación (8h)                                                      |
-| **14** | Pruebas funcionales y QA           | - Diseño y ejecución de pruebas backend/frontend (12h)<br>- Corrección bugs y mejoras UX (6h)<br>- Documentación pruebas (2h)                                                |
-| **15** | Despliegue y CI/CD                 | - Configuración CI/CD backend y frontend (8h)<br>- Despliegue en Azure/AWS (10h)<br>- Documentación despliegue (2h)                                                          |
-| **16** | Cierre, demo y entrega final       | - Preparación demo funcional para stakeholders (6h)<br>- Ajustes UI y optimización (8h)<br>- Backup y documentación final (6h)                                               |
+| Semana | Objetivo / Módulos                 | Descripción y Horas aproximadas (20h/semana)                                                                                                                                     |
+|--------|------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **1**  | Análisis y diseño inicial          | - Requerimientos funcionales y no funcionales (8h)<br>- Diagramas UML: Casos de uso (5h), Diagrama de actividades (3h)<br>- Revisión con stakeholders (4h)                      |
+| **2**  | Configuración base y autenticación | - Setup proyecto backend y frontend (4h)<br>- Implementación autenticación JWT, login, roles (8h)<br>- Frontend login/registro con validaciones (6h)<br>- Documentación (2h)    |
+| **3**  | Gestión usuarios y roles           | - Backend CRUD usuarios y roles (8h)<br>- Frontend panel usuarios y roles (7h)<br>- Validaciones y control de acceso (3h)<br>- Documentación (2h)                               |
+| **4**  | CRUD solicitudes overtime          | - Backend modelo y endpoints solicitudes (10h)<br>- Frontend formularios y listados (7h)<br>- Documentación de módulo para solicitudes (3h)                                             |
+| **5**  | Flujo de aprobación básico         | - Endpoints aprobación/rechazo (8h)<br>- Frontend vista aprobación con feedback visual (8h)<br>- Documentación de flujo para aprobación (4h)                                            |
+| **6**  | Notificaciones por email           | - Integración SMTP/SendGrid, plantillas HTML (7h)<br>- Backend notificaciones automáticas (8h)<br>- Frontend mensajes de estado (5h)                                            |
+| **7**  | Dashboard seguimiento              | - Backend APIs estadísticas (10h)<br>- Frontend gráficos con Chart.js/Recharts (10h)                                                                                            |
+| **8**  | Historial y auditoría              | - Backend registro completo acciones (10h)<br>- Frontend historial detallado (9h)<br>- Documentación (1h)                                                                       |
+| **9**  | Validaciones reglas negocio        | - Backend reglas negocio (14h)<br>- Frontend validaciones y mensajes (6h)                                                                                                       |
+| **10** | Recomendaciones inteligentes       | - Backend algoritmo sugerencias (14h)<br>- Frontend recomendaciones y alertas (6h)                                                                                              |
+| **11** | Integración calendarios            | - Backend integración Google Calendar y Outlook (9h)<br>- Frontend exportar y vista calendario (7h)<br>- Documentación (4h)                                                     |
+| **12** | Reportes avanzados                 | - Backend generación y filtrado reportes (10h)<br>- Exportación a PDF, Excel (7h)<br>- Frontend interfaz reportes (3h)                                                          |
+| **13** | Optimización rendimiento           | - Backend optimización consultas, indexación DB (6h)<br>- Frontend optimización carga y UX (6h)<br>- Pruebas de rendimiento (4h)<br>- Documentación (4h)                        |
+| **14** | Pruebas funcionales y QA           | - Diseño y ejecución de pruebas backend/frontend (12h)<br>- Corrección bugs y mejoras UX (6h)<br>- Documentación de pruebas (2h)                                                   |
+| **15** | Despliegue y CI/CD                 | - Configuración CI/CD backend y frontend (8h)<br>- Despliegue en Azure/AWS (10h)<br>- Documentación de despliegue (2h)                                                             |
+| **16** | Cierre, demo y entrega final       | - Preparación demo funcional para stakeholders (6h)<br>- Ajustes UI y optimización (8h)<br>- Backup y documentación final (6h)                                                  |
 
 ---
 
@@ -109,3 +109,4 @@ La solución propuesta consta de una aplicación web con backend en .NET 8 y fro
 ## 7. Conclusión
 
 El proyecto tiene un enfoque profesional, orientado a cubrir todas las etapas: análisis, diseño, desarrollo, pruebas, despliegue y documentación, con un cronograma detallado y realista para una dedicación semanal de 20 horas durante 16 semanas.
+
