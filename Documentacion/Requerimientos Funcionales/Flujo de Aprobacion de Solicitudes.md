@@ -22,8 +22,7 @@ Vista de aprobación en frontend y endpoints de aprobación/rechazo en backend. 
 
 ## Casos de Uso Relacionados
 
-- CU-04: Aprobar Solicitud
-- CU-05: Rechazar Solicitud
+- CU-03: Rechazar Solicitud
 
 ## Criterios de Aceptación
 
