@@ -23,7 +23,7 @@ Integrar SendGrid o SMTP para enviar correos automáticos con plantillas HTML qu
 
 ## Casos de Uso Relacionados
 
-- CU-06: Notificar Cambio de Estado de Solicitud  
+- CU-07: Notificar Cambio de Estado de Solicitud  
 - CU-03 / CU-04: Aprobar, Rechazar, Editar o Cancelar Solicitud (acciones que disparan la notificación)
 
 ## Criterios de Aceptación
