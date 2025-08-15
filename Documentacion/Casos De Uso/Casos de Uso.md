@@ -2,193 +2,278 @@
 
 ---
 
-## **CU-01 – Autenticarse en el sistema**
+# Caso de Uso
+Título del Caso de Uso
+CU-01 – Autenticarse en el sistema
 
-**Descripción:** Permite a cualquier usuario con credenciales válidas ingresar al sistema, accediendo a funciones según su rol asignado.  
-**Actores:** Colaborador, Supervisor, People Ops, Administrador.  
-**Precondiciones:**
+Descripción
+Permite a los usuarios registrados ingresar al sistema y acceder a funcionalidades según su rol.
 
-- El usuario debe estar registrado y activo.
-- Debe contar con conexión a Internet.
+Actores
+Primarios: Colaborador, Supervisor, People Ops, Administrador
+Secundarios: Sistema
 
-**Flujo principal:**
+Precondiciones
+- Usuario registrado y activo.
+- Conexión a Internet.
 
-1. El usuario ingresa usuario y contraseña en el formulario de inicio de sesión.
-2. El sistema valida credenciales contra la base de datos.
-3. Si son correctas, se establece sesión y se redirige al panel correspondiente al rol.
+Postcondiciones
+- Usuario autenticado y con acceso a su panel según rol.
 
-**Flujo alternativo:**
+Flujo Principal
+1. Usuario ingresa credenciales.
+2. Sistema valida credenciales.
+3. Usuario es redirigido a su panel correspondiente.
 
-- Si el usuario olvida la contraseña, puede solicitar restablecimiento vía correo electrónico.
+Flujos Alternativos
+FA-01: Recuperar contraseña
+1. Usuario solicita restablecimiento de contraseña.
+2. Sistema envía correo con enlace de recuperación.
+3. Usuario restablece contraseña.
 
-**Excepciones:**
+Prototipos
+//: # TODO Agregar prototipos de login
 
-- **E01:** Credenciales inválidas → Se muestra mensaje de error y se registra intento fallido.
+Requerimientos Especiales
+- Autenticación mediante JWT.
+- Protección de datos sensibles.
 
-**Postcondiciones:**
+Escenarios de Prueba
+Entrada	Salida Esperada
+Credenciales válidas	Acceso concedido
+Credenciales inválidas	Mensaje de error y registro de intento fallido
 
-- El usuario queda autenticado y con acceso a sus módulos autorizados.
-
-**RF asociados:** RF-01.
-
----
-
-## **CU-02 – Registrar solicitud de horas extra**
-
-**Descripción:** Permite a un colaborador crear una solicitud indicando fecha, hora de inicio, hora de fin, justificación y adjuntos opcionales.  
-**Actores:** Colaborador (principal), Sistema (secundario).  
-**Precondiciones:**
-
-- Usuario autenticado con rol de Colaborador.
-- No debe existir otra solicitud para el mismo rango horario.
-
-**Flujo principal:**
-
-1. El colaborador accede al módulo “Solicitudes de Overtime”.
-2. Completa el formulario con los campos requeridos.
-3. Adjunta documentos justificativos si aplica.
-4. Envía la solicitud.
-5. El sistema valida disponibilidad horaria y formato de datos.
-6. La solicitud queda registrada con estado “Pendiente” y se notifica al supervisor.
-
-**Flujo alternativo:**
-
-- Si faltan datos, el sistema solicita correcciones antes de guardar.
-
-**Excepciones:**
-
-- **E02:** Horas duplicadas con otra solicitud → Se rechaza el registro y se informa al usuario.
-
-**Postcondiciones:**
-
-- Solicitud creada y visible en el historial del usuario.
-
-**RF asociados:** RF-02, RF-03.
+Documento Preparado Por: Mariano Durán
+Fecha: 2025-08-15
 
 ---
 
-## **CU-03 – Aprobar o rechazar solicitud**
+# Caso de Uso
+Título del Caso de Uso
+CU-02 – Registrar solicitud de horas extra
 
-**Descripción:** Permite al supervisor revisar solicitudes pendientes y tomar una decisión con base en la justificación y adjuntos.  
-**Actores:** Supervisor (principal), Sistema (secundario).  
-**Precondiciones:**
+Descripción
+Permite a los empleados registrar solicitudes de overtime indicando fecha, cantidad de horas y justificación.
 
+Actores
+Primarios: Colaborador
+Secundarios: Sistema
+
+Precondiciones
+- Usuario autenticado como Colaborador.
+- No solapamiento con otras solicitudes existentes.
+
+Postcondiciones
+- Solicitud registrada y visible en historial del usuario.
+
+Flujo Principal
+1. Usuario accede al módulo de solicitudes.
+2. Completa formulario con fecha, horas y justificación.
+3. Adjunta documentos opcionales.
+4. Envía solicitud al sistema.
+5. Sistema valida datos y registra solicitud.
+6. Notificación enviada al supervisor.
+
+Flujos Alternativos
+FA-01: Datos incompletos
+1. Usuario intenta enviar solicitud sin completar todos los campos.
+2. Sistema alerta de campos faltantes.
+3. Usuario corrige y envía nuevamente.
+
+Prototipos
+//: # TODO Agregar prototipos de formulario
+
+Requerimientos Especiales
+- Validaciones de campos obligatorios y rango de horas.
+
+Escenarios de Prueba
+Entrada	Salida Esperada
+Formulario completo	Solicitud registrada correctamente
+Formulario incompleto	Mensaje de error
+
+Documento Preparado Por: Mariano Durán
+Fecha: 2025-08-15
+
+---
+
+# Caso de Uso
+Título del Caso de Uso
+CU-03 – Aprobar o rechazar solicitud
+
+Descripción
+Permite a los managers aprobar o rechazar solicitudes de horas extra con un clic, generando notificación al solicitante.
+
+Actores
+Primarios: Supervisor
+Secundarios: Sistema
+
+Precondiciones
 - Usuario autenticado como Supervisor.
-- Existencia de solicitudes en estado “Pendiente” asignadas al supervisor.
+- Existencia de solicitudes pendientes.
 
-**Flujo principal:**
+Postcondiciones
+- Estado de la solicitud actualizado y notificación enviada al empleado.
 
-1. El supervisor ingresa a “Solicitudes pendientes”.
-2. Selecciona una solicitud para revisar.
-3. Visualiza detalles, justificación y adjuntos.
-4. Elige aprobar o rechazar.
-5. El sistema actualiza el estado y notifica al solicitante.
+Flujo Principal
+1. Supervisor ingresa al módulo de solicitudes pendientes.
+2. Selecciona solicitud y revisa detalles.
+3. Decide aprobar o rechazar.
+4. Sistema actualiza estado y envía notificación al solicitante.
 
-**Flujo alternativo:**
+Flujos Alternativos
+FA-01: Solicitud con información insuficiente
+1. Supervisor solicita aclaraciones.
+2. Empleado actualiza la solicitud.
+3. Supervisor completa aprobación/rechazo.
 
-- El supervisor puede solicitar aclaraciones antes de decidir.
+Prototipos
+//: # TODO Agregar prototipos de aprobación
 
-**Excepciones:**
+Requerimientos Especiales
+- Registro en historial/auditoría de cada acción.
 
-- **E03:** La solicitud fue modificada o cancelada mientras se revisaba → Se bloquea la acción y se informa.
+Escenarios de Prueba
+Entrada	Salida Esperada
+Solicitud pendiente	Aprobada y notificación enviada
+Solicitud pendiente	Rechazada y notificación enviada
 
-**Postcondiciones:**
-
-- Estado actualizado y reflejado en reportes.
-
-**RF asociados:** RF-04, RF-05.
+Documento Preparado Por: Mariano Durán
+Fecha: 2025-08-15
 
 ---
 
-## **CU-04 – Editar o cancelar solicitud**
+# Caso de Uso
+Título del Caso de Uso
+CU-04 – Editar o cancelar solicitud
 
-**Descripción:** Permite a un colaborador modificar o anular una solicitud siempre que no haya sido aprobada o rechazada.  
-**Actores:** Colaborador, Sistema.  
-**Precondiciones:**
+Descripción
+Permite a un colaborador modificar o anular una solicitud antes de su aprobación o rechazo.
 
-- Solicitud en estado “Pendiente”.
-- Usuario autenticado como propietario de la solicitud.
+Actores
+Primarios: Colaborador
+Secundarios: Sistema
 
-**Flujo principal:**
+Precondiciones
+- Solicitud en estado pendiente.
+- Usuario propietario de la solicitud.
 
-1. El colaborador accede a su historial de solicitudes.
-2. Selecciona la solicitud a modificar o cancelar.
+Postcondiciones
+- Solicitud modificada o cancelada correctamente.
+
+Flujo Principal
+1. Usuario accede a historial de solicitudes.
+2. Selecciona solicitud a modificar o cancelar.
 3. Realiza cambios o confirma cancelación.
-4. El sistema actualiza los datos y registra la acción.
+4. Sistema actualiza datos y registra la acción.
 
-**Flujo alternativo:**
+Flujos Alternativos
+FA-01: Revertir cambios
+1. Usuario deshace modificaciones antes de confirmar.
+2. Sistema mantiene estado anterior.
 
-- El usuario puede revertir cambios antes de confirmar.
+Prototipos
+//: # TODO Agregar prototipos de edición
 
-**Excepciones:**
+Requerimientos Especiales
+- Control de acceso para editar solo solicitudes propias.
 
-- **E04:** La solicitud ya fue aprobada/rechazada → No se permite modificación.
+Escenarios de Prueba
+Entrada	Salida Esperada
+Solicitud pendiente modificada	Actualización reflejada en historial
+Solicitud pendiente cancelada	Solicitud eliminada del listado activo
 
-**Postcondiciones:**
-
-- Solicitud modificada o eliminada del registro activo.
-
-**RF asociados:** RF-06, RF-07.
+Documento Preparado Por: Mariano Durán
+Fecha: 2025-08-15
 
 ---
 
-## **CU-05 – Generar reporte mensual de horas extra**
+# Caso de Uso
+Título del Caso de Uso
+CU-05 – Generar reporte mensual de horas extra
 
-**Descripción:** Permite al personal de People Ops generar un reporte consolidado de horas extra aprobadas, clasificadas por departamento y rango de fechas.  
-**Actores:** People Ops, Sistema.  
-**Precondiciones:**
+Descripción
+Permite a People Ops generar reportes consolidados por departamento y período.
 
+Actores
+Primarios: People Ops
+Secundarios: Sistema
+
+Precondiciones
 - Usuario autenticado con rol autorizado.
-- Existencia de solicitudes aprobadas en el período seleccionado.
+- Existencia de solicitudes aprobadas.
 
-**Flujo principal:**
+Postcondiciones
+- Reporte generado y disponible para descarga/exportación.
 
-1. People Ops ingresa a “Reportes”.
+Flujo Principal
+1. Usuario accede a módulo de reportes.
 2. Selecciona rango de fechas y filtros opcionales.
-3. El sistema extrae datos y genera reporte.
-4. El usuario descarga en formato PDF o Excel.
+3. Sistema genera reporte consolidado.
+4. Usuario descarga en PDF o Excel.
 
-**Flujo alternativo:**
+Flujos Alternativos
+FA-01: Programar envío automático
+1. Usuario programa envío recurrente.
+2. Sistema envía reporte automáticamente al correo designado.
 
-- Se puede programar el envío automático por correo electrónico.
+Prototipos
+//: # TODO Agregar prototipos de reporte
 
-**Excepciones:**
+Requerimientos Especiales
+- Exportación compatible con PDF y Excel.
 
-- **E05:** No hay datos en el período → Se genera reporte vacío con mensaje aclaratorio.
+Escenarios de Prueba
+Entrada	Salida Esperada
+Periodo con datos	Reporte generado correctamente
+Periodo sin datos	Reporte vacío con mensaje aclaratorio
 
-**Postcondiciones:**
-
-- Reporte disponible para consulta y archivo.
-
-**RF asociados:** RF-08.
+Documento Preparado Por: Mariano Durán
+Fecha: 2025-08-15
 
 ---
 
-## **CU-06 – Configurar parámetros del sistema**
+# Caso de Uso
+Título del Caso de Uso
+CU-06 – Consultar historial de solicitudes
 
-**Descripción:** Permite al administrador ajustar parámetros como políticas de aprobación, límites de horas, roles y notificaciones.  
-**Actores:** Administrador, Sistema.  
-**Precondiciones:**
+Descripción
+Permite a usuarios autorizados revisar todas las acciones realizadas sobre solicitudes para auditoría y trazabilidad.
 
-- Usuario autenticado como Administrador.
+Actores
+Primarios: People Ops, Supervisor, Administrador
+Secundarios: Sistema
 
-**Flujo principal:**
+Precondiciones
+- Usuario autenticado con rol autorizado.
+- Existencia de registros en el sistema.
 
-1. El administrador accede al módulo “Configuraciones”.
-2. Modifica parámetros deseados.
-3. Guarda cambios.
-4. El sistema aplica nuevas reglas en solicitudes futuras.
+Postcondiciones
+- Historial completo mostrado y exportable.
 
-**Flujo alternativo:**
+Flujo Principal
+1. Usuario accede al módulo “Historial de Solicitudes”.
+2. Aplica filtros por fecha, empleado o estado.
+3. Sistema consulta registros históricos.
+4. Sistema despliega resultados detallados.
+5. Usuario puede exportar historial a PDF/Excel.
 
-- El administrador puede exportar configuraciones previas como respaldo.
+Flujos Alternativos
+FA-01: No existen registros para filtro
+1. Usuario aplica filtros.
+2. Sistema no encuentra registros.
+3. Muestra mensaje “No se encontraron resultados”.
 
-**Excepciones:**
+Prototipos
+//: # TODO Agregar prototipos de historial
 
-- **E06:** Error en validación de valores ingresados → Se muestra mensaje y no se guardan cambios.
+Requerimientos Especiales
+- Acceso solo a roles autorizados.
+- Registro inmutable con sello de tiempo.
 
-**Postcondiciones:**
+Escenarios de Prueba
+Entrada	Salida Esperada
+Filtro por fechas	Lista de acciones en el rango seleccionado
+Filtro por colaborador	Lista de acciones realizadas por ese colaborador
 
-- Configuración actualizada y activa.
-
-**RF asociados:** RF-09.
+Documento Preparado Por: Mariano Durán
+Fecha: 2025-08-15
