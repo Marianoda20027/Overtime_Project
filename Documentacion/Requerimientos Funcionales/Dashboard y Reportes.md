@@ -24,7 +24,6 @@ Dashboard interactivo con gráficos en React y generación de reportes exportabl
 ## Casos de Uso Relacionados
 
 - CU-05: Generar reporte mensual de horas extra  
-- CU-07: Visualizar Dashboard (opcional para métricas en tiempo real)  
 
 ## Criterios de Aceptación
 
