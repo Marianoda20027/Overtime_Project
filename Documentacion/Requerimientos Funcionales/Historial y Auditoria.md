@@ -23,7 +23,7 @@ Implementar un módulo de historial que registre automáticamente todas las acci
 
 ## Casos de Uso Relacionados
 
-- CU-09: Consultar Historial de Solicitudes  
+- CU-06: Consultar Historial de Solicitudes  
 - CU-03 / CU-04: Aprobar, Rechazar, Editar o Cancelar Solicitud (acciones que quedan registradas)
 
 ## Criterios de Aceptación
