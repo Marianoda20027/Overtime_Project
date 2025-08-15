@@ -2,34 +2,37 @@
 
 ## Descripción
 
-Mostrar métricas y estadísticas clave de solicitudes y permitir exportar reportes.
+Mostrar métricas y estadísticas clave de solicitudes y permitir exportar reportes de horas extra, con filtros por fecha, departamento y estado.
 
 ## Necesidad
 
-Contar con datos actualizados para decisiones de gestión.
+Contar con datos actualizados para la toma de decisiones de gestión y optimizar la supervisión de solicitudes de overtime.
 
 ## Proceso Actual
 
-Los reportes se generan manualmente desde hojas de cálculo.
+Los reportes se generan manualmente desde hojas de cálculo, lo que provoca retrasos y riesgo de errores.
 
 ## Solución Propuesta
 
-Dashboard interactivo con gráficos en React y exportación a PDF/Excel.
+Dashboard interactivo con gráficos en React y generación de reportes exportables a PDF y Excel. Permite filtros dinámicos y visualización en tiempo real de métricas clave.
 
 ## Documentos de Referencia
 
-- [Política de Reportes]
+- [Política de Reportes]  
+- [Manual de Gestión de Overtime]  
 
 ## Casos de Uso Relacionados
 
-- CU-05: Generar Reporte
+- CU-05: Generar reporte mensual de horas extra  
+- CU-07: Visualizar Dashboard (opcional para métricas en tiempo real)  
 
 ## Criterios de Aceptación
 
-- Datos actualizados en tiempo real.
-- Exportación sin pérdida de formato.
+- Datos reflejados en tiempo real en el dashboard.  
+- Exportación de reportes sin pérdida de formato y con todos los filtros aplicados correctamente.  
+- Acceso restringido solo a roles autorizados (People Ops, Administrador).
 
 ---
 
-**Documento Preparado Por:** Jaziel Rojas
+**Documento Preparado Por:** Jaziel Rojas  
 **Fecha:** 2025-08-15
