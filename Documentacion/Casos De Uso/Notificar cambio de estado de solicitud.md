@@ -56,3 +56,4 @@ Solicitud rechazada Correo enviado al empleado con estado “Rechazada”
 
 - Documento Preparado Por: Mariano Durán
 - Fecha: 2025-08-15
+
