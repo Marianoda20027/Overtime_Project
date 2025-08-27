@@ -1,0 +1,53 @@
+# dependencias
+/node_modules
+/.pnp
+.pnp.js
+
+# build
+/dist
+/build
+/.vite
+vite.config.ts.timestamp-*
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.log
+
+# sistema
+.DS_Store
+Thumbs.db
+
+# editor
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# typescript
+*.tsbuildinfo
+tsconfig.tsbuildinfo
+
+# env
+.env
+.env.local
+.env.*.local
+
+# husky
+.husky/_
+
+# test coverage
+/coverage
+/.nyc_output
+
+# misc
+*.lock
