@@ -1,0 +1,79 @@
+/* src/pages/styles.css */
+
+/* Aseguramos que la página tenga fondo blanco */
+.overtime-page {
+  background-color: #ffffff; /* Fondo blanco */
+  font-family: 'Open Sans', sans-serif;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  min-height: 100vh; /* Asegura que ocupe toda la altura */
+  margin: 0;
+  padding: 0;
+}
+
+/* Estilo para el Header */
+.overtime-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 0; /* Padding reducido para hacerlo más compacto */
+  background-color: #ffffff; /* Fondo blanco */
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1); /* Sombra más suave y compacta */
+  width: 100%;
+  max-width: 100%; /* Header abarca todo el ancho */
+  margin-bottom: 40px; /* Aumentamos el espacio después del header */
+}
+
+/* Logo y título del header */
+.overtime-header .logo-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.horizontal-logo {
+  width: 250px; /* Ajustamos el tamaño del logo horizontal para hacerlo más compacto */
+}
+
+/* Estilo para el Footer */
+.overtime-footer {
+  width: 100%;
+  background-color: #663db9; /* Fondo morado para el footer */
+  color: #fff; /* Texto blanco */
+  text-align: center;
+  padding: 20px 0; /* Aumentamos el padding para mayor espacio */
+  margin-top: 50px; /* Aumentamos el espacio antes del footer */
+}
+
+.overtime-footer p {
+  margin: 5px 0;
+  font-size: 14px;
+}
+
+.overtime-footer a {
+  color: #50B95D; /* Color verde para los enlaces */
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.overtime-footer a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 480px) {
+  .overtime-header,
+  .overtime-footer {
+    width: 90%; /* Para dispositivos pequeños, hacemos que los componentes tengan un ancho más flexible */
+  }
+
+  .overtime-header {
+    padding: 15px 0; /* Reducimos el padding en dispositivos pequeños */
+  }
+
+  .overtime-footer {
+    padding: 12px 0; /* Reducimos el padding en dispositivos pequeños */
+  }
+}
