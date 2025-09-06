@@ -1,6 +1,7 @@
 /* src/components/Login/styles.css */
+
 body {
-  font-family: 'Roboto', sans-serif;
+  font-family: 'Open Sans', sans-serif; /* Cambiado a Open Sans según la biblia */
   background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
   margin: 0;
   padding: 0;
@@ -17,39 +18,39 @@ body {
 
 .login-form {
   background: #ffffff;
-  padding: 40px;
-  border-radius: 12px;
-  box-shadow: 0 15px 35px rgba(50, 50, 93, 0.1), 0 5px 15px rgba(0, 0, 0, 0.07);
+  padding: 50px; /* Aumentado el padding para más espacio */
+  border-radius: 12px; /* Bordes más grandes */
+  box-shadow: 0 10px 30px rgba(50, 50, 93, 0.1), 0 5px 15px rgba(0, 0, 0, 0.07);
   width: 100%;
-  max-width: 450px;
+  max-width: 500px; /* Aumentado el tamaño máximo del formulario */
 }
 
 .login-form h1 {
-  font-size: 28px;
-  font-weight: 700;
+  font-size: 32px; /* Aumentado el tamaño del título */
+  font-weight: 700; /* Más peso para el título */
   color: #67C28D; /* Verde más profesional */
-  margin-bottom: 30px;
+  margin-bottom: 30px; /* Más margen debajo del título */
   text-align: center;
 }
 
 .input-group {
-  margin-bottom: 25px;
+  margin-bottom: 20px; /* Aumentado el margen entre los campos */
 }
 
 .input-group label {
-  font-size: 14px;
+  font-size: 14px; /* Etiquetas un poco más grandes */
   color: #555;
-  margin-bottom: 8px;
+  margin-bottom: 6px; /* Más espacio debajo de las etiquetas */
   display: block;
   font-weight: 500;
 }
 
 .input-group input {
   width: 100%;
-  padding: 15px;
-  font-size: 16px;
+  padding: 16px; /* Más padding en los campos */
+  font-size: 16px; /* Fuente más grande */
   border: 1px solid #ddd;
-  border-radius: 8px;
+  border-radius: 8px; /* Bordes más suaves */
   background-color: #f9f9f9;
   color: #333;
   transition: all 0.3s;
@@ -64,19 +65,19 @@ body {
 
 .error-message {
   color: #e74c3c;
-  font-size: 14px;
+  font-size: 14px; /* Mensajes un poco más grandes */
   text-align: center;
   margin: 15px 0;
-  padding: 10px;
+  padding: 12px;
   background-color: rgba(231, 76, 60, 0.1);
-  border-radius: 6px;
+  border-radius: 8px;
 }
 
 .login-btn {
   width: 100%;
-  padding: 16px;
-  font-size: 16px;
-  font-weight: 600;
+  padding: 16px; /* Botón más grande */
+  font-size: 16px; /* Fuente más grande en el botón */
+  font-weight: 700;
   background-color: #67C28D;
   color: white;
   border: none;
@@ -86,7 +87,7 @@ body {
 }
 
 .login-btn:hover {
-  background-color: #67C28D;
+  background-color: #45a56f; /* Verde más oscuro */
 }
 
 .login-btn:disabled {
@@ -96,10 +97,19 @@ body {
 
 @media (max-width: 480px) {
   .login-form {
-    padding: 25px;
+    padding: 30px; /* Aumento de padding en dispositivos pequeños */
   }
-  
+
   .login-form h1 {
-    font-size: 24px;
+    font-size: 28px; /* Título más grande en pantallas pequeñas */
+  }
+
+  .input-group input {
+    font-size: 15px; /* Fuente más grande en dispositivos pequeños */
+  }
+
+  .login-btn {
+    padding: 14px; /* Botón más grande en dispositivos pequeños */
+    font-size: 15px; /* Fuente más grande en el botón */
   }
 }
