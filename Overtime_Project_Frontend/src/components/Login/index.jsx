@@ -70,7 +70,7 @@ const Login = () => {
   return (
     <div className="login-container">
       <div className="login-form">
-        <h1>Arkose Labs Login</h1>
+        <h1>Login</h1>
 
         {!show2FA ? (
           <form onSubmit={handleLogin}>

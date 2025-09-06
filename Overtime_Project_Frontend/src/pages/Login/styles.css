@@ -1,0 +1,80 @@
+/* src/pages/styles.css */
+
+/* Aseguramos que la página tenga fondo blanco */
+.login-page {
+  background-color: #ffffff; /* Fondo blanco */
+  font-family: 'Open Sans', sans-serif;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh; /* Asegura que ocupe toda la altura */
+  margin: 0;
+  padding: 0;
+}
+
+/* Estilo para el Header */
+.login-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 15px 0; /* Reducción de padding para hacerlo más compacto */
+  background-color: #ffffff; /* Fondo blanco */
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1); /* Sombra más suave y compacta */
+  width: 100%;
+  max-width: 100%; /* Header abarca todo el ancho */
+}
+
+/* Logo y título del header */
+.login-header .logo-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.horizontal-logo {
+  width: 250px; /* Ajustamos el tamaño del logo horizontal para hacerlo más compacto */
+}
+
+
+
+/* Estilo del Footer */
+.login-footer {
+  width: 100%;
+  background-color: #663db9; /* Fondo morado para el footer */
+  color: #fff; /* Texto blanco */
+  text-align: center;
+  padding: 15px 0; /* Reducimos el padding para hacerlo más compacto */
+  margin-top: 20px; /* Menos espacio entre el contenido principal y el footer */
+}
+
+.login-footer p {
+  margin: 5px 0;
+  font-size: 14px;
+}
+
+.login-footer a {
+  color: #50B95D; /* Color verde para los enlaces */
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.login-footer a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 480px) {
+  .login-header,
+  .login-form {
+    width: 90%; /* Para dispositivos pequeños, hacemos que los componentes tengan un ancho más flexible */
+  }
+
+  .login-header {
+    padding: 15px 0; /* Reducimos el padding en dispositivos pequeños */
+  }
+
+  .login-form {
+    padding: 10px; /* Reducimos el padding en dispositivos pequeños */
+  }
+}
