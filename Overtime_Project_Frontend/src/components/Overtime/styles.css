@@ -2,7 +2,7 @@
 
 /* Eliminar cualquier posible margen no deseado del body */
 body {
-  font-family: 'Roboto', sans-serif;
+  font-family: 'Open Sans', sans-serif;
   background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
   margin: 0;
   padding: 0;
@@ -66,7 +66,7 @@ h1 {
 
 .input-group input,
 .input-group textarea {
-  width: 100%; /* Los campos ahora ocupan todo el ancho disponible */
+  width: 100%;
   padding: 16px; /* Aumentamos el padding en los campos */
   font-size: 16px; /* Fuente más grande */
   border: 1px solid #ddd;
@@ -116,10 +116,34 @@ h1 {
 }
 
 .ot-btn:hover {
-  background-color: #50B95D; /* Verde más oscuro */
+  background-color: #45a56f; /* Verde más oscuro */
 }
 
 .ot-btn:disabled {
+  background-color: #d3d3d3;
+  cursor: not-allowed;
+}
+
+/* Nuevo botón para ver solicitudes previas */
+.view-requests-btn {
+  width: 100%;
+  padding: 16px; /* Botón más grande */
+  font-size: 18px; /* Fuente más grande */
+  font-weight: 700;
+  background-color: #452b79ff; /* Morado para el botón de "Ver Solicitudes" */
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-top: 15px; /* Espacio entre los dos botones */
+}
+
+.view-requests-btn:hover {
+  background-color: #351f5d; /* Morado más oscuro */
+}
+
+.view-requests-btn:disabled {
   background-color: #d3d3d3;
   cursor: not-allowed;
 }
@@ -141,6 +165,11 @@ h1 {
   }
 
   .ot-btn {
+    padding: 18px; /* Botón más grande en dispositivos pequeños */
+    font-size: 16px; /* Fuente más grande en el botón */
+  }
+
+  .view-requests-btn {
     padding: 18px; /* Botón más grande en dispositivos pequeños */
     font-size: 16px; /* Fuente más grande en el botón */
   }

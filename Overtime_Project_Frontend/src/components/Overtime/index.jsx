@@ -2,9 +2,19 @@
 import React from 'react';
 import { useOvertimeForm } from './hooks.jsx';
 import './styles.css'; // Importing the updated styles
+import { useNavigate } from 'react-router-dom';
 
 const OvertimeRequest = () => {
   const { form, update, totalHours, loading, error, okMsg, submit } = useOvertimeForm();
+
+  const navigate = useNavigate(); // Aquí es donde obtenemos la función navigate
+
+
+  // Función para manejar la acción del botón "Ver Solicitudes"
+  const handleViewRequests = () => {
+      navigate('/request'); // Navegamos a la página OvertimeRequest
+
+  };
 
   return (
     <div className="ot-page">
@@ -62,10 +72,16 @@ const OvertimeRequest = () => {
             />
           </div>
 
+          {/* Botón para enviar la solicitud */}
           <button className="ot-btn" type="submit" disabled={loading}>
             {loading ? 'Sending...' : 'Submit Request'}
           </button>
         </form>
+
+        {/* Botón para ver solicitudes anteriores */}
+        <button className="ot-btn view-requests-btn" onClick={handleViewRequests}>
+          View My Requests
+        </button>
 
         {error && <div className="error-message">{error}</div>}
         {okMsg && <div className="success-message">{okMsg}</div>}
