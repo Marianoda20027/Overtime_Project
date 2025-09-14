@@ -21,7 +21,7 @@ const TwoButtonsPage = () => {
   const handleViewRequests = () => {
     try {
       // Navegamos a la página de visualización de requests
-      navigate('/view-requests'); // Cambiamos el console.log por una navegación real
+      navigate('/request'); // Cambiamos el console.log por una navegación real
     } catch (error) {
       console.error('Error al navegar a view-requests:', error);
       // Fallback: mostrar mensaje en consola si hay error
