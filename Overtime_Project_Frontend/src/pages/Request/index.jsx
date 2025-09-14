@@ -11,7 +11,7 @@ const YourRequests = () => {
   const { requests, loading, error } = useYourRequests();
 
   const handleGoBack = () => {
-    navigate('/');
+    navigate('/home');
   };
 
   const handleNewRequest = () => {
