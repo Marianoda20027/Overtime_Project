@@ -1,9 +1,13 @@
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
 using OtpNet;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 using System.Text;
+using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using Microsoft.AspNetCore.Authorization;
+using System.Xml.Serialization;
+using api.Request;
+using api.JWTToken;
 
 namespace api.Controllers
 {
@@ -11,16 +15,19 @@ namespace api.Controllers
     [Route("auth")]
     public class AuthController : ControllerBase
     {
-        private readonly IConfiguration _config;
-        private static readonly Dictionary<string, string> userSecrets = new(); // Guardamos secreto TOTP por usuario
-        private static readonly HashSet<string> usersWith2FA = new(); // Usuarios con 2FA activado
+
+        private static readonly Dictionary<string, string> userSecrets = new();
+        private static readonly HashSet<string> usersWith2FA = new();
+
+        private readonly TokenCreator tokenCreator;
 
         public AuthController(IConfiguration config)
         {
-            _config = config;
+            tokenCreator = new TokenCreator(config);
         }
 
         [HttpPost("login")]
+        [AllowAnonymous]
         public IActionResult Login([FromBody] LoginRequest request)
         {
             //valores test para retornar un ok en el login
@@ -32,7 +39,7 @@ namespace api.Controllers
                     return Ok(new { require2FA = true, message = "2FA required" });
                 }
 
-                var token = GenerateJwtToken(request.Username);
+                var token = tokenCreator.CreateToken(request.Username);
                 return Ok(new { token });
             }
 
@@ -41,6 +48,7 @@ namespace api.Controllers
 
         // Endpoint para registrar 2FA (generar secreto)
         [HttpPost("register-2fa")]
+        [AllowAnonymous]
         public IActionResult Register2FA([FromBody] Register2FARequest request)
         {
             if (string.IsNullOrEmpty(request.Username))
@@ -56,6 +64,7 @@ namespace api.Controllers
 
         // Endpoint para verificar 2FA
         [HttpPost("2fa")]
+        [AllowAnonymous]
         public IActionResult Verify2FA([FromBody] Verify2FARequest request)
         {
             if (string.IsNullOrEmpty(request.Username) || string.IsNullOrEmpty(request.Token))
@@ -74,51 +83,10 @@ namespace api.Controllers
             usersWith2FA.Add(request.Username);
 
             // Genera JWT al validar correctamente
-            var token = GenerateJwtToken(request.Username);
+            var token = tokenCreator.CreateToken(request.Username);
             return Ok(new { token });
         }
 
-        private string GenerateJwtToken(string username)
-        {
-            var jwtKey = _config["Jwt:Key"];
-            var jwtIssuer = _config["Jwt:Issuer"];
-            var jwtAudience = _config["Jwt:Audience"];
 
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey!));
-            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-
-            var claims = new[]
-            {
-                new Claim(JwtRegisteredClaimNames.Sub, username),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-            };
-
-            var token = new JwtSecurityToken(
-                issuer: jwtIssuer,
-                audience: jwtAudience,
-                claims: claims,
-                expires: DateTime.Now.AddHours(1),
-                signingCredentials: credentials
-            );
-
-            return new JwtSecurityTokenHandler().WriteToken(token);
-        }
-    }
-
-    public class LoginRequest
-    {
-        public string? Username { get; set; }
-        public string? Password { get; set; }
-    }
-
-    public class Register2FARequest
-    {
-        public string? Username { get; set; }
-    }
-
-    public class Verify2FARequest
-    {
-        public string? Username { get; set; }
-        public string? Token { get; set; }
     }
 }
