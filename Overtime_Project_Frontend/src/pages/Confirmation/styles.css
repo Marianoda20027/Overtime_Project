@@ -269,11 +269,15 @@ body {
 .modal-content {
   background: white;
   border-radius: var(--border-radius);
-  width: 90%;
-  max-width: 500px;
+  width: 80%; /* Reducimos el tamaño al 80% */
+  max-width: 500px; /* Ajustamos el tamaño máximo */
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
   animation: slideIn 0.3s ease;
   overflow: hidden;
+  padding: 15px; /* Reducimos el padding */
+  height: auto; /* Ajustamos la altura para que se adapte al contenido */
+  max-height: 700px; /* Limita la altura máxima del modal */
+  overflow-y: auto; /* Permite desplazarse si el contenido excede la altura */
 }
 
 .modal-header {

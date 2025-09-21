@@ -1,3 +1,5 @@
+// src/pages/ConfirmationPage/index.jsx
+
 import React, { useState } from 'react';
 import { useRequests } from './hooks';
 import Header from '../../components/Header';
@@ -10,6 +12,7 @@ const ConfirmationPage = () => {
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [actionType, setActionType] = useState(''); // 'accept' o 'reject'
   const [reason, setReason] = useState('');
+  const [comments, setComments] = useState(''); // Comentarios de la aprobación/rechazo
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleAccept = (request) => {
@@ -29,29 +32,32 @@ const ConfirmationPage = () => {
     setSelectedRequest(null);
     setActionType('');
     setReason('');
+    setComments('');
     setIsSubmitting(false);
   };
 
   const handleConfirm = async () => {
     if (!selectedRequest) return;
-    
+
     setIsSubmitting(true);
-    
+
     try {
+      // Calcular el costo de horas extra
+      const cost = selectedRequest.totalHours * selectedRequest.salary; // salario por hora * total horas
+
       if (actionType === 'accept') {
-        await acceptRequest(selectedRequest.id);
+        await acceptRequest(selectedRequest.id, comments, cost); // Aceptar solicitud con comentarios y costo
       } else if (actionType === 'reject') {
         if (!reason.trim()) {
           alert('Por favor, ingrese una razón para el rechazo');
           setIsSubmitting(false);
           return;
         }
-        await rejectRequest(selectedRequest.id, reason.trim());
+        await rejectRequest(selectedRequest.id, reason.trim(), comments, cost); // Rechazar solicitud con razón, comentarios y costo
       }
-      
-      // El hook ya maneja la recarga de página, pero por si acaso:
+
       handleClose();
-      
+
     } catch (error) {
       console.error('Error al procesar la solicitud:', error);
       alert('Error al procesar la solicitud. Intente nuevamente.');
@@ -219,6 +225,23 @@ const ConfirmationPage = () => {
                 </div>
               )}
               
+              <div className="form-group">
+                <label className="form-label">
+                  Comentarios
+                </label>
+                <textarea
+                  className="form-input"
+                  value={comments}
+                  onChange={(e) => setComments(e.target.value)}
+                  placeholder="Ingrese un comentario (opcional)"
+                  rows="4"
+                  maxLength="500"
+                />
+                <small style={{ color: '#6c757d', fontSize: '12px' }}>
+                  {comments.length}/500 caracteres
+                </small>
+              </div>
+              
               <div className="modal-actions">
                 <button 
                   className="btn-secondary"
@@ -246,3 +269,4 @@ const ConfirmationPage = () => {
 };
 
 export default ConfirmationPage;
+
