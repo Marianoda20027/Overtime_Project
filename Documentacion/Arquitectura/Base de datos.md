@@ -67,5 +67,20 @@ Esta tabla almacena las notificaciones enviadas a los usuarios sobre el estado d
 | `user_id`       | UUID (FK)      | Clave foránea que hace referencia al usuario receptor. |
 | `message`       | TEXT           | Mensaje de la notificación.                            |
 | `date_sent`     | DATETIME       | Fecha y hora en que la notificación fue enviada.       |
-| `status`        | VARCHAR(20)    | Estado de la notificación: 'sent', 'failed', 'pending'. |
+| `status`        | VARCHAR(20)    | Estado de la notificación: 'sent', 'failed', 'pending'.|
+
+## **2. Relaciones entre Tablas**
+
+- **Usuarios y Solicitudes de Overtime:**  
+  Un usuario puede tener múltiples solicitudes de overtime. Esto se modela mediante una relación **uno a muchos** entre la tabla `users` y la tabla `overtime_requests`, a través del campo `user_id`.
+
+- **Solicitudes de Overtime y Aprobaciones/Rechazos:**  
+  Cada solicitud de overtime puede ser aprobada o rechazada por un manager. Esto se modela mediante una relación **uno a uno o uno a muchos** entre la tabla `overtime_requests` y la tabla `overtime_approvals`, a través del campo `overtime_id`.
+
+- **Roles y Usuarios:**  
+  Un usuario puede tener un solo rol, pero un rol puede ser asignado a múltiples usuarios. Esta es una relación **uno a muchos** entre la tabla `roles` y la tabla `users`, a través del campo `role_id`.
+
+- **Usuarios y Notificaciones:**  
+  Un usuario puede recibir múltiples notificaciones. Esto se modela mediante una relación **uno a muchos** entre la tabla `users` y la tabla `notifications`, a través del campo `user_id`.
+
 
