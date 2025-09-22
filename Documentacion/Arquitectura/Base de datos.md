@@ -134,6 +134,3 @@ using (var scope = app.Services.CreateScope())
     var db = scope.ServiceProvider.GetRequiredService<OvertimeContext>();
     db.Database.Migrate(); // crea la base y aplica migraciones pendientes
 }
-
-
----
