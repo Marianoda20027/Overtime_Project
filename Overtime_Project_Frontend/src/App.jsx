@@ -4,7 +4,8 @@ import OvertimePage from './pages/Overtime/page';
 import LoginPage from './pages/Login/page';
 import Menu from './pages/Menu/page';
 import Request from './pages/Request';
-import ConfirmationPage from './pages/Confirmation';
+import ApprovalPage from './pages/Approval';
+
 import { ConfigProvider, theme } from 'antd';
 
 export default function App() {
@@ -89,7 +90,7 @@ export default function App() {
             <Route path="/Overtime-Request" element={<OvertimePage />} />
             <Route path="/home" element={<Menu />} />
             <Route path="/Request" element={<Request />} />
-            <Route path="/Confirmation" element={<ConfirmationPage />} />
+            <Route path="/Approval" element={<ApprovalPage />} />
           </Routes>
         </Router>
       </div>
