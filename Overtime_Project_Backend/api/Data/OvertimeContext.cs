@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using api.Domain;
 
-namespace Overtime_Project_Backend.Data;
+namespace api.Data;
 
 public class OvertimeContext : DbContext
 {
