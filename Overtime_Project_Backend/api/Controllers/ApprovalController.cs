@@ -4,6 +4,7 @@ using System.Security.Claims;
 using api.Domain;
 using api.DTOs;
 using api.Mappers;
+using api.Data;
 
 
 namespace api.Controllers;
@@ -12,23 +13,31 @@ namespace api.Controllers;
 [Route("api/overtime/approval")]
 public class OvertimeApprovalController : ControllerBase
 {
-    private static readonly List<Approval> _approvals = new();
+    private readonly OvertimeContext _db;
+
+    public OvertimeApprovalController(OvertimeContext db)
+    {
+        _db = db;
+    }
 
     [HttpPost("{id:guid}/accept")]
     [Authorize(Roles = "Manager,People_Ops")]
     public IActionResult AcceptRequest(Guid id, [FromBody] ApprovalRequestDto body)
     {
-        var req = OvertimeRequestsController._requests.FirstOrDefault(r => r.OvertimeId == id);
+        var req = _db.OvertimeRequests.FirstOrDefault(r => r.OvertimeId == id);
         if (req is null) return NotFound(new { message = "Solicitud no encontrada" });
         if (req.Status != OvertimeStatus.Pending)
-            return BadRequest(new { message = "La solicitud ya ha sido procesada" });
+            return BadRequest(new { message = "La solicitud ya fue procesada" });
 
         var managerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (string.IsNullOrWhiteSpace(managerId)) return Unauthorized();
 
+        // actualizar request
         req.Status = OvertimeStatus.Approved;
         req.Cost = CalcularCosto(req, body.ApprovedHours);
+        req.UpdatedAt = DateTime.UtcNow;
 
+        // crear approval
         var approval = new Approval
         {
             ApprovalId = Guid.NewGuid(),
@@ -36,24 +45,17 @@ public class OvertimeApprovalController : ControllerBase
             ManagerId = Guid.Parse(managerId),
             ApprovedHours = body.ApprovedHours,
             Status = OvertimeStatus.Approved,
-            Comments = body.Comments
+            Comments = body.Comments,
+            ApprovalDate = DateTime.UtcNow
         };
-        _approvals.Add(approval);
 
-        return Ok(new
-        {
+        _db.OvertimeApprovals.Add(approval);
+        _db.SaveChanges();
+
+        return Ok(new {
             message = "Solicitud aprobada",
             request = req.ToDto(),
-            approval = new ApprovalResponseDto
-            {
-                ApprovalId = approval.ApprovalId,
-                OvertimeId = approval.OvertimeId,
-                ManagerId = approval.ManagerId,
-                ApprovedHours = approval.ApprovedHours,
-                ApprovalDate = approval.ApprovalDate,
-                Status = approval.Status.ToString(),
-                Comments = approval.Comments
-            }
+            approval = approval.ToDto()
         });
     }
 
@@ -61,16 +63,19 @@ public class OvertimeApprovalController : ControllerBase
     [Authorize(Roles = "Manager,People_Ops")]
     public IActionResult RejectRequest(Guid id, [FromBody] RejectRequestDto body)
     {
-        var req = OvertimeRequestsController._requests.FirstOrDefault(r => r.OvertimeId == id);
+        var req = _db.OvertimeRequests.FirstOrDefault(r => r.OvertimeId == id);
         if (req is null) return NotFound(new { message = "Solicitud no encontrada" });
         if (req.Status != OvertimeStatus.Pending)
-            return BadRequest(new { message = "La solicitud ya ha sido procesada" });
+            return BadRequest(new { message = "La solicitud ya fue procesada" });
 
         var managerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (string.IsNullOrWhiteSpace(managerId)) return Unauthorized();
 
+        // actualizar request
         req.Status = OvertimeStatus.Rejected;
+        req.UpdatedAt = DateTime.UtcNow;
 
+        // crear approval
         var approval = new Approval
         {
             ApprovalId = Guid.NewGuid(),
@@ -79,66 +84,36 @@ public class OvertimeApprovalController : ControllerBase
             ApprovedHours = 0,
             Status = OvertimeStatus.Rejected,
             Comments = body.Comments,
-            RejectionReason = body.Reason
+            RejectionReason = body.Reason,
+            ApprovalDate = DateTime.UtcNow
         };
-        _approvals.Add(approval);
 
-        return Ok(new
-        {
+        _db.OvertimeApprovals.Add(approval);
+        _db.SaveChanges();
+
+        return Ok(new {
             message = "Solicitud rechazada",
             request = req.ToDto(),
-            approval = new ApprovalResponseDto
-            {
-                ApprovalId = approval.ApprovalId,
-                OvertimeId = approval.OvertimeId,
-                ManagerId = approval.ManagerId,
-                ApprovedHours = 0,
-                ApprovalDate = approval.ApprovalDate,
-                Status = approval.Status.ToString(),
-                Comments = approval.Comments
-            }
+            approval = approval.ToDto()
         });
     }
 
     [HttpGet("pending")]
     [Authorize(Roles = "Manager,People_Ops")]
-    public IActionResult GetPending()
-        => Ok(OvertimeRequestsController._requests
+    public IActionResult GetPendingRequests()
+    {
+        var pending = _db.OvertimeRequests
             .Where(r => r.Status == OvertimeStatus.Pending)
-            .Select(r => r.ToDto()));
+            .Select(r => r.ToDto()) // mapper a DTO
+            .ToList();
 
-    [HttpGet("approved")]
-    [Authorize(Roles = "Manager,People_Ops")]
-    public IActionResult GetApproved()
-        => Ok(OvertimeRequestsController._requests
-            .Where(r => r.Status == OvertimeStatus.Approved)
-            .Select(r => r.ToDto()));
-
-    [HttpGet("rejected")]
-    [Authorize(Roles = "Manager,People_Ops")]
-    public IActionResult GetRejected()
-        => Ok(OvertimeRequestsController._requests
-            .Where(r => r.Status == OvertimeStatus.Rejected)
-            .Select(r => r.ToDto()));
-
-    [HttpGet("history/{managerId:guid}")]
-    [Authorize(Roles = "Manager,People_Ops")]
-    public IActionResult GetApprovalHistory(Guid managerId)
-        => Ok(_approvals.Where(a => a.ManagerId == managerId)
-                        .Select(a => new ApprovalResponseDto {
-                            ApprovalId = a.ApprovalId,
-                            OvertimeId = a.OvertimeId,
-                            ManagerId = a.ManagerId,
-                            ApprovedHours = a.ApprovedHours,
-                            ApprovalDate = a.ApprovalDate,
-                            Status = a.Status.ToString(),
-                            Comments = a.Comments,
-                        }));
+        return Ok(pending);
+    }
 
     private static decimal CalcularCosto(OvertimeRequest r, decimal approvedHours)
     {
-        // Ejemplo simple: si no hay salario del usuario en memoria, usar tarifa fija
-        const decimal tarifa = 10m; 
-        return Math.Round(approvedHours * tarifa, 2);
+        // ejemplo básico: salario por hora (asumiendo 160 horas al mes)
+        var hourlyRate = r.User?.Salary / 160 ?? 10m;
+        return Math.Round(approvedHours * hourlyRate, 2);
     }
 }

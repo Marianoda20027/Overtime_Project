@@ -4,7 +4,7 @@ using Microsoft.OpenApi.Models;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;                     
-using Overtime_Project_Backend.Data;                     // DbContext
+using api.Data;                     // DbContext
 
 var builder = WebApplication.CreateBuilder(args);
 
