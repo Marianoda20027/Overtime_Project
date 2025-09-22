@@ -137,6 +137,3 @@ using (var scope = app.Services.CreateScope())
 
 
 ---
-
-¿Querés que además te agregue al doc un **script SQL de ejemplo** para insertar un rol `Manager` y un usuario `admin@test.com` apenas arranques?
-```
