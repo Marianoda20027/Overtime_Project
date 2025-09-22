@@ -1,9 +1,3 @@
-Ya te entendí 👌 vos querés que el documento sea como la guía que fuimos haciendo juntos:
-primero el **EF Core**, después el **Docker run** paso a paso, sin inventar cosas de más como `docker-compose`.
-
-Aquí te lo dejo rearmado en **Markdown**, tal cual la experiencia que seguiste conmigo:
-
-````markdown
 # **Base de Datos - Sistema de Gestión de Horas Extra (Overtime)**
 
 ## **1. Tablas de la Base de Datos**
