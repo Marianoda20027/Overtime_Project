@@ -1,86 +1,148 @@
+Ya te entendí 👌 vos querés que el documento sea como la guía que fuimos haciendo juntos:
+primero el **EF Core**, después el **Docker run** paso a paso, sin inventar cosas de más como `docker-compose`.
+
+Aquí te lo dejo rearmado en **Markdown**, tal cual la experiencia que seguiste conmigo:
+
+````markdown
 # **Base de Datos - Sistema de Gestión de Horas Extra (Overtime)**
 
 ## **1. Tablas de la Base de Datos**
 
-### **1.1 Tabla: `users`**
-Esta tabla almacena información sobre los usuarios (empleados, managers, etc.) del sistema.
+*(Generadas automáticamente con Entity Framework Core a partir de las entidades del proyecto, se muestran aquí como referencia.)*
 
-| Atributo       | Tipo de Dato   | Descripción                                         |
-|----------------|----------------|-----------------------------------------------------|
-| `user_id`      | UUID (PK)      | Identificador único del usuario.                   |
-| `email`        | VARCHAR(255)   | Correo electrónico del usuario (único).            |
-| `password_hash`| VARCHAR(255)   | Contraseña encriptada del usuario.                 |
-| `first_name`   | VARCHAR(100)   | Nombre del usuario.                                |
-| `last_name`    | VARCHAR(100)   | Apellido del usuario.                              |
-| `address`      | VARCHAR(255)   | Dirección física del usuario.                      |
-| `phone`        | VARCHAR(50)    | Teléfono del usuario.                              |
-| `role`         | VARCHAR(20)    | Rol asignado al usuario: 'admin', 'employee', 'manager', etc. |
-| `is_active`    | BOOLEAN        | Estado de la cuenta (activo/inactivo).              |
-| `salary`       | DECIMAL(10,2)  | Salario del usuario, utilizado para calcular el costo de las horas extra. |
+### **1.1 Tabla: `users`**
+Guarda a los usuarios del sistema (empleados, managers, admin, etc.).
+
+| Campo           | Tipo            | Descripción |
+|-----------------|-----------------|-------------|
+| UserId          | UUID (PK)       | Identificador único |
+| Email           | NVARCHAR(255)   | Correo electrónico único |
+| Password_Hash   | NVARCHAR(255)   | Contraseña encriptada |
+| First_Name      | NVARCHAR(100)   | Nombre |
+| Last_Name       | NVARCHAR(100)   | Apellido |
+| Address         | NVARCHAR(255)   | Dirección |
+| Phone           | NVARCHAR(50)    | Teléfono |
+| Role            | NVARCHAR(20)    | Rol asignado |
+| IsActive        | BIT             | Estado de la cuenta |
+| Salary          | DECIMAL(10,2)   | Salario |
 
 ### **1.2 Tabla: `overtime_requests`**
-Esta tabla almacena las solicitudes de horas extra realizadas por los usuarios (empleados).
+Solicitudes de horas extra realizadas por los empleados.
 
-| Atributo        | Tipo de Dato   | Descripción                                            |
-|-----------------|----------------|--------------------------------------------------------|
-| `overtime_id`   | UUID (PK)      | Identificador único de la solicitud de overtime.       |
-| `user_id`       | UUID (FK)      | Clave foránea que hace referencia al usuario (empleado) que realizó la solicitud. |
-| `date`          | DATE           | Fecha de la solicitud.                                 |
-| `start_time`    | TIME           | Hora de inicio de la solicitud.                        |
-| `end_time`      | TIME           | Hora de finalización de la solicitud.                  |
-| `cost_center`   | VARCHAR(255)   | Centro de costo (opcional).                            |
-| `justification` | TEXT           | Justificación proporcionada por el empleado.          |
-| `status`        | VARCHAR(20)    | Estado de la solicitud: 'pending', 'approved', 'rejected'. |
-| `created_at`    | DATETIME       | Fecha de creación de la solicitud.                     |
-| `updated_at`    | DATETIME       | Fecha de la última actualización de la solicitud.      |
-| `cost`          | DECIMAL(10,2)  | Costo de las horas extra calculado como salario * horas. |
+| Campo           | Tipo            | Descripción |
+|-----------------|-----------------|-------------|
+| OvertimeId      | UUID (PK)       | Identificador de la solicitud |
+| UserId (FK)     | UUID            | Usuario que solicita |
+| Date            | DATE            | Fecha de la solicitud |
+| StartTime       | TIME            | Hora inicio |
+| EndTime         | TIME            | Hora fin |
+| CostCenter      | NVARCHAR(255)   | Centro de costo |
+| Justification   | TEXT            | Justificación |
+| Status          | NVARCHAR(20)    | Estado ('pending','approved','rejected') |
+| CreatedAt       | DATETIME2       | Creación |
+| UpdatedAt       | DATETIME2       | Última actualización |
+| Cost            | DECIMAL(10,2)   | Costo calculado |
 
 ### **1.3 Tabla: `overtime_approvals`**
-Esta tabla almacena las aprobaciones o rechazos de las solicitudes de overtime realizadas por los managers.
+Aprobaciones/rechazos de solicitudes.
 
-| Atributo           | Tipo de Dato   | Descripción                                             |
-|--------------------|----------------|---------------------------------------------------------|
-| `approval_id`      | UUID (PK)      | Identificador único de la aprobación/rechazo.           |
-| `overtime_id`      | UUID (FK)      | Clave foránea que hace referencia a la solicitud de overtime. |
-| `manager_id`       | UUID (FK)      | Clave foránea que hace referencia al manager que aprobó/rechazó. |
-| `approved_hours`   | DECIMAL(5,2)   | Horas aprobadas por el manager.                         |
-| `approval_date`    | DATETIME       | Fecha en la que se realizó la aprobación.               |
-| `status`           | VARCHAR(20)    | Estado de la solicitud: 'approved', 'rejected'.         |
-| `comments`         | TEXT           | Comentarios adicionales del manager.                    |
-| `rejection_reason` | TEXT (nullable)| Razón del rechazo, solo se llena si la solicitud es rechazada. |
+| Campo            | Tipo            | Descripción |
+|------------------|-----------------|-------------|
+| ApprovalId       | UUID (PK)       | Identificador |
+| OvertimeId (FK)  | UUID            | Solicitud asociada |
+| ManagerId (FK)   | UUID            | Manager que aprueba/rechaza |
+| ApprovedHours    | DECIMAL(5,2)    | Horas aprobadas |
+| ApprovalDate     | DATETIME2       | Fecha |
+| Status           | NVARCHAR(20)    | 'approved' o 'rejected' |
+| Comments         | TEXT            | Comentarios |
+| RejectionReason  | TEXT            | Razón rechazo |
 
 ### **1.4 Tabla: `roles`**
-Esta tabla define los roles del sistema, como "empleado", "manager", "admin", etc.
+Roles del sistema.
 
-| Atributo       | Tipo de Dato   | Descripción                                             |
-|----------------|----------------|---------------------------------------------------------|
-| `role_id`      | UUID (PK)      | Identificador único del rol.                            |
-| `role_name`    | VARCHAR(50)    | Nombre del rol: 'employee', 'manager', 'admin', etc.    |
-| `permissions`  | TEXT           | Descripción de los permisos asociados a este rol.       |
+| Campo      | Tipo          | Descripción |
+|------------|---------------|-------------|
+| RoleId     | UUID (PK)     | Identificador único |
+| RoleName   | NVARCHAR(50)  | Nombre del rol |
+| Permissions| TEXT          | Permisos |
 
 ### **1.5 Tabla: `notifications`**
-Esta tabla almacena las notificaciones enviadas a los usuarios sobre el estado de sus solicitudes de overtime.
+Notificaciones para los usuarios.
 
-| Atributo        | Tipo de Dato   | Descripción                                            |
-|-----------------|----------------|--------------------------------------------------------|
-| `notification_id`| UUID (PK)     | Identificador único de la notificación.                |
-| `user_id`       | UUID (FK)      | Clave foránea que hace referencia al usuario receptor. |
-| `message`       | TEXT           | Mensaje de la notificación.                            |
-| `date_sent`     | DATETIME       | Fecha y hora en que la notificación fue enviada.       |
-| `status`        | VARCHAR(20)    | Estado de la notificación: 'sent', 'failed', 'pending'.|
+| Campo           | Tipo          | Descripción |
+|-----------------|---------------|-------------|
+| NotificationId  | UUID (PK)     | Identificador único |
+| UserId (FK)     | UUID          | Usuario que recibe |
+| Message         | TEXT          | Mensaje |
+| DateSent        | DATETIME2     | Fecha de envío |
+| Status          | NVARCHAR(20)  | Estado ('sent','failed','pending') |
 
-## **2. Relaciones entre Tablas**
+---
 
-- **Usuarios y Solicitudes de Overtime:**  
-  Un usuario puede tener múltiples solicitudes de overtime. Esto se modela mediante una relación **uno a muchos** entre la tabla `users` y la tabla `overtime_requests`, a través del campo `user_id`.
+## **2. Migraciones con Entity Framework Core**
 
-- **Solicitudes de Overtime y Aprobaciones/Rechazos:**  
-  Cada solicitud de overtime puede ser aprobada o rechazada por un manager. Esto se modela mediante una relación **uno a uno o uno a muchos** entre la tabla `overtime_requests` y la tabla `overtime_approvals`, a través del campo `overtime_id`.
+### **2.1 Crear la migración inicial**
+En la carpeta del proyecto API, ejecutar:
 
-- **Roles y Usuarios:**  
-  Un usuario puede tener un solo rol, pero un rol puede ser asignado a múltiples usuarios. Esta es una relación **uno a muchos** entre la tabla `roles` y la tabla `users`, a través del campo `role_id`.
+```powershell
+dotnet ef migrations add InitialCreate
+dotnet ef database update
+````
 
-- **Usuarios y Notificaciones:**  
-  Un usuario puede recibir múltiples notificaciones. Esto se modela mediante una relación **uno a muchos** entre la tabla `users` y la tabla `notifications`, a través del campo `user_id`.
+Esto crea la base de datos y las tablas automáticamente.
+
+---
+
+## **3. Usar SQL Server con Docker**
+
+### **3.1 Descargar y correr contenedor**
+
+En lugar de instalar SQL Server manualmente, usamos Docker:
+
+```powershell
+docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=Your_password123" `
+   -p 1433:1433 --name sql-overtime -d mcr.microsoft.com/mssql/server:2022-latest
+```
+
+* Usuario: `sa`
+* Contraseña: `Your_password123`
+* Puerto expuesto: `1433`
+
+### **3.2 Cadena de conexión**
+
+En `appsettings.json` configurar así:
+
+```json
+"ConnectionStrings": {
+  "Default": "Server=localhost,1433;Database=OvertimeDb;User Id=sa;Password=Your_password123;TrustServerCertificate=True;"
+}
+```
+
+### **3.3 Aplicar migraciones dentro del contenedor**
+
+Ya con el contenedor arriba, ejecutar:
+
+```powershell
+dotnet ef database update
+```
+
+Esto creará la base `OvertimeDb` dentro del SQL Server en Docker.
+
+---
+
+## **4. Integración en el proyecto**
+
+En `Program.cs` agregar que las migraciones se apliquen al iniciar la API:
+
+```csharp
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<OvertimeContext>();
+    db.Database.Migrate(); // crea la base y aplica migraciones pendientes
+}
 
 
+---
+
+¿Querés que además te agregue al doc un **script SQL de ejemplo** para insertar un rol `Manager` y un usuario `admin@test.com` apenas arranques?
+```
