@@ -17,4 +17,3 @@ namespace api.Request
         public string? Token { get; set; }
     }
 }
-

@@ -1,51 +1,84 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using api.Request;
 using System.Security.Claims;
-using System.IdentityModel.Tokens.Jwt;
+using api.Domain;
+using api.DTOs;
+using api.Mappers;
 
-namespace api.Controllers
+namespace api.Controllers;
+
+[ApiController]
+[Route("api/overtime")]
+public class OvertimeRequestsController : ControllerBase
 {
-    [ApiController]
-    [Route("api/overtime")]
-    public class OvertimeRequestsController : ControllerBase
+    // Simulación in-memory (cambiá por DbContext luego)
+    internal static readonly List<OvertimeRequest> _requests = new();
+
+    [HttpPost("request")]
+    [Authorize] // antes era AllowAnonymous
+    public IActionResult Create([FromBody] OvertimeCreateDto dto)
     {
-        private static readonly List<OvertimeRequest> _requests = new();
-        private static int _nextId = 1;
+        if (dto is null) return BadRequest(new { message = "Datos inválidos" });
 
-        [HttpPost("request")]
-        [AllowAnonymous]
-        public IActionResult Create([FromBody] OvertimeRequest model)
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrWhiteSpace(userId)) return Unauthorized();
+
+        var entity = new OvertimeRequest
         {
-            if (model == null)
-                return BadRequest(new { message = "Datos inválidos" });
+            OvertimeId = Guid.NewGuid(),
+            UserId = Guid.Parse(userId),
+            Date = dto.Date,
+            StartTime = dto.StartTime,
+            EndTime = dto.EndTime,
+            CostCenter = dto.CostCenter,
+            Justification = dto.Justification,
+            Status = OvertimeStatus.Pending
+        };
+        _requests.Add(entity);
 
-            model.Id = _nextId++;
-            model.Username = User.Identity?.Name ?? "unknown";
-            _requests.Add(model);
+        return CreatedAtAction(nameof(GetById), new { id = entity.OvertimeId }, entity.ToDto());
+    }
 
-            return CreatedAtAction(nameof(GetById), new { id = model.Id }, model);
-        }
+    [HttpGet("{id:guid}")]
+    [Authorize]
+    public IActionResult GetById(Guid id)
+    {
+        var e = _requests.FirstOrDefault(r => r.OvertimeId == id);
+        return e is null ? NotFound(new { message = "Solicitud no encontrada" }) : Ok(e.ToDto());
+    }
 
-        
-        [HttpGet("{id:int}")]
-        [AllowAnonymous]
-        public IActionResult GetById(int id)
-        {
-            var request = _requests.FirstOrDefault(r => r.Id == id);
+    [HttpGet("all")]
+    [Authorize(Roles = "Manager,People_Ops")]
+    public IActionResult GetAll() => Ok(_requests.Select(x => x.ToDto()));
 
-            if (request == null)
-                return NotFound(new { message = "Solicitud no encontrada" });
+    [HttpGet("user/{userId:guid}")]
+    [Authorize]
+    public IActionResult GetByUser(Guid userId)
+        => Ok(_requests.Where(r => r.UserId == userId).Select(r => r.ToDto()));
 
-            return Ok(request);
-        }
+    [HttpPut("{id:guid}")]
+    [Authorize]
+    public IActionResult Update(Guid id, [FromBody] OvertimeUpdateDto dto)
+    {
+        var e = _requests.FirstOrDefault(r => r.OvertimeId == id);
+        if (e is null) return NotFound(new { message = "Solicitud no encontrada" });
+        if (e.Status != OvertimeStatus.Pending)
+            return BadRequest(new { message = "No se puede modificar una solicitud ya procesada" });
 
-        // Listar todas las solicitudes → permitido a Manager y People_Ops
-        [HttpGet("all")]
-        [AllowAnonymous]
-        public IActionResult GetAll()
-        {
-            return Ok(_requests);
-        }
+        e.ApplyUpdate(dto);
+        return Ok(e.ToDto());
+    }
+
+    [HttpDelete("{id:guid}")]
+    [Authorize]
+    public IActionResult Delete(Guid id)
+    {
+        var e = _requests.FirstOrDefault(r => r.OvertimeId == id);
+        if (e is null) return NotFound(new { message = "Solicitud no encontrada" });
+        if (e.Status != OvertimeStatus.Pending)
+            return BadRequest(new { message = "No se puede eliminar una solicitud ya procesada" });
+
+        _requests.Remove(e);
+        return Ok(new { message = "Solicitud eliminada exitosamente" });
     }
 }
