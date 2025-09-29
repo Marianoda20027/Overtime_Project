@@ -1,11 +1,11 @@
-using System.Text;
+using System.Text; 
 using System.Security.Claims;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi.Models; 
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.EntityFrameworkCore;                     
-using api.Data;                     // DbContext
-
+using Microsoft.EntityFrameworkCore;
+using api.Data; 
+using api.BusinessLogic.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 // ===== Config JWT =====
@@ -15,10 +15,26 @@ var jwtAudience = builder.Configuration["Jwt:Audience"]!;
 
 // ===== Servicios =====
 builder.Services.AddControllers();
+builder.Services.AddScoped<AuthService>();  // Cambiar a Scoped
+builder.Services.AddScoped<IEmailService, SMTPService>();
+
+
 
 // EF Core (SQL Server). Se apoya en "ConnectionStrings:Default" en appsettings.json
 builder.Services.AddDbContext<OvertimeContext>(opt =>
     opt.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
+    
+
+// Configuración de CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin()  // Permite cualquier origen
+              .AllowAnyMethod()  // Permite cualquier método (GET, POST, etc.)
+              .AllowAnyHeader(); // Permite cualquier cabecera
+    });
+});
 
 // Auth + JWT
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -88,7 +104,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// app.UseHttpsRedirection();
+// Habilitar CORS
+app.UseCors("AllowAll");
 
 app.UseAuthentication();
 app.UseAuthorization();

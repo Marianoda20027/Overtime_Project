@@ -12,21 +12,24 @@ public class OvertimeContext : DbContext
     public DbSet<Approval> OvertimeApprovals => Set<Approval>();
     public DbSet<Role> Roles => Set<Role>();
     public DbSet<Notification> Notifications => Set<Notification>();
-
-    protected override void OnModelCreating(ModelBuilder b)
-    {
-        // ===== users =====
-        b.Entity<User>(e =>
+   protected override void OnModelCreating(ModelBuilder b)
         {
-            e.ToTable("users");
-            e.HasKey(x => x.UserId);
-            e.HasIndex(x => x.Email).IsUnique();
-            e.Property(x => x.Email).HasMaxLength(255).IsRequired();
-            e.Property(x => x.PasswordHash).HasMaxLength(255).IsRequired().HasColumnName("password_hash");
-            e.Property(x => x.Role).HasMaxLength(50).IsRequired();
-            e.Property(x => x.IsActive).HasDefaultValue(true);
-            e.Property(x => x.Salary).HasColumnType("decimal(10,2)");
-        });
+            // ===== users =====
+            b.Entity<User>(e =>
+            {
+                e.ToTable("users");
+                e.HasKey(x => x.UserId);
+                e.HasIndex(x => x.Email).IsUnique();
+                e.Property(x => x.Email).HasMaxLength(255).IsRequired();
+                e.Property(x => x.PasswordHash).HasMaxLength(255).IsRequired().HasColumnName("password_hash");
+                e.Property(x => x.Role).HasMaxLength(50).IsRequired();
+                e.Property(x => x.IsActive).HasDefaultValue(true);
+                e.Property(x => x.Salary).HasColumnType("decimal(10,2)");
+
+                // Agregar configuración para la columna TwoFactorSecret
+                e.Property(x => x.TwoFactorSecret).HasMaxLength(255).IsRequired(false);  // Hacemos que sea nullable
+            });
+
 
         // ===== overtime_requests =====
         b.Entity<OvertimeRequest>(e =>
