@@ -184,36 +184,5 @@ Notificaciones para los usuarios.
 
    sql
    SELECT * FROM dbo.Users;
-   
 
 ---
-
-## *5. Solución de Problemas Comunes*
-
-### *Error: Invalid column name 'PasswordHash'*
-
-* Este error indica que la columna PasswordHash no existe en la tabla. Asegúrate de que la tabla Users esté correctamente definida y que PasswordHash esté incluido en la creación de la tabla.
-
-### *Error: Conversion failed when converting from a character string to uniqueidentifier*
-
-* Este error ocurre si intentas insertar un valor que no es un *GUID* válido en una columna que espera un *uniqueidentifier. Asegúrate de que los valores de UserId sean **UUID válidos*.
-
-### *Error: Incorrect syntax near*
-
-* Este error generalmente ocurre por comas o paréntesis mal colocados. Revisa cuidadosamente la sintaxis de los comandos INSERT INTO y asegúrate de que cada valor esté correctamente formateado.
-
----
-
-## *Conclusión*
-
-Siguiendo estos pasos, ahora tienes un entorno de SQL Server corriendo en un contenedor Docker y puedes gestionarlo cómodamente usando *SQL Server Management Studio (SSMS). Además, con **Entity Framework (EF Core)*, puedes realizar migraciones y gestionar tu base de datos de manera eficiente.
-
-¡Ya está todo listo! Si tienes alguna duda o necesitas más ayuda, no dudes en preguntar.
-
-```
-
-Este resumen cubre:
-- La *instalación de Docker y SQL Server* en un contenedor.
-- Cómo realizar *migraciones con Entity Framework*.
-- Conexión y gestión de *SQL Server* usando *SQL Server Management Studio (SSMS)*.
-- Solución de algunos *errores comunes*.
