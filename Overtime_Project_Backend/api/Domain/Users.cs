@@ -12,5 +12,5 @@ public class User
     public decimal Salary { get; set; }
     public ICollection<OvertimeRequest>? OvertimeRequests { get; set; }
     public ICollection<Notification>? Notifications { get; set; }
-}
 
+}

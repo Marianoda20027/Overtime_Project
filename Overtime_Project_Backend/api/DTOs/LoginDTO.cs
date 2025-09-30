@@ -6,14 +6,9 @@ namespace api.Request
         public string? Password { get; set; }
     }
 
-    public class Register2FARequest
+   public class OTPRequest
     {
-        public string? Username { get; set; }
-    }
-
-    public class Verify2FARequest
-    {
-        public string? Username { get; set; }
-        public string? Token { get; set; }
+        public string Username { get; set; } = null!;
+        public string OTP { get; set; } = null!;
     }
 }

@@ -1,15 +1,11 @@
-using OtpNet;
-using System.Text;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using Microsoft.AspNetCore.Authorization;
-using System.Xml.Serialization;
+using System.Threading.Tasks;
 using api.Request;
+using api.BusinessLogic.Services;
 using api.JWTToken;
-using api.Mappers;
-
+using api.Data;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace api.Controllers
 {
@@ -17,78 +13,48 @@ namespace api.Controllers
     [Route("auth")]
     public class AuthController : ControllerBase
     {
+        private readonly AuthService _authService;
+        private readonly OvertimeContext _context;
+        private readonly IConfiguration _config;
 
-        private static readonly Dictionary<string, string> userSecrets = new();
-        private static readonly HashSet<string> usersWith2FA = new();
-
-        private readonly TokenCreator tokenCreator;
-
-        public AuthController(IConfiguration config)
+        public AuthController(AuthService authService, OvertimeContext context, IConfiguration config)
         {
-            tokenCreator = new TokenCreator(config);
+            _authService = authService;
+            _context = context;
+            _config = config;
         }
 
         [HttpPost("login")]
-        [AllowAnonymous]
-        public IActionResult Login([FromBody] LoginRequest request)
+        public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
-            //valores test para retornar un ok en el login
-            if (request.Username == "admin" && request.Password == "123")
-            {
-                if (usersWith2FA.Contains(request.Username))
-                {
-                    // Usuario tiene 2FA activado → solicita el código
-                    return Ok(new { require2FA = true, message = "2FA required" });
-                }
+            if (string.IsNullOrWhiteSpace(request.Username) || string.IsNullOrWhiteSpace(request.Password))
+                return BadRequest(new { message = "Email and password are required." });
 
-                var token = tokenCreator.CreateToken(request.Username);
-                return Ok(new { token });
-            }
+            var result = await _authService.AuthenticateUserAsync(request.Username, request.Password);
+            if (!result.success)
+                return Unauthorized(new { message = result.message });
 
-            return Unauthorized(new { message = "Credenciales inválidas" });
+            return Ok(new { message = result.message });
         }
 
-        // Endpoint para registrar 2FA (generar secreto)
-        [HttpPost("register-2fa")]
-        [AllowAnonymous]
-        public IActionResult Register2FA([FromBody] Register2FARequest request)
-        {
-            if (string.IsNullOrEmpty(request.Username))
-                return BadRequest(new { message = "Username required" });
-
-            var secret = KeyGeneration.GenerateRandomKey(20);
-            var base32Secret = Base32Encoding.ToString(secret);
-            userSecrets[request.Username] = base32Secret;
-
-            // Devuelve el secreto para que el frontend genere QR
-            return Ok(new { secret = base32Secret });
-        }
-
-        // Endpoint para verificar 2FA
         [HttpPost("2fa")]
-        [AllowAnonymous]
-        public IActionResult Verify2FA([FromBody] Verify2FARequest request)
+        public async Task<IActionResult> Verify2FA([FromBody] OTPRequest request)
         {
-            if (string.IsNullOrEmpty(request.Username) || string.IsNullOrEmpty(request.Token))
-                return BadRequest(new { message = "Username and token required" });
+            if (string.IsNullOrWhiteSpace(request.Username) || string.IsNullOrWhiteSpace(request.OTP))
+                return BadRequest(new { message = "Username and OTP are required." });
 
-            if (!userSecrets.ContainsKey(request.Username))
-                return BadRequest(new { message = "2FA not registered for user" });
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email.ToLower() == request.Username.ToLower());
+            if (user == null)
+                return Unauthorized(new { message = "User not found." });
 
-            var totp = new Totp(Base32Encoding.ToBytes(userSecrets[request.Username]));
-            bool isValid = totp.VerifyTotp(request.Token, out long timeStepMatched, VerificationWindow.RfcSpecifiedNetworkDelay);
+            if (!OTPStore.ValidateOTP(user.Email, request.OTP))
+                return Unauthorized(new { message = "Invalid or expired OTP." });
 
-            if (!isValid)
-                return Unauthorized(new { message = "Invalid 2FA code" });
+            // Generar JWT
+            var tokenCreator = new TokenCreator(_config);
+            var jwt = tokenCreator.CreateToken(user.Email);
 
-            // Activar 2FA si aún no está activado
-            usersWith2FA.Add(request.Username);
-
-            // Genera JWT al validar correctamente
-            var token = tokenCreator.CreateToken(request.Username);
-            return Ok(new { token });
+            return Ok(new { message = "2FA successful.", token = jwt });
         }
-
-
     }
 }

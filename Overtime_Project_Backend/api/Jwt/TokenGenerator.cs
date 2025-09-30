@@ -1,9 +1,8 @@
 using System.Text;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
-
 
 namespace api.JWTToken
 {
@@ -18,12 +17,6 @@ namespace api.JWTToken
 
         public string CreateToken(string username)
         {
-            return GenerateJwtToken(username); 
-        }
-
-        private string GenerateJwtToken(string username)
-        {
-
             var jwtKey = _config["Jwt:Key"];
             var jwtIssuer = _config["Jwt:Issuer"];
             var jwtAudience = _config["Jwt:Audience"];
@@ -37,24 +30,13 @@ namespace api.JWTToken
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
 
-            switch (username.ToLower())
-            {
-                case "employee":
-                    claims.Add(new Claim(ClaimTypes.Role, "Employee"));
-                    break;
-                case "manager":
-                    claims.Add(new Claim(ClaimTypes.Role, "Manager"));
-                    break;
-                case "people_ops":
-                    claims.Add(new Claim(ClaimTypes.Role, "People_Ops"));
-                    break;
-                case "payroll]":
-                    claims.Add(new Claim(ClaimTypes.Role, "Payroll"));
-                    break;
-                default:
-                    claims.Add(new Claim(ClaimTypes.Role, "Guest"));
-                    break;
-            }
+            // Roles opcionales según email
+            if (username.ToLower().Contains("manager"))
+                claims.Add(new Claim(ClaimTypes.Role, "Manager"));
+            else if (username.ToLower().Contains("payroll"))
+                claims.Add(new Claim(ClaimTypes.Role, "Payroll"));
+            else
+                claims.Add(new Claim(ClaimTypes.Role, "Employee"));
 
             var token = new JwtSecurityToken(
                 issuer: jwtIssuer,
