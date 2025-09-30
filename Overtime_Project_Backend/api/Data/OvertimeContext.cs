@@ -26,8 +26,6 @@ public class OvertimeContext : DbContext
                 e.Property(x => x.IsActive).HasDefaultValue(true);
                 e.Property(x => x.Salary).HasColumnType("decimal(10,2)");
 
-                // Agregar configuración para la columna TwoFactorSecret
-                e.Property(x => x.TwoFactorSecret).HasMaxLength(255).IsRequired(false);  // Hacemos que sea nullable
             });
 
 

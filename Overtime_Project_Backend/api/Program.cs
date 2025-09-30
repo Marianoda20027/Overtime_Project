@@ -16,6 +16,7 @@ var jwtAudience = builder.Configuration["Jwt:Audience"]!;
 // ===== Servicios =====
 builder.Services.AddControllers();
 builder.Services.AddScoped<AuthService>();  // Cambiar a Scoped
+builder.Services.AddScoped<IEmailTemplateService, EmailTemplateService>();
 builder.Services.AddScoped<IEmailService, SMTPService>();
 
 

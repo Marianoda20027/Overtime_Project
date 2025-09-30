@@ -197,10 +197,6 @@ namespace Overtime_Project_Backend.Migrations
                     b.Property<decimal>("Salary")
                         .HasColumnType("decimal(10,2)");
 
-                    b.Property<string>("TwoFactorSecret")
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
                     b.HasKey("UserId");
 
                     b.HasIndex("Email")

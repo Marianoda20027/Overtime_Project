@@ -12,8 +12,8 @@ using api.Data;
 namespace Overtime_Project_Backend.Migrations
 {
     [DbContext(typeof(OvertimeContext))]
-    [Migration("20250929001648_InitialMigration")]
-    partial class InitialMigration
+    [Migration("20250930012113_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

@@ -6,9 +6,9 @@ namespace api.Request
         public string? Password { get; set; }
     }
 
-  public class VerifyOTPRequest
+   public class OTPRequest
     {
-        public string Email { get; set; }
-        public string OTP { get; set; }
+        public string Username { get; set; } = null!;
+        public string OTP { get; set; } = null!;
     }
 }

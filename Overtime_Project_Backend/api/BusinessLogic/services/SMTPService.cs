@@ -7,37 +7,110 @@ using Microsoft.Extensions.Logging;
 
 namespace api.BusinessLogic.Services
 {
+    // ------------------- Interfaces -------------------
     public interface IEmailService
     {
         Task<bool> SendTwoFactorCodeAsync(string email, string code);
     }
 
+    public interface IEmailTemplateService
+    {
+        string GenerateTwoFactorEmail(string code);
+    }
+
+    // ------------------- Template Service -------------------
+    public class EmailTemplateService : IEmailTemplateService
+    {
+        public string GenerateTwoFactorEmail(string code)
+        {
+            return $@"
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset='utf-8'>
+<title>OTP Verification</title>
+<style>
+  body {{
+    font-family: 'Open Sans', sans-serif;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    margin: 0;
+    padding: 0;
+  }}
+  .email-container {{
+    max-width: 600px;
+    margin: 0 auto;
+    background: #fff;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 15px 40px rgba(50,50,93,0.1), 0 8px 20px rgba(0,0,0,0.1);
+  }}
+  h1 {{
+    font-size: 32px;
+    font-weight: 700;
+    color: #50B95D;
+    text-align: center;
+  }}
+  p {{
+    font-size: 16px;
+    color: #333;
+    line-height: 1.6;
+  }}
+  .otp-box {{
+    background-color: #f9f9f9;
+    padding: 20px;
+    text-align: center;
+    font-size: 28px;
+    font-weight: bold;
+    letter-spacing: 5px;
+    margin: 20px 0;
+    border-radius: 10px;
+    color: #50B95D;
+  }}
+  .footer {{
+    font-size: 12px;
+    color: #7f8c8d;
+    text-align: center;
+    margin-top: 20px;
+  }}
+</style>
+</head>
+<body>
+  <div class='email-container'>
+    <h1>Código de Autenticación</h1>
+    <p>Hola,</p>
+    <p>Tu código de verificación es:</p>
+    <div class='otp-box'>{code}</div>
+    <p><strong>Este código expirará en 10 minutos.</strong></p>
+    <p>Si no solicitaste este código, ignora este correo.</p>
+    <div class='footer'>Este es un correo automático, por favor no respondas.</div>
+  </div>
+</body>
+</html>
+";
+        }
+    }
+
+    // ------------------- SMTP Service -------------------
     public class SMTPService : IEmailService
     {
         private readonly IConfiguration _configuration;
         private readonly ILogger<SMTPService> _logger;
+        private readonly IEmailTemplateService _templateService;
 
-        public SMTPService(IConfiguration configuration, ILogger<SMTPService> logger)
+        public SMTPService(IConfiguration configuration, ILogger<SMTPService> logger, IEmailTemplateService templateService)
         {
             _configuration = configuration;
             _logger = logger;
+            _templateService = templateService;
         }
 
         public async Task<bool> SendTwoFactorCodeAsync(string email, string code)
         {
             try
             {
-                // Validar email de entrada
-                if (string.IsNullOrWhiteSpace(email) || !IsValidEmail(email))
+                if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(code))
                 {
-                    _logger.LogWarning("Invalid email address provided: {Email}", email);
-                    return false;
-                }
-
-                // Validar código
-                if (string.IsNullOrWhiteSpace(code))
-                {
-                    _logger.LogWarning("Invalid OTP code provided");
+                    _logger.LogWarning("Invalid email or code");
                     return false;
                 }
 
@@ -45,36 +118,17 @@ namespace api.BusinessLogic.Services
                 var fromEmail = smtpConfig["Email"];
                 var password = smtpConfig["Password"];
                 var host = smtpConfig["Host"];
-                var portString = smtpConfig["Port"];
+                var port = int.Parse(smtpConfig["Port"] ?? "587");
 
-                // Validar configuración completa
-                if (string.IsNullOrEmpty(fromEmail) || 
-                    string.IsNullOrEmpty(password) || 
-                    string.IsNullOrEmpty(host) ||
-                    string.IsNullOrEmpty(portString))
-                {
-                    _logger.LogError("SMTP configuration is incomplete");
-                    return false;
-                }
-
-                if (!int.TryParse(portString, out int port))
-                {
-                    _logger.LogError("Invalid SMTP port configuration");
-                    return false;
-                }
-
-                // Crear mensaje
                 using var mailMessage = new MailMessage
                 {
                     From = new MailAddress(fromEmail, "MyApp Security"),
-                    Subject = "Your Two-Factor Authentication Code",
-                    Body = GenerateEmailBody(code),
-                    IsBodyHtml = true,
-                    Priority = MailPriority.High
+                    Subject = "Código de Autenticación",
+                    Body = _templateService.GenerateTwoFactorEmail(code),
+                    IsBodyHtml = true
                 };
                 mailMessage.To.Add(email);
 
-                // Configurar SMTP client
                 using var smtpClient = new SmtpClient(host, port)
                 {
                     Credentials = new NetworkCredential(fromEmail, password),
@@ -84,77 +138,14 @@ namespace api.BusinessLogic.Services
                 };
 
                 await smtpClient.SendMailAsync(mailMessage);
-                
-                _logger.LogInformation("OTP sent successfully to {Email}", MaskEmail(email));
+                _logger.LogInformation("OTP sent to {Email}", email);
                 return true;
-            }
-            catch (SmtpException smtpEx)
-            {
-                _logger.LogError(smtpEx, "SMTP error sending OTP to {Email}: {StatusCode}", 
-                    MaskEmail(email), smtpEx.StatusCode);
-                return false;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Unexpected error sending OTP to {Email}", MaskEmail(email));
+                _logger.LogError(ex, "Error sending OTP to {Email}", email);
                 return false;
             }
-        }
-
-        private string GenerateEmailBody(string code)
-        {
-            return $@"
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset='utf-8'>
-</head>
-<body style='font-family: Arial, sans-serif; line-height: 1.6; color: #333;'>
-    <div style='max-width: 600px; margin: 0 auto; padding: 20px;'>
-        <h2 style='color: #2c3e50;'>Código de Autenticación</h2>
-        <p>Hola,</p>
-        <p>Tu código de verificación es:</p>
-        <div style='background-color: #f4f4f4; padding: 15px; text-align: center; font-size: 24px; font-weight: bold; letter-spacing: 5px; margin: 20px 0;'>
-            {code}
-        </div>
-        <p style='color: #e74c3c;'><strong>Este código expirará en 10 minutos.</strong></p>
-        <p>Si no solicitaste este código, por favor ignora este correo.</p>
-        <hr style='border: none; border-top: 1px solid #eee; margin: 20px 0;'>
-        <p style='color: #7f8c8d; font-size: 12px;'>
-            Este es un correo automático, por favor no respondas a este mensaje.
-        </p>
-    </div>
-</body>
-</html>";
-        }
-
-        private bool IsValidEmail(string email)
-        {
-            try
-            {
-                var addr = new MailAddress(email);
-                return addr.Address == email;
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
-        private string MaskEmail(string email)
-        {
-            if (string.IsNullOrEmpty(email)) return "unknown";
-            
-            var parts = email.Split('@');
-            if (parts.Length != 2) return "invalid";
-            
-            var localPart = parts[0];
-            var domain = parts[1];
-            
-            if (localPart.Length <= 2)
-                return $"{localPart[0]}***@{domain}";
-            
-            return $"{localPart[0]}***{localPart[^1]}@{domain}";
         }
     }
 }

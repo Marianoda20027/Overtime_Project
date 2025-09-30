@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace api.BusinessLogic.Services
 {
+
     public class AuthService
     {
         private readonly OvertimeContext _context;
@@ -16,22 +17,22 @@ namespace api.BusinessLogic.Services
             _emailService = emailService;
         }
 
-        // Autenticar usuario y enviar OTP
         public async Task<(bool success, string message)> AuthenticateUserAsync(string email, string password)
         {
-            // Buscar usuario en la base de datos
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email.ToLower() == email.ToLower());
             if (user == null)
                 return (false, "User not found");
 
-            // Comparar contraseña en texto plano
             if (user.PasswordHash != password)
                 return (false, "Invalid password");
 
-            // Generar OTP manual (6 dígitos)
+            // Generar OTP
             var otp = GenerateOTP();
 
-            // Enviar OTP por correo
+            // Guardar OTP en memoria
+            OTPStore.SetOTP(user.Email, otp, 10);
+
+            // Enviar OTP
             var emailSent = await _emailService.SendTwoFactorCodeAsync(user.Email, otp);
             if (!emailSent)
                 return (false, "Failed to send OTP email");
@@ -39,7 +40,6 @@ namespace api.BusinessLogic.Services
             return (true, "Login successful. OTP sent.");
         }
 
-        // Generar un OTP de 6 dígitos
         private string GenerateOTP()
         {
             Random random = new Random();
