@@ -1,7 +1,8 @@
+// src/components/Login/hooks.js
 import { httpService } from '../../services/http.service';
-import { ErrorHandler
-  
- } from '../../utilities/errorLoginHandler';
+import { ErrorHandler } from '../../utilities/errorLoginHandler';
+
+// ------------------ Login ------------------
 export const login = async (username, password) => {
   try {
     const payload = { username, password };
@@ -12,10 +13,11 @@ export const login = async (username, password) => {
   }
 };
 
-// Simulación de verificación 2FA
-export const verify2FA = async (token) => {
+// ------------------ Verificación 2FA ------------------
+export const verify2FA = async ({ Username, OTP }) => {
   try {
-    const response = await httpService.post('/auth/2fa', { token });
+    const payload = { Username, OTP };
+    const response = await httpService.post('/auth/2fa', payload);
     return response.data;
   } catch (error) {
     return { error: ErrorHandler.getErrorMessage(error) };
