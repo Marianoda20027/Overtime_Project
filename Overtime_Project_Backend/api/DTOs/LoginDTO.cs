@@ -1,3 +1,4 @@
+  using System.Text.Json.Serialization;
 namespace api.Request
 {
     public class LoginRequest
@@ -6,9 +7,16 @@ namespace api.Request
         public string? Password { get; set; }
     }
 
-   public class OTPRequest
+
+
+
+    public class OTPRequest
     {
+        [JsonPropertyName("Username")]
         public string Username { get; set; } = null!;
+
+        [JsonPropertyName("OTP")]
         public string OTP { get; set; } = null!;
     }
 }
+

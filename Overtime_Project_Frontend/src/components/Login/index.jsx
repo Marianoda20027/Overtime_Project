@@ -1,84 +1,82 @@
 import React, { useState } from 'react';
 import { login, verify2FA } from './hooks';
+import Cookies from 'js-cookie';
+import { useNavigate } from 'react-router-dom';
 import './styles.css';
 
 const Login = () => {
-  const [username, setUsername] = useState('');
+  const [username, setUsername] = useState(''); // email
   const [password, setPassword] = useState('');
-  const [twoFactor, setTwoFactor] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const [otp, setOtp] = useState('');
   const [show2FA, setShow2FA] = useState(false);
+  const [emailSentTo, setEmailSentTo] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+  const [infoMessage, setInfoMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
-  // Initial email validation pattern
-  const emailPattern = /^[a-z]\.[a-z]+@arkoselabs\.com$/i;
+  const navigate = useNavigate();
 
+  // ------------------ Paso 1: Login ------------------
   const handleLogin = async (e) => {
     e.preventDefault();
     setErrorMessage('');
+    setInfoMessage('');
 
-    if (!emailPattern.test(username)) {
-      setErrorMessage('The email must be initial.lastname@arkoselabs.com');
-      return;
-    }
-
-    if (!password) {
-      setErrorMessage('Password is required');
+    if (!username || !password) {
+      setErrorMessage('Email and password are required');
       return;
     }
 
     setIsLoading(true);
     const response = await login(username, password);
+    setIsLoading(false);
 
     if (response.error) {
       setErrorMessage(response.error);
+    } else if (response.message === 'Login successful. OTP sent.') {
+      setEmailSentTo(username); 
+      setInfoMessage(`Login exitoso! Se ha enviado un código de verificación a tu correo: ${username}`);
+      setShow2FA(true);
     } else {
-      // If the backend indicates that 2FA is required
-      if (response.require2FA) {
-        setShow2FA(true);
-      } else {
-        console.log('Login successful:', response);
-      }
+      setInfoMessage(response.message);
     }
-
-    setIsLoading(false);
   };
 
+  // ------------------ Paso 2: Verificación 2FA ------------------
   const handle2FA = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
     setErrorMessage('');
+    setInfoMessage('');
 
-    if (!twoFactor) {
-      setErrorMessage('Enter the 2FA code');
-      setIsLoading(false);
+    if (!otp) {
+      setErrorMessage('Por favor ingresa el código recibido en tu correo.');
       return;
     }
 
-    const response = await verify2FA(twoFactor);
+    setIsLoading(true);
+    const response = await verify2FA({ Username: emailSentTo, OTP: otp }); // coincide con backend
+    setIsLoading(false);
 
     if (response.error) {
       setErrorMessage(response.error);
     } else {
-      console.log('2FA successful:', response);
-      setShow2FA(false);
+      if (response.token) {
+        Cookies.set('jwt', response.token, { expires: 1 }); // expira en 1 día
+        navigate('/home'); // redirigir al dashboard
+      }
     }
-
-    setIsLoading(false);
   };
 
   return (
     <div className="login-container">
       <div className="login-form">
-        <h1>Login</h1>
-
         {!show2FA ? (
           <form onSubmit={handleLogin}>
+            <h1>Login</h1>
             <div className="input-group">
-              <label htmlFor="username">Email</label>
+              <label>Email</label>
               <input
                 type="text"
-                id="username"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 placeholder="initial.lastname@arkoselabs.com"
@@ -86,10 +84,9 @@ const Login = () => {
             </div>
 
             <div className="input-group">
-              <label htmlFor="password">Password</label>
+              <label>Password</label>
               <input
                 type="password"
-                id="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter your password"
@@ -97,6 +94,7 @@ const Login = () => {
             </div>
 
             {errorMessage && <div className="error-message">{errorMessage}</div>}
+            {infoMessage && <div className="info-message">{infoMessage}</div>}
 
             <button type="submit" className="login-btn" disabled={isLoading}>
               {isLoading ? 'Loading...' : 'Login'}
@@ -104,13 +102,14 @@ const Login = () => {
           </form>
         ) : (
           <form onSubmit={handle2FA}>
+            <h1>Two-Factor Authentication</h1>
+            <p>{infoMessage}</p>
             <div className="input-group">
-              <label htmlFor="2fa">2FA Code</label>
+              <label>2FA Code</label>
               <input
                 type="text"
-                id="2fa"
-                value={twoFactor}
-                onChange={(e) => setTwoFactor(e.target.value)}
+                value={otp}
+                onChange={(e) => setOtp(e.target.value)}
                 placeholder="Enter your code"
               />
             </div>
