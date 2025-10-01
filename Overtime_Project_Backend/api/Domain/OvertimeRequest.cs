@@ -1,18 +1,29 @@
-namespace api.Domain;
-
-public class OvertimeRequest
+namespace api.Domain
 {
-    public Guid OvertimeId { get; set; }
-    public Guid UserId { get; set; }
-    public DateTime Date { get; set; }
-    public TimeSpan StartTime { get; set; }
-    public TimeSpan EndTime { get; set; }
-    public string? CostCenter { get; set; }
-    public string? Justification { get; set; }
-    public OvertimeStatus Status { get; set; } = OvertimeStatus.Pending;
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-    public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
-    public decimal? Cost { get; set; }
-    public User? User { get; set; }
-    public ICollection<Approval>? Approvals { get; set; }
+    public class OvertimeRequest
+    {
+        public Guid OvertimeId { get; set; }
+        public Guid UserId { get; set; }
+        public DateTime Date { get; set; }
+        public TimeSpan StartTime { get; set; }  // Cambié de string a TimeSpan
+        public TimeSpan EndTime { get; set; }    // Cambié de string a TimeSpan
+        public string Justification { get; set; }
+        public OvertimeStatus Status { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
+        public decimal TotalHours { get; set; }  // TotalHours es decimal
+        public decimal Cost { get; set; }
+
+        // Relación con el usuario
+        public User User { get; set; }
+
+        // Relación con las aprobaciones
+        public ICollection<Approval> Approvals { get; set; } = new List<Approval>();
+    }
+      public enum OvertimeStatus
+    {
+        Pending,    // Solicitud pendiente
+        Approved,   // Solicitud aprobada
+        Rejected    // Solicitud rechazada
+    }
 }
