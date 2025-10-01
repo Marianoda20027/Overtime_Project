@@ -1,84 +1,78 @@
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
-using api.Domain;
 using api.DTOs;
-using api.Mappers;
+using api.Domain;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using api.Data;
 
-namespace api.Controllers;
-
-[ApiController]
-[Route("api/overtime")]
-public class OvertimeRequestsController : ControllerBase
+namespace api.Controllers
 {
-    // Simulación in-memory (cambiá por DbContext luego)
-    internal static readonly List<OvertimeRequest> _requests = new();
-
-    [HttpPost("request")]
-    [Authorize] // antes era AllowAnonymous
-    public IActionResult Create([FromBody] OvertimeCreateDto dto)
+    [Route("api/overtime")]
+    [ApiController]
+    public class OvertimeController : ControllerBase
     {
-        if (dto is null) return BadRequest(new { message = "Datos inválidos" });
+        private readonly OvertimeContext _context;
 
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (string.IsNullOrWhiteSpace(userId)) return Unauthorized();
-
-        var entity = new OvertimeRequest
+        public OvertimeController(OvertimeContext context)
         {
-            OvertimeId = Guid.NewGuid(),
-            UserId = Guid.Parse(userId),
-            Date = dto.Date,
-            StartTime = dto.StartTime,
-            EndTime = dto.EndTime,
-            CostCenter = dto.CostCenter,
-            Justification = dto.Justification,
-            Status = OvertimeStatus.Pending
-        };
-        _requests.Add(entity);
+            _context = context;
+        }
 
-        return CreatedAtAction(nameof(GetById), new { id = entity.OvertimeId }, entity.ToDto());
-    }
+      [HttpPost("create")]
+public async Task<IActionResult> CreateOvertimeRequest([FromBody] OvertimeCreateDto overtimeCreateDto)
+{
+    var userEmail = overtimeCreateDto.Email; 
 
-    [HttpGet("{id:guid}")]
-    [Authorize]
-    public IActionResult GetById(Guid id)
+    if (string.IsNullOrEmpty(userEmail))
     {
-        var e = _requests.FirstOrDefault(r => r.OvertimeId == id);
-        return e is null ? NotFound(new { message = "Solicitud no encontrada" }) : Ok(e.ToDto());
+        return Unauthorized(new { message = "Email is required." });
     }
 
-    [HttpGet("all")]
-    [Authorize(Roles = "Manager,People_Ops")]
-    public IActionResult GetAll() => Ok(_requests.Select(x => x.ToDto()));
-
-    [HttpGet("user/{userId:guid}")]
-    [Authorize]
-    public IActionResult GetByUser(Guid userId)
-        => Ok(_requests.Where(r => r.UserId == userId).Select(r => r.ToDto()));
-
-    [HttpPut("{id:guid}")]
-    [Authorize]
-    public IActionResult Update(Guid id, [FromBody] OvertimeUpdateDto dto)
+    var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == userEmail);
+    if (user == null)
     {
-        var e = _requests.FirstOrDefault(r => r.OvertimeId == id);
-        if (e is null) return NotFound(new { message = "Solicitud no encontrada" });
-        if (e.Status != OvertimeStatus.Pending)
-            return BadRequest(new { message = "No se puede modificar una solicitud ya procesada" });
-
-        e.ApplyUpdate(dto);
-        return Ok(e.ToDto());
+        return Unauthorized(new { message = "User not found." });
     }
 
-    [HttpDelete("{id:guid}")]
-    [Authorize]
-    public IActionResult Delete(Guid id)
+    // Usamos directamente TotalHours enviado desde el frontend
+    var cost = (int)(overtimeCreateDto.TotalHours * user.Salary);  // Convertido a int aquí
+
+    var overtimeRequest = new OvertimeRequest
     {
-        var e = _requests.FirstOrDefault(r => r.OvertimeId == id);
-        if (e is null) return NotFound(new { message = "Solicitud no encontrada" });
-        if (e.Status != OvertimeStatus.Pending)
-            return BadRequest(new { message = "No se puede eliminar una solicitud ya procesada" });
+        UserId = user.UserId,
+        Date = overtimeCreateDto.Date,
+        StartTime = overtimeCreateDto.StartTime,
+        EndTime = overtimeCreateDto.EndTime,
+        Justification = overtimeCreateDto.Justification,
+        Status = OvertimeStatus.Pending,
+        CreatedAt = DateTime.UtcNow,
+        UpdatedAt = DateTime.UtcNow,
+        TotalHours = overtimeCreateDto.TotalHours,
+        Cost = cost
+    };
 
-        _requests.Remove(e);
-        return Ok(new { message = "Solicitud eliminada exitosamente" });
-    }
+    _context.OvertimeRequests.Add(overtimeRequest);
+    await _context.SaveChangesAsync();
+
+    var responseDto = new OvertimeResponseDto
+    {
+        OvertimeId = overtimeRequest.OvertimeId,
+        UserId = overtimeRequest.UserId,
+        Date = overtimeRequest.Date,
+        StartTime = overtimeRequest.StartTime,
+        EndTime = overtimeRequest.EndTime,
+        Justification = overtimeRequest.Justification,
+        Status = overtimeRequest.Status.ToString(),
+        CreatedAt = overtimeRequest.CreatedAt,
+        UpdatedAt = overtimeRequest.UpdatedAt,
+        TotalHours = overtimeRequest.TotalHours,
+        Cost = overtimeRequest.Cost
+    };
+
+    return Ok(responseDto);
+}
+
+
+}
+
+
 }

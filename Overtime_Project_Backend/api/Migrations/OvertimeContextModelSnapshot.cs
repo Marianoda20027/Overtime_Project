@@ -102,12 +102,8 @@ namespace Overtime_Project_Backend.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<decimal?>("Cost")
+                    b.Property<decimal>("Cost")
                         .HasColumnType("decimal(10,2)");
-
-                    b.Property<string>("CostCenter")
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
@@ -121,6 +117,7 @@ namespace Overtime_Project_Backend.Migrations
                         .HasColumnType("time");
 
                     b.Property<string>("Justification")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<TimeSpan>("StartTime")
@@ -132,6 +129,11 @@ namespace Overtime_Project_Backend.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)")
                         .HasDefaultValue("Pending");
+
+                    b.Property<decimal>("TotalHours")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("decimal(5,2)")
+                        .HasDefaultValue(0m);
 
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAdd()

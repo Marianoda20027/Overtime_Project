@@ -1,6 +1,5 @@
 namespace api.Domain;
 
-public enum OvertimeStatus { Pending, Approved, Rejected }
 
 public class User
 {
