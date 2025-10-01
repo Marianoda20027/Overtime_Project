@@ -1,26 +1,29 @@
 // src/services/http.service.js
 import axios from 'axios';
+import Cookies from 'js-cookie';
 
 const API_URL = "http://localhost:5100";
 
+// Crear la instancia de Axios
 const createApiInstance = (baseURL) => {
   const instance = axios.create({ baseURL });
 
   // Interceptor de request
   instance.interceptors.request.use(
     (config) => {
-      // Aquí podés agregar token si lo tenés guardado
-      // const token = AuthStorage.getToken();
-      // if (token) config.headers['Authorization'] = `Bearer ${token}`;
+      const token = Cookies.get('jwt'); // Obtener el token de las cookies
+      if (token) {
+        // Si el token existe, lo agregamos a los headers de la solicitud
+        config.headers['Authorization'] = `Bearer ${token}`;
+      }
       return config;
     },
     (error) => {
-      // Error antes de enviar la petición
       return Promise.reject({ status: 0, message: `Request failed: ${error.message}` });
     }
   );
 
-  // Interceptor de response
+  // Interceptor de response para manejar errores
   instance.interceptors.response.use(
     (response) => response,
     (error) => {

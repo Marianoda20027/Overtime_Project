@@ -1,19 +1,17 @@
 // src/pages/Overtime/index.jsx
 import React from 'react';
 import { useOvertimeForm } from './hooks.jsx';
-import './styles.css'; // Importing the updated styles
+import './styles.css'; // Importando los estilos actualizados
 import { useNavigate } from 'react-router-dom';
 
 const OvertimeRequest = () => {
-  const { form, update, totalHours, loading, error, okMsg, submit } = useOvertimeForm();
+  const { form, update, loading, error, okMsg, submit } = useOvertimeForm();
 
   const navigate = useNavigate(); // Aquí es donde obtenemos la función navigate
-
 
   // Función para manejar la acción del botón "Ver Solicitudes"
   const handleViewRequests = () => {
       navigate('/request'); // Navegamos a la página OvertimeRequest
-
   };
 
   return (
@@ -21,7 +19,7 @@ const OvertimeRequest = () => {
       <div className="ot-card">
         <h3>Overtime Request</h3>
 
-        {/* Overtime request form */}
+        {/* Formulario de solicitud de horas extra */}
         <form onSubmit={submit}>
           <div className="input-group">
             <label>Date</label>
@@ -50,15 +48,6 @@ const OvertimeRequest = () => {
               value={form.endTime}
               onChange={(e) => update('endTime', e.target.value)}
               required
-            />
-          </div>
-
-          <div className="input-group">
-            <label>Cost Center (optional)</label>
-            <input
-              type="text"
-              value={form.costCenter || ''}
-              onChange={(e) => update('costCenter', e.target.value)}
             />
           </div>
 

@@ -8,7 +8,6 @@ export const useOvertimeForm = () => {
     startTime: '',
     endTime: '',
     justification: '',
-    costCenter: '',
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -45,12 +44,23 @@ export const useOvertimeForm = () => {
     setLoading(true);
 
     try {
+      // Obtener el JWT de las cookies y decodificarlo
+      const tokenData = await OvertimeService.getJwtData();
+      const email = tokenData?.sub; // El correo está en el 'sub' del JWT
+
+      if (!email) {
+        setError('Usuario no autenticado');
+        return;
+      }
+
+      // Enviar la solicitud de horas extra con el correo y otros datos
       await OvertimeService.create({
         ...form,
         totalHours,
+        email, // Agregar el correo del usuario al payload
       });
       setOkMsg('Solicitud enviada correctamente');
-      setForm({ date: '', startTime: '', endTime: '', justification: '', costCenter: '' });
+      setForm({ date: '', startTime: '', endTime: '', justification: '' });
     } catch (err) {
       setError(err.message || 'Error al enviar la solicitud');
     } finally {
