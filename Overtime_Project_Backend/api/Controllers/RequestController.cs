@@ -8,11 +8,11 @@ namespace api.Controllers
 {
     [Route("api/overtime")]
     [ApiController]
-    public class OvertimeController : ControllerBase
+    public class RequestController  : ControllerBase
     {
         private readonly OvertimeContext _context;
 
-        public OvertimeController(OvertimeContext context)
+        public RequestController (OvertimeContext context)
         {
             _context = context;
         }

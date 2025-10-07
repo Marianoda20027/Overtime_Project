@@ -34,7 +34,7 @@ namespace api.Controllers
             if (!result.success)
                 return Unauthorized(new { message = result.message });
 
-            return Ok(new { message = result.message });
+            return Ok(new { message = result.message, role = result.role });
         }
 
         [HttpPost("2fa")]
@@ -43,18 +43,35 @@ namespace api.Controllers
             if (string.IsNullOrWhiteSpace(request.Username) || string.IsNullOrWhiteSpace(request.OTP))
                 return BadRequest(new { message = "Username and OTP are required." });
 
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email.ToLower() == request.Username.ToLower());
-            if (user == null)
-                return Unauthorized(new { message = "User not found." });
+            string email = request.Username.ToLower();
+            string role = "Employee";
 
-            if (!OTPStore.ValidateOTP(user.Email, request.OTP))
-                return Unauthorized(new { message = "Invalid or expired OTP." });
+            // Verificar en Users
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email.ToLower() == email);
+            if (user != null)
+            {
+                if (!OTPStore.ValidateOTP(user.Email, request.OTP))
+                    return Unauthorized(new { message = "Invalid or expired OTP." });
 
-            // Generar JWT
+                role = "Employee";
+            }
+            else
+            {
+                // Verificar en Managers
+                var manager = await _context.Managers.FirstOrDefaultAsync(m => m.Email.ToLower() == email);
+                if (manager == null)
+                    return Unauthorized(new { message = "User not found." });
+
+                if (!OTPStore.ValidateOTP(manager.Email, request.OTP))
+                    return Unauthorized(new { message = "Invalid or expired OTP." });
+
+                role = "Manager";
+            }
+
             var tokenCreator = new TokenCreator(_config);
-            var jwt = tokenCreator.CreateToken(user.Email);
+            var jwt = tokenCreator.CreateToken(email, role);
 
-            return Ok(new { message = "2FA successful.", token = jwt });
+            return Ok(new { message = "2FA successful.", token = jwt, role });
         }
     }
 }

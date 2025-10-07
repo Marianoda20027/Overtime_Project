@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace api.BusinessLogic.Services
 {
-
     public class AuthService
     {
         private readonly OvertimeContext _context;
@@ -17,27 +16,43 @@ namespace api.BusinessLogic.Services
             _emailService = emailService;
         }
 
-        public async Task<(bool success, string message)> AuthenticateUserAsync(string email, string password)
+        public async Task<(bool success, string message, string role)> AuthenticateUserAsync(string email, string password)
         {
+            // Buscar en Users
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Email.ToLower() == email.ToLower());
-            if (user == null)
-                return (false, "User not found");
+            if (user != null)
+            {
+                if (user.PasswordHash != password)
+                    return (false, "Invalid password", "");
 
-            if (user.PasswordHash != password)
-                return (false, "Invalid password");
+                var otp = GenerateOTP();
+                OTPStore.SetOTP(user.Email, otp, 10);
+                var emailSent = await _emailService.SendTwoFactorCodeAsync(user.Email, otp);
 
-            // Generar OTP
-            var otp = GenerateOTP();
+                if (!emailSent)
+                    return (false, "Failed to send OTP email", "");
 
-            // Guardar OTP en memoria
-            OTPStore.SetOTP(user.Email, otp, 10);
+                return (true, "Login successful. OTP sent.", "Employee");
+            }
 
-            // Enviar OTP
-            var emailSent = await _emailService.SendTwoFactorCodeAsync(user.Email, otp);
-            if (!emailSent)
-                return (false, "Failed to send OTP email");
+            // Buscar en Managers
+            var manager = await _context.Managers.FirstOrDefaultAsync(m => m.Email.ToLower() == email.ToLower());
+            if (manager != null)
+            {
+                if (manager.PasswordHash != password)
+                    return (false, "Invalid password", "");
 
-            return (true, "Login successful. OTP sent.");
+                var otp = GenerateOTP();
+                OTPStore.SetOTP(manager.Email, otp, 10);
+                var emailSent = await _emailService.SendTwoFactorCodeAsync(manager.Email, otp);
+
+                if (!emailSent)
+                    return (false, "Failed to send OTP email", "");
+
+                return (true, "Login successful. OTP sent.", "Manager");
+            }
+
+            return (false, "User or Manager not found", "");
         }
 
         private string GenerateOTP()

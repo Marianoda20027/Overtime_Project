@@ -64,6 +64,30 @@ namespace Overtime_Project_Backend.Migrations
                     b.ToTable("overtime_approvals", (string)null);
                 });
 
+            modelBuilder.Entity("api.Domain.Manager", b =>
+                {
+                    b.Property<int>("ManagerId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ManagerId"));
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)")
+                        .HasColumnName("password_hash");
+
+                    b.HasKey("ManagerId");
+
+                    b.ToTable("managers", (string)null);
+                });
+
             modelBuilder.Entity("api.Domain.Notification", b =>
                 {
                     b.Property<Guid>("NotificationId")
@@ -185,6 +209,9 @@ namespace Overtime_Project_Backend.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(true);
 
+                    b.Property<int?>("ManagerId")
+                        .HasColumnType("int");
+
                     b.Property<string>("PasswordHash")
                         .IsRequired()
                         .HasMaxLength(255)
@@ -203,6 +230,8 @@ namespace Overtime_Project_Backend.Migrations
 
                     b.HasIndex("Email")
                         .IsUnique();
+
+                    b.HasIndex("ManagerId");
 
                     b.ToTable("users", (string)null);
                 });
@@ -246,6 +275,21 @@ namespace Overtime_Project_Backend.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("api.Domain.User", b =>
+                {
+                    b.HasOne("api.Domain.Manager", "Manager")
+                        .WithMany("Users")
+                        .HasForeignKey("ManagerId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Manager");
+                });
+
+            modelBuilder.Entity("api.Domain.Manager", b =>
+                {
+                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("api.Domain.OvertimeRequest", b =>
