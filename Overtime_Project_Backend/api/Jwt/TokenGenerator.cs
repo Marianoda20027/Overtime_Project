@@ -15,7 +15,7 @@ namespace api.JWTToken
             _config = config;
         }
 
-        public string CreateToken(string username)
+        public string CreateToken(string username, string role)
         {
             var jwtKey = _config["Jwt:Key"];
             var jwtIssuer = _config["Jwt:Issuer"];
@@ -27,16 +27,9 @@ namespace api.JWTToken
             var claims = new List<Claim>
             {
                 new Claim(JwtRegisteredClaimNames.Sub, username),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim(ClaimTypes.Role, role)
             };
-
-            // Roles opcionales según email
-            if (username.ToLower().Contains("manager"))
-                claims.Add(new Claim(ClaimTypes.Role, "Manager"));
-            else if (username.ToLower().Contains("payroll"))
-                claims.Add(new Claim(ClaimTypes.Role, "Payroll"));
-            else
-                claims.Add(new Claim(ClaimTypes.Role, "Employee"));
 
             var token = new JwtSecurityToken(
                 issuer: jwtIssuer,

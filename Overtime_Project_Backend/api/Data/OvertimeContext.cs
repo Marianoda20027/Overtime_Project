@@ -8,6 +8,7 @@ namespace api.Data
         public OvertimeContext(DbContextOptions<OvertimeContext> options) : base(options) { }
 
         public DbSet<User> Users => Set<User>();
+        public DbSet<Manager> Managers => Set<Manager>();
         public DbSet<OvertimeRequest> OvertimeRequests => Set<OvertimeRequest>();
         public DbSet<Approval> OvertimeApprovals => Set<Approval>();
         public DbSet<Role> Roles => Set<Role>();
@@ -15,6 +16,15 @@ namespace api.Data
 
         protected override void OnModelCreating(ModelBuilder b)
         {
+            // ===== managers =====
+            b.Entity<Manager>(e =>
+            {
+                e.ToTable("managers");
+                e.HasKey(x => x.ManagerId);
+                e.Property(x => x.Email).HasMaxLength(255).IsRequired();
+                e.Property(x => x.PasswordHash).HasMaxLength(255).IsRequired().HasColumnName("password_hash");
+            });
+
             // ===== users =====
             b.Entity<User>(e =>
             {
@@ -26,6 +36,12 @@ namespace api.Data
                 e.Property(x => x.Role).HasMaxLength(50).IsRequired();
                 e.Property(x => x.IsActive).HasDefaultValue(true);
                 e.Property(x => x.Salary).HasColumnType("decimal(10,2)");
+
+                // 🔹 Relación N:1 (un manager puede tener muchos usuarios)
+                e.HasOne(x => x.Manager)
+                 .WithMany(m => m.Users!)
+                 .HasForeignKey(x => x.ManagerId)
+                 .OnDelete(DeleteBehavior.Restrict);
             });
 
             // ===== overtime_requests =====
@@ -38,13 +54,13 @@ namespace api.Data
                 e.Property(x => x.EndTime).HasColumnType("time");
                 e.Property(x => x.Justification).HasColumnType("text");
                 e.Property(x => x.Status)
-                 .HasConversion<string>() // enum -> string
+                 .HasConversion<string>()
                  .HasMaxLength(20)
                  .HasDefaultValue(OvertimeStatus.Pending);
                 e.Property(x => x.CreatedAt).HasColumnType("datetime2").HasDefaultValueSql("GETUTCDATE()");
                 e.Property(x => x.UpdatedAt).HasColumnType("datetime2").HasDefaultValueSql("GETUTCDATE()");
                 e.Property(x => x.Cost).HasColumnType("decimal(10,2)");
-                e.Property(x => x.TotalHours).HasColumnType("decimal(5,2)").HasDefaultValue(0); // Total hours field
+                e.Property(x => x.TotalHours).HasColumnType("decimal(5,2)").HasDefaultValue(0);
 
                 e.HasOne(x => x.User)
                  .WithMany(u => u.OvertimeRequests!)
@@ -60,7 +76,7 @@ namespace api.Data
                 e.Property(x => x.ApprovedHours).HasColumnType("decimal(5,2)");
                 e.Property(x => x.ApprovalDate).HasColumnType("datetime2").HasDefaultValueSql("GETUTCDATE()");
                 e.Property(x => x.Status)
-                 .HasConversion<string>() // enum -> string
+                 .HasConversion<string>()
                  .HasMaxLength(20)
                  .HasDefaultValue(OvertimeStatus.Approved);
                 e.Property(x => x.Comments).HasColumnType("text");
