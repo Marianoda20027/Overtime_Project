@@ -1,66 +1,68 @@
 // src/pages/TwoButtonsPage.js
 import React from 'react';
-import { useNavigate } from 'react-router-dom'; // Importamos el hook useNavigate para la navegación
-import Header from "../../components/Header"; // Asegúrate de que la ruta sea correcta
-import Footer from "../../components/Footer"; // Asegúrate de que la ruta sea correcta
-import './styles.css'; // Importamos los estilos
+import { useNavigate } from 'react-router-dom';
+import Cookies from 'js-cookie';
+import Header from "../../components/Header";
+import Footer from "../../components/Footer";
+import './styles.css';
+import { decodeJWT } from '../../hooks/decodeJWT.JSX';
 
 const TwoButtonsPage = () => {
-  const navigate = useNavigate(); // Usamos el hook useNavigate para navegar a otra página
+  const navigate = useNavigate();
 
-  // Función para manejar la acción del botón "Submit Request"
-  const handleSubmitRequest = () => {
-    try {
-      navigate('/overtime-request'); // Navegamos a la página OvertimeRequest
-    } catch (error) {
-      console.error('Error al navegar a overtime-request:', error);
-    }
-  };
+  // ✅ Leer token de las cookies
+  const token = Cookies.get("jwt");
+  const decoded = decodeJWT(token);
+  const role = decoded?.["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
 
-  // Función para manejar la acción del botón "View My Request"
-  const handleViewRequests = () => {
-    try {
-      // Navegamos a la página de visualización de requests
-      navigate('/request'); // Cambiamos el console.log por una navegación real
-    } catch (error) {
-      console.error('Error al navegar a view-requests:', error);
-      // Fallback: mostrar mensaje en consola si hay error
-      console.log('Ver solicitudes anteriores - Error en navegación');
-    }
-  };
+  const handleSubmitRequest = () => navigate('/overtime-request');
+  const handleViewRequests = () => navigate('/request');
+  const handleManagerRequests = () => navigate('/approval');
 
   return (
     <div className="buttons-page">
-      <Header /> {/* Agregamos el Header */}
-      
+      <Header />
+
       <div className="content-container">
-        {/* Título principal */}
         <h2>Overtime Request System</h2>
-        
-        
-        {/* Botones a la izquierda y derecha */}
+
         <div className="buttons-container">
-          <button 
-            className="button-left" 
-            onClick={handleViewRequests}
-            type="button"
-            aria-label="View my previous overtime requests"
-          >
-            View My Request
-          </button>
-          
-          <button 
-            className="button-right" 
-            onClick={handleSubmitRequest}
-            type="button"
-            aria-label="Submit a new overtime request"
-          >
-            Submit Request
-          </button>
+          {role === "Manager" ? (
+            // 👔 Si es manager, solo ve este botón
+            <button
+              className="button-center"
+              onClick={handleManagerRequests}
+              type="button"
+              aria-label="View employees overtime requests"
+            >
+              Employees Requests
+            </button>
+          ) : (
+            // 👷 Si no es manager, ve los dos botones normales
+            <>
+              <button
+                className="button-left"
+                onClick={handleViewRequests}
+                type="button"
+                aria-label="View my previous overtime requests"
+              >
+                View My Request
+              </button>
+
+              <button
+                className="button-right"
+                onClick={handleSubmitRequest}
+                type="button"
+                aria-label="Submit a new overtime request"
+              >
+                Submit Request
+              </button>
+            </>
+          )}
         </div>
       </div>
 
-      <Footer /> {/* Agregamos el Footer */}
+      <Footer />
     </div>
   );
 };
