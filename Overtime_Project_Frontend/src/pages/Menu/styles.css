@@ -10,6 +10,27 @@
   margin: 0;
   padding: 0;
 }
+/* Botón centrado - "Employees Requests" (para Manager) */
+.button-center {
+  background-color: #67C28D; /* Color dorado cálido para diferenciarlo */
+  color: white;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%); /* Lo centra horizontalmente */
+  width: 350px;
+  height: 120px;
+  font-weight: 700;
+  border-radius: 15px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.button-center:hover {
+  background-color: #67C28A; /* Un tono más oscuro al hacer hover */
+  transform: translate(-50%, -3px); /* Sutil animación */
+  box-shadow: 0 8px 25px rgba(245, 166, 35, 0.4);
+}
 
 /* Estilo para la sección de contenido */
 .content-container {

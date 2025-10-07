@@ -1,110 +1,56 @@
 import { useState, useEffect } from 'react';
+import Cookies from 'js-cookie'; // solo esta sí, para leer la cookie
+import { decodeJWT } from '../../hooks/decodeJWT.JSX';
 
 export const useRequests = () => {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
+  const API_BASE = "http://localhost:5100";
 
-  // Función para obtener solicitudes desde el backend
   const fetchRequests = async () => {
     setLoading(true);
     try {
-      // Endpoint real para obtener solicitudes de horas extra
-      const token = localStorage.getItem("authToken");  // Asegúrate de tener el token JWT
-      const response = await fetch('/api/overtime/all', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,  // Incluye el token en el encabezado
-        }
-      });
-
-      if (!response.ok) {
-        throw new Error('Error al obtener solicitudes');
+      const token = Cookies.get("jwt");
+      if (!token) {
+        console.warn("No hay token en las cookies.");
+        setLoading(false);
+        return;
       }
 
+      // Decodificar el token manualmente
+      const decoded = decodeJWT(token);
+      const role = decoded?.["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
+      const email = decoded?.sub;
+      console.log("Rol:", role, "| Email:", email);
+
+      // ⚙️ Aquí podrías hacer fetch del managerId si no lo tenés guardado
+      let url = `${API_BASE}/api/manager/${email}`;
+
+
+
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) throw new Error("Error al obtener solicitudes");
+
       const data = await response.json();
-      setRequests(data);  // Actualiza el estado con las solicitudes obtenidas del backend
+      setRequests(data);
     } catch (error) {
-      console.error('Error al obtener solicitudes:', error);
-      setRequests([]);  // Manejo de errores
+      console.error("Error al obtener solicitudes:", error);
+      setRequests([]);
     } finally {
-      setLoading(false);  // Finaliza la carga
+      setLoading(false);
     }
   };
 
-  // Cargar solicitudes al montar el componente
   useEffect(() => {
     fetchRequests();
   }, []);
 
-  // Función para aceptar solicitud
-  const acceptRequest = async (id, comments, cost) => {
-    try {
-      const token = localStorage.getItem("authToken");  // Obtén el token JWT
-      const response = await fetch(`/api/overtime/${id}/accept`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          comments: comments,
-          cost: cost
-        })
-      });
-
-      if (!response.ok) {
-        throw new Error('Error al aceptar la solicitud');
-      }
-
-      const result = await response.json();
-      console.log('Solicitud aceptada exitosamente:', result);
-      
-      // Recargar la lista de solicitudes después de aceptar
-      fetchRequests();
-      
-    } catch (error) {
-      console.error('Error al aceptar solicitud:', error);
-    }
-  };
-
-  // Función para rechazar solicitud
-  const rejectRequest = async (id, reason, comments, cost) => {
-    try {
-      const token = localStorage.getItem("authToken");  // Obtén el token JWT
-      const response = await fetch(`/api/overtime/${id}/reject`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          reason: reason,
-          comments: comments,
-          cost: cost
-        })
-      });
-
-      if (!response.ok) {
-        throw new Error('Error al rechazar la solicitud');
-      }
-
-      const result = await response.json();
-      console.log('Solicitud rechazada exitosamente:', result);
-      
-      // Recargar la lista de solicitudes después de rechazar
-      fetchRequests();
-      
-    } catch (error) {
-      console.error('Error al rechazar solicitud:', error);
-    }
-  };
-
-  return { 
-    requests, 
-    acceptRequest, 
-    rejectRequest, 
-    loading,
-    refetch: fetchRequests // Método para recargar manualmente las solicitudes
-  };
+  return { requests, loading, refetch: fetchRequests };
 };
