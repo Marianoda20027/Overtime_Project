@@ -1,13 +1,18 @@
-
-// Solo usamos una imagen
-import horizontalLogo from '../../assets/Logomark_logotype/ArkoseLabs_Horizontal.jpg'; // Asegúrate de que la ruta sea la correcta
+import { Link } from 'react-router-dom';
+import horizontalLogo from '../../assets/Logomark_logotype/ArkoseLabs_Horizontal.jpg'; 
 
 const Header = () => {
   return (
     <header className="login-header">
       <div className="logo-container">
-        {/* Solo mostramos el logo horizontal */}
-        <img src={horizontalLogo} alt="Arkose Labs Horizontal Logo" className="horizontal-logo" />
+        <Link to="/home">
+          <img
+            src={horizontalLogo}
+            alt="Arkose Labs Horizontal Logo"
+            className="horizontal-logo"
+            style={{ cursor: 'pointer' }} 
+          />
+        </Link>
       </div>
     </header>
   );

@@ -25,6 +25,16 @@ export const useOvertimeForm = () => {
     return diff > 0 ? diff.toFixed(2) : 0;
   }, [form.startTime, form.endTime]);
 
+  //verifica que las horas sean validas
+  const isInvalidTime = useMemo(() => {
+    if (!form.startTime || !form.endTime) return false;
+    const [sh, sm] = form.startTime.split(':').map(Number);
+    const [eh, em] = form.endTime.split(':').map(Number);
+    const start = sh + sm / 60;
+    const end = eh + em / 60;
+    return end <= start;
+  }, [form.startTime, form.endTime]);
+
   // Manejar cambios en el formulario
   const update = useCallback((key, value) => {
     setForm((prevForm) => ({ ...prevForm, [key]: value }));
@@ -35,6 +45,11 @@ export const useOvertimeForm = () => {
     e.preventDefault();
     setError(null);
     setOkMsg(null);
+
+     if (isInvalidTime) {
+      setError('La hora final debe ser posterior a la hora de inicio');
+      return;
+    }
 
     if (totalHours <= 0) {
       setError('Las horas deben ser mayores que 0');
@@ -77,5 +92,5 @@ export const useOvertimeForm = () => {
     fetchRequests();
   }, []);
 
-  return { form, update, totalHours, loading, error, okMsg, submit, requests };
+  return { form, update, totalHours, loading, error, okMsg, submit, requests, isInvalidTime };
 };
