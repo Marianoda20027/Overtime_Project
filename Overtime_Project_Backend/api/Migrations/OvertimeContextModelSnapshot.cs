@@ -39,8 +39,11 @@ namespace Overtime_Project_Backend.Migrations
                     b.Property<string>("Comments")
                         .HasColumnType("text");
 
-                    b.Property<Guid>("ManagerId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("ManagerId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ManagerId1")
+                        .HasColumnType("int");
 
                     b.Property<Guid>("OvertimeId")
                         .HasColumnType("uniqueidentifier");
@@ -58,6 +61,8 @@ namespace Overtime_Project_Backend.Migrations
                     b.HasKey("ApprovalId");
 
                     b.HasIndex("ManagerId");
+
+                    b.HasIndex("ManagerId1");
 
                     b.HasIndex("OvertimeId");
 
@@ -238,11 +243,15 @@ namespace Overtime_Project_Backend.Migrations
 
             modelBuilder.Entity("api.Domain.Approval", b =>
                 {
-                    b.HasOne("api.Domain.User", "Manager")
+                    b.HasOne("api.Domain.Manager", null)
                         .WithMany()
                         .HasForeignKey("ManagerId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.HasOne("api.Domain.Manager", "Manager")
+                        .WithMany()
+                        .HasForeignKey("ManagerId1");
 
                     b.HasOne("api.Domain.OvertimeRequest", "Overtime")
                         .WithMany("Approvals")

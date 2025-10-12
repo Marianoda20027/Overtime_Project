@@ -115,28 +115,34 @@ namespace Overtime_Project_Backend.Migrations
                 {
                     ApprovalId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     OvertimeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ManagerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ManagerId = table.Column<int>(type: "int", nullable: false),
                     ApprovedHours = table.Column<decimal>(type: "decimal(5,2)", nullable: false),
                     ApprovalDate = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()"),
                     Status = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false, defaultValue: "Approved"),
                     Comments = table.Column<string>(type: "text", nullable: true),
-                    RejectionReason = table.Column<string>(type: "text", nullable: true)
+                    RejectionReason = table.Column<string>(type: "text", nullable: true),
+                    ManagerId1 = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_overtime_approvals", x => x.ApprovalId);
+                    table.ForeignKey(
+                        name: "FK_overtime_approvals_managers_ManagerId",
+                        column: x => x.ManagerId,
+                        principalTable: "managers",
+                        principalColumn: "ManagerId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_overtime_approvals_managers_ManagerId1",
+                        column: x => x.ManagerId1,
+                        principalTable: "managers",
+                        principalColumn: "ManagerId");
                     table.ForeignKey(
                         name: "FK_overtime_approvals_overtime_requests_OvertimeId",
                         column: x => x.OvertimeId,
                         principalTable: "overtime_requests",
                         principalColumn: "OvertimeId",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_overtime_approvals_users_ManagerId",
-                        column: x => x.ManagerId,
-                        principalTable: "users",
-                        principalColumn: "UserId",
-                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(
@@ -148,6 +154,11 @@ namespace Overtime_Project_Backend.Migrations
                 name: "IX_overtime_approvals_ManagerId",
                 table: "overtime_approvals",
                 column: "ManagerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_overtime_approvals_ManagerId1",
+                table: "overtime_approvals",
+                column: "ManagerId1");
 
             migrationBuilder.CreateIndex(
                 name: "IX_overtime_approvals_OvertimeId",
