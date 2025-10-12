@@ -37,7 +37,6 @@ namespace api.Data
                 e.Property(x => x.IsActive).HasDefaultValue(true);
                 e.Property(x => x.Salary).HasColumnType("decimal(10,2)");
 
-                // 🔹 Relación N:1 (un manager puede tener muchos usuarios)
                 e.HasOne(x => x.Manager)
                  .WithMany(m => m.Users!)
                  .HasForeignKey(x => x.ManagerId)
@@ -73,6 +72,10 @@ namespace api.Data
             {
                 e.ToTable("overtime_approvals");
                 e.HasKey(x => x.ApprovalId);
+                
+                // 🔥 CAMBIO CRÍTICO: ManagerId debe ser int, NO Guid
+                e.Property(x => x.ManagerId).HasColumnType("int");
+                
                 e.Property(x => x.ApprovedHours).HasColumnType("decimal(5,2)");
                 e.Property(x => x.ApprovalDate).HasColumnType("datetime2").HasDefaultValueSql("GETUTCDATE()");
                 e.Property(x => x.Status)
@@ -87,7 +90,8 @@ namespace api.Data
                  .HasForeignKey(x => x.OvertimeId)
                  .OnDelete(DeleteBehavior.Cascade);
 
-                e.HasOne(x => x.Manager)
+                // 🔥 Relación con Manager (int, no Guid)
+                e.HasOne<Manager>()
                  .WithMany()
                  .HasForeignKey(x => x.ManagerId)
                  .OnDelete(DeleteBehavior.Restrict);
@@ -118,7 +122,6 @@ namespace api.Data
             });
         }
 
-        // Mantener UpdatedAt en UTC
         public override int SaveChanges()
         {
             TouchTimestamps();
@@ -149,4 +152,4 @@ namespace api.Data
             }
         }
     }
-}
+} 
