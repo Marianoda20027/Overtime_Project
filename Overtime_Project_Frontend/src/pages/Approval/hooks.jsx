@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import Cookies from 'js-cookie'; // solo esta sí, para leer la cookie
+import Cookies from 'js-cookie';
 import { decodeJWT } from '../../hooks/decodeJWT.JSX';
 
 export const useRequests = () => {
@@ -17,18 +17,16 @@ export const useRequests = () => {
         return;
       }
 
-      // Decodificar el token manualmente
       const decoded = decodeJWT(token);
-      const role = decoded?.["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
       const email = decoded?.sub;
-      console.log("Rol:", role, "| Email:", email);
 
-      // ⚙️ Aquí podrías hacer fetch del managerId si no lo tenés guardado
-      let url = `${API_BASE}/api/manager/${email}`;
+      if (!email) {
+        console.warn("No se pudo obtener el email del token");
+        setLoading(false);
+        return;
+      }
 
-
-
-      const response = await fetch(url, {
+      const response = await fetch(`${API_BASE}/api/manager/${email}`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -39,7 +37,11 @@ export const useRequests = () => {
       if (!response.ok) throw new Error("Error al obtener solicitudes");
 
       const data = await response.json();
-      setRequests(data);
+      
+      // 🔥 FILTRAR solo Pending
+      const pendingRequests = data.filter(req => req.status === "Pending");
+      setRequests(pendingRequests);
+      
     } catch (error) {
       console.error("Error al obtener solicitudes:", error);
       setRequests([]);
@@ -48,9 +50,92 @@ export const useRequests = () => {
     }
   };
 
+  // ✅ APROBAR SOLICITUD
+  const acceptRequest = async (overtimeId, comments) => {
+    try {
+      const token = Cookies.get("jwt");
+      if (!token) throw new Error("No token found");
+
+      const decoded = decodeJWT(token);
+      const managerEmail = decoded?.sub;
+
+      if (!managerEmail) throw new Error("No se pudo obtener el email del manager");
+
+      const response = await fetch(`${API_BASE}/api/overtime/approve/${overtimeId}`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          managerEmail,
+          comments: comments || null
+        })
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || "Error al aprobar");
+      }
+
+      // Refrescar la lista
+      await fetchRequests();
+      return true;
+
+    } catch (error) {
+      console.error("Error al aprobar solicitud:", error);
+      throw error;
+    }
+  };
+
+  // ❌ RECHAZAR SOLICITUD
+  const rejectRequest = async (overtimeId, reason, comments) => {
+    try {
+      const token = Cookies.get("jwt");
+      if (!token) throw new Error("No token found");
+
+      const decoded = decodeJWT(token);
+      const managerEmail = decoded?.sub;
+
+      if (!managerEmail) throw new Error("No se pudo obtener el email del manager");
+
+      const response = await fetch(`${API_BASE}/api/overtime/reject/${overtimeId}`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          managerEmail,
+          reason,
+          comments: comments || null
+        })
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || "Error al rechazar");
+      }
+
+      // Refrescar la lista
+      await fetchRequests();
+      return true;
+
+    } catch (error) {
+      console.error("Error al rechazar solicitud:", error);
+      throw error;
+    }
+  };
+
   useEffect(() => {
     fetchRequests();
   }, []);
 
-  return { requests, loading, refetch: fetchRequests };
+  return { 
+    requests, 
+    loading, 
+    acceptRequest, 
+    rejectRequest, 
+    refetch: fetchRequests 
+  };
 };
