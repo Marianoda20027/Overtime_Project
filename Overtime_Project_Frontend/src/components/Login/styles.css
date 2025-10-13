@@ -77,9 +77,10 @@ body {
 }
 
 .login-btn {
+  height: 5%;
   width: 100%;
   padding: 20px; /* Botón más grande */
-  font-size: 30px; /* Fuente más grande en el botón */
+  font-size: 15px; /* Fuente más grande en el botón */
   font-weight: 700;
   background-color: #50B95D;
   color: white;
@@ -115,4 +116,8 @@ body {
     padding: 18px; /* Botón más grande en dispositivos pequeños */
     font-size: 16px; /* Fuente más grande en el botón */
   }
+  
 }
+
+
+
