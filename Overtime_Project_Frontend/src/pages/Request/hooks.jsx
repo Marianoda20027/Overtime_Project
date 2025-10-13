@@ -1,93 +1,52 @@
 import { useState, useEffect } from 'react';
+import Cookies from 'js-cookie';
+import { decodeJWT } from '../../hooks/decodeJWT.JSX';
 
-export const useYourRequests = () => {
+export const useRequests = () => {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const API_BASE = "http://localhost:5100";
 
-  // Función para obtener requests desde la API
   const fetchRequests = async () => {
+    setLoading(true);
+    setError(null);
+
     try {
-      setLoading(true);
-      setError(null);
+      const token = Cookies.get("jwt");
+      if (!token) throw new Error("No se encontró el token.");
 
-      // Simular delay de API
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      const decoded = decodeJWT(token);
+      const email = decoded?.sub;
+      if (!email) throw new Error("No se pudo obtener el email del usuario.");
 
-      // Datos de ejemplo para testing
-      const mockData = [
-        {
-          id: 1,
-          date: '2024-09-05',
-          startTime: '18:00',
-          endTime: '22:00',
-          totalHours: 4,
-          status: 'approved',
-          justification: 'System maintenance and security updates'
+      const response = await fetch(`${API_BASE}/api/overtime/user/${email}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
         },
-        {
-          id: 2,
-          date: '2024-09-03',
-          startTime: '17:30',
-          endTime: '20:30',
-          totalHours: 3,
-          status: 'pending',
-          justification: 'Emergency bug fix for production issue'
-        },
-        {
-          id: 3,
-          date: '2024-09-01',
-          startTime: '19:00',
-          endTime: '23:00',
-          totalHours: 4,
-          status: 'rejected',
-          justification: 'Database migration during off-peak hours'
-        }
-      ];
+      });
 
-      // Simula un pequeño retraso extra para hacer la carga más suave
-      await new Promise(resolve => setTimeout(resolve, 500));
+      if (!response.ok) {
+        const text = await response.text();
+        throw new Error(text || "Error al obtener solicitudes.");
+      }
 
-      setRequests(mockData);
+      const data = await response.json();
+      setRequests(data);
+
     } catch (err) {
-      setError('Error loading requests');
+      console.error("Error al obtener solicitudes:", err);
+      setError(err.message || "Error desconocido al cargar solicitudes.");
+      setRequests([]);
     } finally {
       setLoading(false);
     }
   };
 
-  // Función para eliminar un request
-  const deleteRequest = async (id) => {
-    try {
-      // Simular delay de API
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      setRequests(prev => prev.filter(req => req.id !== id));
-    } catch (err) {
-      setError('Error deleting request');
-    }
-  };
-
-  // Cargar requests al inicio
   useEffect(() => {
     fetchRequests();
   }, []);
 
-  // Estadísticas simples
-  const totalRequests = requests.length;
-  const totalHours = requests.reduce((sum, req) => sum + (req.totalHours || 0), 0);
-  const pendingRequests = requests.filter(req => req.status === 'pending').length;
-  const approvedRequests = requests.filter(req => req.status === 'approved').length;
-
-  return {
-    requests,
-    loading,
-    error,
-    refreshRequests: fetchRequests,
-    deleteRequest,
-    totalRequests,
-    totalHours,
-    pendingRequests,
-    approvedRequests
-  };
+  return { requests, loading, error, refetch: fetchRequests };
 };
