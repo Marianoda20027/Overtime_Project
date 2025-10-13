@@ -1,27 +1,21 @@
-// src/pages/YourRequests/index.jsx
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useYourRequests } from './hooks.jsx';
+import { useRequests } from './hooks.jsx';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import './styles.css';
 
 const YourRequests = () => {
   const navigate = useNavigate();
-  const { requests, loading, error } = useYourRequests();
+  const { requests, loading, error, refetch } = useRequests();
 
-  const handleGoBack = () => {
-    navigate('/home');
-  };
-
-  const handleNewRequest = () => {
-    navigate('/overtime-request');
-  };
+  const handleGoBack = () => navigate('/home');
+  const handleNewRequest = () => navigate('/overtime-request');
 
   return (
     <div className="your-requests-page">
       <Header />
-      
+
       <div className="requests-container">
         <div className="requests-header">
           <h2>Your Overtime Requests</h2>
@@ -38,7 +32,6 @@ const YourRequests = () => {
         </div>
 
         {loading && <div className="loading">Loading...</div>}
-        
         {error && <div className="error">{error}</div>}
 
         {!loading && !error && (
