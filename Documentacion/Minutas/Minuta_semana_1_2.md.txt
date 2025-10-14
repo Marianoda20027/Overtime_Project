@@ -1,0 +1,22 @@
+# Minuta de Reunión - Semana 1–2: Análisis y Diseño Inicial
+
+**Fecha:** 19-08-2025  
+**Asistentes:** Jaziel Rojas – Mariano Durán
+**Duración:** 30 minutos  
+
+## Objetivos
+
+Definir los requisitos funcionales y no funcionales del sistema.  
+Revisar los diagramas UML propuestos.  
+Validar alineación con expectativas del negocio.
+
+## Temas tratados
+
+1. Presentación de los requerimientos recopilados.  
+2. Análisis de los casos de uso principales.  
+3. Presentación de diagramas UML (casos de uso y actividades).
+
+## Acuerdos
+
+Se acordó revisar la validación de usuarios externos en el siguiente sprint.  
+Diagramas UML aceptados con mejoras acorde al problema planteado.
