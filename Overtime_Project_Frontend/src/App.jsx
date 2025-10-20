@@ -6,6 +6,9 @@ import Menu from './pages/Menu/page';
 import Request from './pages/Request';
 import ApprovalPage from './pages/Approval';
 
+import ReportsPage from './pages/Reports';
+
+
 import { ConfigProvider, theme } from 'antd';
 
 export default function App() {
@@ -91,6 +94,7 @@ export default function App() {
             <Route path="/home" element={<Menu />} />
             <Route path="/Request" element={<Request />} />
             <Route path="/Approval" element={<ApprovalPage />} />
+            <Route path="/reports" element={<ReportsPage />} />
           </Routes>
         </Router>
       </div>
