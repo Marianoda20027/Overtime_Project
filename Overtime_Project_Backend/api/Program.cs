@@ -6,6 +6,10 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using api.Data; 
 using api.BusinessLogic.Services;
+using api.BusinessLogic.Services.Reports;
+using QuestPDF.Infrastructure;
+
+
 var builder = WebApplication.CreateBuilder(args);
 
 // ===== Config JWT =====
@@ -15,9 +19,15 @@ var jwtAudience = builder.Configuration["Jwt:Audience"]!;
 
 // ===== Servicios =====
 builder.Services.AddControllers();
-builder.Services.AddScoped<AuthService>();  // Cambiar a Scoped
+builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<IEmailTemplateService, EmailTemplateService>();
 builder.Services.AddScoped<IEmailService, SMTPService>();
+builder.Services.AddScoped<SMTPService>();
+builder.Services.AddScoped<ReportsService>();
+QuestPDF.Settings.License = LicenseType.Community;
+
+
+
 
 
 
