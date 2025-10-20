@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Overtime_Project_Backend.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class InitialClean : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -120,8 +120,7 @@ namespace Overtime_Project_Backend.Migrations
                     ApprovalDate = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()"),
                     Status = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false, defaultValue: "Approved"),
                     Comments = table.Column<string>(type: "text", nullable: true),
-                    RejectionReason = table.Column<string>(type: "text", nullable: true),
-                    ManagerId1 = table.Column<int>(type: "int", nullable: true)
+                    RejectionReason = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -132,11 +131,6 @@ namespace Overtime_Project_Backend.Migrations
                         principalTable: "managers",
                         principalColumn: "ManagerId",
                         onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_overtime_approvals_managers_ManagerId1",
-                        column: x => x.ManagerId1,
-                        principalTable: "managers",
-                        principalColumn: "ManagerId");
                     table.ForeignKey(
                         name: "FK_overtime_approvals_overtime_requests_OvertimeId",
                         column: x => x.OvertimeId,
@@ -154,11 +148,6 @@ namespace Overtime_Project_Backend.Migrations
                 name: "IX_overtime_approvals_ManagerId",
                 table: "overtime_approvals",
                 column: "ManagerId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_overtime_approvals_ManagerId1",
-                table: "overtime_approvals",
-                column: "ManagerId1");
 
             migrationBuilder.CreateIndex(
                 name: "IX_overtime_approvals_OvertimeId",

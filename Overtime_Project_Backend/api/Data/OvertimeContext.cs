@@ -72,10 +72,7 @@ namespace api.Data
             {
                 e.ToTable("overtime_approvals");
                 e.HasKey(x => x.ApprovalId);
-                
-                // 🔥 CAMBIO CRÍTICO: ManagerId debe ser int, NO Guid
                 e.Property(x => x.ManagerId).HasColumnType("int");
-                
                 e.Property(x => x.ApprovedHours).HasColumnType("decimal(5,2)");
                 e.Property(x => x.ApprovalDate).HasColumnType("datetime2").HasDefaultValueSql("GETUTCDATE()");
                 e.Property(x => x.Status)
@@ -90,8 +87,7 @@ namespace api.Data
                  .HasForeignKey(x => x.OvertimeId)
                  .OnDelete(DeleteBehavior.Cascade);
 
-                // 🔥 Relación con Manager (int, no Guid)
-                e.HasOne<Manager>()
+                e.HasOne(x => x.Manager)
                  .WithMany()
                  .HasForeignKey(x => x.ManagerId)
                  .OnDelete(DeleteBehavior.Restrict);
@@ -152,4 +148,4 @@ namespace api.Data
             }
         }
     }
-} 
+}
