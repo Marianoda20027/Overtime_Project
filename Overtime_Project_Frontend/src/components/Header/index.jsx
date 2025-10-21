@@ -32,23 +32,7 @@ const Header = () => {
     paddingLeft: '10px',          // opcional, separación del logo
   }}
 >
-  <button
-    onClick={handleLogout}
-    className="btn-logout"
-    style={{
-      height: '30px',             // altura fija y consistente
-      width: '90px',
-      padding: '0 15px',
-      backgroundColor: '#030303',
-      color: '#ffffff',
-      border: 'none',
-      borderRadius: '5px',
-      cursor: 'pointer',
-      fontSize: '16px',
-    }}
-  >
-    Logout
-  </button>
+ 
 </div>
 
       <div className="logo-container">

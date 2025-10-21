@@ -15,22 +15,22 @@ const ReportsPage = () => {
   return (
     <div className="report-page">
       <div className="report-card">
-        <h3>Reporte de Horas Extra</h3>
+        <h3>Overtime Report</h3>
 
         <form onSubmit={handleGenerate}>
           <div className="input-group">
-            <label>Correo destinatario</label>
+            <label>Recipient Email</label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              placeholder="ejemplo@correo.com"
+              placeholder="example@email.com"
             />
           </div>
 
           <button className="report-btn" type="submit" disabled={loading}>
-            {loading ? 'Generando...' : 'Generar y Enviar Reporte'}
+            {loading ? 'Generating...' : 'Generate and Send Report'}
           </button>
         </form>
 
@@ -41,7 +41,7 @@ const ReportsPage = () => {
           <div className="report-viewer">
             <iframe
               src={pdfUrl}
-              title="Reporte PDF"
+              title="PDF Report"
               width="100%"
               height="600px"
               style={{ border: '1px solid #ccc', borderRadius: '10px' }}

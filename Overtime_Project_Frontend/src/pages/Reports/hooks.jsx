@@ -1,6 +1,5 @@
 // src/pages/Reports/hooks.js
 import { useState, useCallback } from 'react';
-import { httpService } from '../../services/http.service';
 
 export const useReport = () => {
   const [pdfUrl, setPdfUrl] = useState(null);
@@ -9,32 +8,53 @@ export const useReport = () => {
   const [error, setError] = useState(null);
 
   const generateAndSendReport = useCallback(async (email) => {
+    if (!email) {
+      setError("You must provide a valid email.");
+      return;
+    }
+
     setLoading(true);
     setError(null);
     setMessage(null);
 
     try {
-      // 1️⃣ Generar el PDF y mostrarlo
-      const res = await httpService.get('/reports/generate', {
-        responseType: 'blob',
+      // 🧾 1️⃣ Generate PDF
+      const pdfResponse = await fetch('http://localhost:5100/api/reports/generate', {
+        method: 'GET',
       });
-      const blob = new Blob([res.data], { type: 'application/pdf' });
+
+      if (!pdfResponse.ok) {
+        throw new Error('Error generating PDF');
+      }
+
+      // Release previous URL if exists
+      if (pdfUrl) URL.revokeObjectURL(pdfUrl);
+
+      const blob = await pdfResponse.blob();
       const url = URL.createObjectURL(blob);
       setPdfUrl(url);
 
-      // 2️⃣ Enviar el reporte al correo
-      await httpService.post('/reports/send', JSON.stringify(email), {
-        headers: { 'Content-Type': 'application/json' },
+      // ✉️ 2️⃣ Send report via email (EXACTLY like your curl)
+      const emailResponse = await fetch('http://localhost:5100/api/reports/send', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
       });
 
-      setMessage(`✅ Reporte generado y enviado a ${email}`);
+      if (!emailResponse.ok) {
+        throw new Error('Error sending email');
+      }
+
+      setMessage(`✅ Report generated and sent successfully to ${email}`);
     } catch (err) {
-      console.error(err);
-      setError('❌ Error generando o enviando el reporte.');
+      console.error("Error generating or sending report:", err);
+      setError("❌ Error generating or sending the report. Please try again.");
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [pdfUrl]);
 
   return { pdfUrl, loading, message, error, generateAndSendReport };
 };
