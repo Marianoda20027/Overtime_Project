@@ -11,16 +11,18 @@ namespace api.BusinessLogic.Services.Reports
     public class ReportsService
     {
         private readonly OvertimeContext _context;
-        private readonly SMTPService _smtp;
+        private readonly IEmailService _emailService;
+        private readonly IEmailTemplateService _templateService;
 
-        public ReportsService(OvertimeContext context, SMTPService smtp)
+        public ReportsService(OvertimeContext context, IEmailService emailService, IEmailTemplateService templateService)
         {
             _context = context;
-            _smtp = smtp;
+            _emailService = emailService;
+            _templateService = templateService;
         }
 
         // ======================================================
-        // 🧾 Generar PDF
+        // 🧾 Generate PDF Report
         // ======================================================
         public async Task<string> GenerateReportAsync()
         {
@@ -50,7 +52,7 @@ namespace api.BusinessLogic.Services.Reports
                                .ToList()
             };
 
-            var filePath = Path.Combine(Path.GetTempPath(), $"ReporteHoras_{DateTime.Now:yyyyMMddHHmmss}.pdf");
+            var filePath = Path.Combine(Path.GetTempPath(), $"OvertimeReport_{DateTime.Now:yyyyMMddHHmmss}.pdf");
 
             var document = new OvertimeReport(report);
             document.GeneratePdf(filePath);
@@ -59,23 +61,25 @@ namespace api.BusinessLogic.Services.Reports
         }
 
         // ======================================================
-        // ✉️ Enviar PDF al correo usando SMTPService
+        // ✉️ Send PDF Report via Email with styled template
         // ======================================================
         public async Task<bool> SendReportAsync(string email)
         {
             var pdfPath = await GenerateReportAsync();
-            var subject = "📊 Reporte de Horas Extra - Sistema Overtime";
-            var message = "<p>Adjunto encontrarás tu reporte de métricas.</p>";
+            var subject = "📊 Overtime Report - Monthly Analytics";
+            
+            // ✅ Use the beautiful styled template from EmailTemplateService
+            var message = _templateService.GenerateReportEmail();
 
             try
             {
-                // ✅ Llamamos al nuevo método que incluye adjuntos
-                await _smtp.SendEmailWithAttachment(
+                // ✅ Send email with styled HTML and PDF attachment
+                await _emailService.SendEmailWithAttachment(
                     email,
                     subject,
                     message,
                     pdfPath,
-                    "ReporteHorasExtra.pdf"
+                    "OvertimeReport.pdf"
                 );
 
                 if (File.Exists(pdfPath))
@@ -85,7 +89,7 @@ namespace api.BusinessLogic.Services.Reports
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error enviando reporte: {ex.Message}");
+                Console.WriteLine($"Error sending report: {ex.Message}");
                 if (File.Exists(pdfPath))
                     File.Delete(pdfPath);
                 return false;
