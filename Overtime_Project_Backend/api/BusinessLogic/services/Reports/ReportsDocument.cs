@@ -29,11 +29,11 @@ namespace api.BusinessLogic.Services.Reports
                 {
                     row.RelativeItem().Column(col =>
                     {
-                        col.Item().PaddingBottom(5).Text("📊 Reporte de Horas Extra")
+                        col.Item().PaddingBottom(5).Text("📊 Overtime Report")
                             .FontSize(28).Bold()
                             .FontColor("#2E7D32");
                         
-                        col.Item().Text("Sistema de Gestión de Horas Extra")
+                        col.Item().Text("Overtime Management System")
                             .FontSize(13)
                             .FontColor("#616161");
                         
@@ -55,7 +55,7 @@ namespace api.BusinessLogic.Services.Reports
                 // ======= FOOTER =======
                 page.Footer()
                     .AlignCenter()
-                    .Text($"Generado el {DateTime.Now:dd/MM/yyyy HH:mm}")
+                    .Text($"Generated on {DateTime.Now:MM/dd/yyyy HH:mm}")
                     .FontSize(10)
                     .FontColor("#9E9E9E");
             });
@@ -68,24 +68,24 @@ namespace api.BusinessLogic.Services.Reports
         {
             container.Column(col =>
             {
-                col.Item().Text("Resumen General")
+                col.Item().Text("General Summary")
                     .FontSize(20).Bold()
                     .FontColor("#2E7D32");
 
                 col.Item().PaddingTop(10).Row(row =>
                 {
-                    row.RelativeItem().Element(c => ComposeSummaryCard(c, "📅", "Total Solicitudes", Data.TotalRequests.ToString(), "#2196F3"));
+                    row.RelativeItem().Element(c => ComposeSummaryCard(c, "📅", "Total Requests", Data.TotalRequests.ToString(), "#2196F3"));
                     row.Spacing(10);
-                    row.RelativeItem().Element(c => ComposeSummaryCard(c, "✅", "Aprobadas", Data.Approved.ToString(), "#4CAF50"));
+                    row.RelativeItem().Element(c => ComposeSummaryCard(c, "✅", "Approved", Data.Approved.ToString(), "#4CAF50"));
                     row.Spacing(10);
-                    row.RelativeItem().Element(c => ComposeSummaryCard(c, "❌", "Rechazadas", Data.Rejected.ToString(), "#F44336"));
+                    row.RelativeItem().Element(c => ComposeSummaryCard(c, "❌", "Rejected", Data.Rejected.ToString(), "#F44336"));
                 });
 
                 col.Item().PaddingTop(10).Row(row =>
                 {
-                    row.RelativeItem().Element(c => ComposeSummaryCard(c, "⏱️", "Tiempo Respuesta", $"{Data.AvgResponseTime:F1} hrs", "#FF9800"));
+                    row.RelativeItem().Element(c => ComposeSummaryCard(c, "⏱️", "Response Time", $"{Data.AvgResponseTime:F1} hrs", "#FF9800"));
                     row.Spacing(10);
-                    row.RelativeItem().Element(c => ComposeSummaryCard(c, "💰", "Costo Total", $"${Data.TotalCost:N2}", "#9C27B0"));
+                    row.RelativeItem().Element(c => ComposeSummaryCard(c, "💰", "Total Cost", $"${Data.TotalCost:N2}", "#9C27B0"));
                 });
             });
         }
@@ -116,7 +116,7 @@ namespace api.BusinessLogic.Services.Reports
         {
             container.Column(col =>
             {
-                col.Item().Text("🏅 Top 5 Usuarios con Más Horas")
+                col.Item().Text("🏅 Top 5 Users by Hours")
                     .FontSize(20).Bold()
                     .FontColor("#2E7D32");
 
@@ -139,11 +139,11 @@ namespace api.BusinessLogic.Services.Reports
                                 .Text("#").FontColor(Colors.White).Bold();
                             header.Cell().Background("#2E7D32")
                                 .Padding(12)
-                                .Text("Usuario").FontColor(Colors.White).Bold();
+                                .Text("User").FontColor(Colors.White).Bold();
                             header.Cell().Background("#2E7D32")
                                 .Padding(12)
                                 .AlignRight()
-                                .Text("Total Horas").FontColor(Colors.White).Bold();
+                                .Text("Total Hours").FontColor(Colors.White).Bold();
                         });
 
                         // Filas
@@ -169,7 +169,7 @@ namespace api.BusinessLogic.Services.Reports
                 }
                 else
                 {
-                    col.Item().Text("No hay registros suficientes.")
+                    col.Item().Text("Not enough records.")
                         .Italic().FontColor("#9E9E9E");
                 }
             });
@@ -182,7 +182,7 @@ namespace api.BusinessLogic.Services.Reports
         {
             container.Column(col =>
             {
-                col.Item().Text("📈 Visualizaciones")
+                col.Item().Text("📈 Visualizations")
                     .FontSize(20).Bold()
                     .FontColor("#2E7D32");
 
@@ -190,7 +190,7 @@ namespace api.BusinessLogic.Services.Reports
                 {
                     row.RelativeItem(3).Padding(5).Column(c =>
                     {
-                        c.Item().Text("Horas por Usuario")
+                        c.Item().Text("Hours by User")
                             .FontSize(14).Bold().FontColor("#424242");
                         c.Item().PaddingTop(10)
                             .Border(1)
@@ -202,7 +202,7 @@ namespace api.BusinessLogic.Services.Reports
 
                     row.RelativeItem(2).Padding(5).Column(c =>
                     {
-                        c.Item().Text("Estado de Solicitudes")
+                        c.Item().Text("Request Status")
                             .FontSize(14).Bold().FontColor("#424242");
                         c.Item().PaddingTop(10)
                             .Border(1)
@@ -236,7 +236,7 @@ namespace api.BusinessLogic.Services.Reports
             if (users.Count == 0)
             {
                 using var font = new Font("Arial", 14, FontStyle.Italic);
-                g.DrawString("No hay datos disponibles", font, Brushes.Gray, width / 2 - 80, height / 2);
+                g.DrawString("No data available", font, Brushes.Gray, width / 2 - 80, height / 2);
                 using var ms = new MemoryStream();
                 bmp.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
                 return ms.ToArray();
@@ -375,12 +375,12 @@ namespace api.BusinessLogic.Services.Reports
             
             // Aprobadas
             g.FillRectangle(brushApproved, legendX, legendY, 40, 40);
-            g.DrawString($"Aprobadas: {approved} ({percentApproved:F1}%)", 
+            g.DrawString($"Approved: {approved} ({percentApproved:F1}%)", 
                 fontLegend, Brushes.Black, legendX + 50, legendY + 8);
             
             // Rechazadas
             g.FillRectangle(brushRejected, legendX + 350, legendY, 40, 40);
-            g.DrawString($"Rechazadas: {rejected} ({percentRejected:F1}%)", 
+            g.DrawString($"Rejected: {rejected} ({percentRejected:F1}%)", 
                 fontLegend, Brushes.Black, legendX + 400, legendY + 8);
 
             using var stream = new MemoryStream();

@@ -19,6 +19,7 @@ namespace api.BusinessLogic.Services
     {
         string GenerateTwoFactorEmail(string code);
         string GenerateOvertimeNotificationEmail(string title, string message, bool isApproved);
+        string GenerateReportEmail();
     }
 
     // ------------------- Template Service -------------------
@@ -79,13 +80,13 @@ namespace api.BusinessLogic.Services
 </head>
 <body>
   <div class='email-container'>
-    <h1>Código de Autenticación</h1>
-    <p>Hola,</p>
-    <p>Tu código de verificación es:</p>
+    <h1>Authentication Code</h1>
+    <p>Hello,</p>
+    <p>Your verification code is:</p>
     <div class='otp-box'>{code}</div>
-    <p><strong>Este código expirará en 10 minutos.</strong></p>
-    <p>Si no solicitaste este código, ignora este correo.</p>
-    <div class='footer'>Este es un correo automático, por favor no respondas.</div>
+    <p><strong>This code will expire in 10 minutes.</strong></p>
+    <p>If you didn't request this code, please ignore this email.</p>
+    <div class='footer'>This is an automated email, please do not reply.</div>
   </div>
 </body>
 </html>
@@ -95,14 +96,14 @@ namespace api.BusinessLogic.Services
         public string GenerateOvertimeNotificationEmail(string title, string message, bool isApproved)
         {
             var color = isApproved ? "#50B95D" : "#dc3545";
-            var statusText = isApproved ? "APROBADA" : "RECHAZADA";
+            var statusText = isApproved ? "APPROVED" : "REJECTED";
 
             return $@"
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset='utf-8'>
-<title>Notificación de Solicitud de Horas Extra</title>
+<title>Overtime Request Notification</title>
 <style>
   body {{
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -144,14 +145,136 @@ namespace api.BusinessLogic.Services
 <body>
   <div class='email-container'>
     <div class='header'>
-      <h1>Solicitud {statusText}</h1>
+      <h1>Request {statusText}</h1>
     </div>
     <div class='content'>
       {message}
     </div>
     <div class='footer'>
-      <strong>Sistema de Gestión de Horas Extra</strong><br/>
-      Este es un mensaje automático, por favor no respondas.
+      <strong>Overtime Management System</strong><br/>
+      This is an automated message, please do not reply.
+    </div>
+  </div>
+</body>
+</html>";
+        }
+
+        public string GenerateReportEmail()
+        {
+            return @"
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset='utf-8'>
+<title>Overtime Report</title>
+<style>
+  body {
+    font-family: 'Open Sans', sans-serif;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    margin: 0;
+    padding: 0;
+  }
+  .email-container {
+    max-width: 600px;
+    margin: 0 auto;
+    background: #fff;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 15px 40px rgba(50,50,93,0.1), 0 8px 20px rgba(0,0,0,0.1);
+  }
+  h1 {
+    font-size: 32px;
+    font-weight: 700;
+    color: #50B95D;
+    text-align: center;
+    margin: 0 0 10px 0;
+  }
+  .subtitle {
+    font-size: 16px;
+    color: #666;
+    text-align: center;
+    margin: 0 0 30px 0;
+  }
+  p {
+    font-size: 16px;
+    color: #333;
+    line-height: 1.6;
+    margin: 0 0 15px 0;
+  }
+  .report-box {
+    background-color: #f9f9f9;
+    padding: 25px;
+    margin: 25px 0;
+    border-radius: 10px;
+    border-left: 4px solid #50B95D;
+  }
+  .report-box h2 {
+    font-size: 20px;
+    color: #50B95D;
+    margin: 0 0 15px 0;
+    font-weight: 600;
+  }
+  .report-box p {
+    margin: 0 0 10px 0;
+    font-size: 15px;
+    color: #555;
+  }
+  .report-box p:last-child {
+    margin: 0;
+  }
+  ul {
+    color: #555;
+    line-height: 1.8;
+    padding-left: 20px;
+    margin: 15px 0;
+  }
+  ul li {
+    margin-bottom: 8px;
+  }
+  .footer {
+    font-size: 12px;
+    color: #7f8c8d;
+    text-align: center;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #e0e0e0;
+  }
+  .footer strong {
+    display: block;
+    font-size: 14px;
+    color: #333;
+    margin-bottom: 5px;
+  }
+</style>
+</head>
+<body>
+  <div class='email-container'>
+    <h1>📊 Overtime Report</h1>
+    <p class='subtitle'>Your monthly metrics and analytics</p>
+    
+    <p>Hello,</p>
+    <p>We're pleased to share your <strong>Overtime Management Report</strong>. The attached PDF contains detailed metrics and insights for this period.</p>
+    
+    <div class='report-box'>
+      <h2>📎 Attached Document</h2>
+      <p><strong>OvertimeReport.pdf</strong></p>
+      <p>Complete analysis of overtime requests, approvals, costs, and trends.</p>
+    </div>
+
+    <p><strong>This report includes:</strong></p>
+    <ul>
+      <li>Total requests submitted and processed</li>
+      <li>Approval and rejection statistics</li>
+      <li>Average response time analysis</li>
+      <li>Total cost breakdown</li>
+      <li>Top users by overtime hours</li>
+    </ul>
+
+    <p>If you have any questions or need additional information, please don't hesitate to reach out to our support team.</p>
+    
+    <div class='footer'>
+      <strong>Overtime Management System</strong>
+      <p>This is an automated email, please do not reply.</p>
     </div>
   </div>
 </body>
@@ -173,7 +296,7 @@ namespace api.BusinessLogic.Services
             _templateService = templateService;
         }
 
-        // 🔐 Envío de código 2FA
+        // 🔐 Send 2FA code
         public async Task<bool> SendTwoFactorCodeAsync(string email, string code)
         {
             try
@@ -186,8 +309,8 @@ namespace api.BusinessLogic.Services
 
                 using var mailMessage = new MailMessage
                 {
-                    From = new MailAddress(fromEmail!, "Sistema de Horas Extra"),
-                    Subject = "Código de Autenticación",
+                    From = new MailAddress(fromEmail!, "Overtime System"),
+                    Subject = "Authentication Code",
                     Body = _templateService.GenerateTwoFactorEmail(code),
                     IsBodyHtml = true
                 };
@@ -204,12 +327,12 @@ namespace api.BusinessLogic.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error enviando OTP");
+                _logger.LogError(ex, "Error sending OTP");
                 return false;
             }
         }
 
-        // 📬 Notificación de solicitud aprobada o rechazada
+        // 📬 Overtime notification (approved or rejected)
         public async Task<bool> SendOvertimeNotificationAsync(string email, string subject, string message)
         {
             try
@@ -220,11 +343,11 @@ namespace api.BusinessLogic.Services
                 var host = smtpConfig["Host"];
                 var port = int.Parse(smtpConfig["Port"] ?? "587");
 
-                var isApproved = subject.Contains("Aprobada", StringComparison.OrdinalIgnoreCase);
+                var isApproved = subject.Contains("Approved", StringComparison.OrdinalIgnoreCase);
 
                 using var mailMessage = new MailMessage
                 {
-                    From = new MailAddress(fromEmail!, "Sistema de Horas Extra"),
+                    From = new MailAddress(fromEmail!, "Overtime System"),
                     Subject = subject,
                     Body = _templateService.GenerateOvertimeNotificationEmail(subject, message, isApproved),
                     IsBodyHtml = true
@@ -242,12 +365,12 @@ namespace api.BusinessLogic.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error enviando notificación de horas extra");
+                _logger.LogError(ex, "Error sending overtime notification");
                 return false;
             }
         }
 
-        // 📎 NUEVO → Enviar correo con adjunto (usado por ReportsService)
+        // 📎 NEW → Send email with attachment (used by ReportsService)
         public async Task<bool> SendEmailWithAttachment(string email, string subject, string message, string attachmentPath, string attachmentName)
         {
             try
@@ -260,7 +383,7 @@ namespace api.BusinessLogic.Services
 
                 using var mailMessage = new MailMessage
                 {
-                    From = new MailAddress(fromEmail!, "Sistema de Horas Extra"),
+                    From = new MailAddress(fromEmail!, "Overtime System"),
                     Subject = subject,
                     Body = message,
                     IsBodyHtml = true
@@ -281,12 +404,12 @@ namespace api.BusinessLogic.Services
                 };
 
                 await smtpClient.SendMailAsync(mailMessage);
-                _logger.LogInformation("Correo enviado con adjunto a {Email}", email);
+                _logger.LogInformation("Email sent with attachment to {Email}", email);
                 return true;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error enviando correo con adjunto a {Email}", email);
+                _logger.LogError(ex, "Error sending email with attachment to {Email}", email);
                 return false;
             }
         }
