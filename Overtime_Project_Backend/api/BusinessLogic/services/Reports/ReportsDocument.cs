@@ -24,7 +24,6 @@ namespace api.BusinessLogic.Services.Reports
                 page.Margin(50);
                 page.Size(PageSizes.A4);
 
-                // ======= HEADER =======
                 page.Header().Row(row =>
                 {
                     row.RelativeItem().Column(col =>
@@ -52,7 +51,6 @@ namespace api.BusinessLogic.Services.Reports
                     col.Item().Element(ComposeCharts);
                 });
 
-                // ======= FOOTER =======
                 page.Footer()
                     .AlignCenter()
                     .Text($"Generated on {DateTime.Now:MM/dd/yyyy HH:mm}")
@@ -61,9 +59,6 @@ namespace api.BusinessLogic.Services.Reports
             });
         }
 
-        // ======================================================
-        // 🧾 RESUMEN GENERAL
-        // ======================================================
         void ComposeSummary(IContainer container)
         {
             container.Column(col =>
@@ -109,9 +104,6 @@ namespace api.BusinessLogic.Services.Reports
                 });
         }
 
-        // ======================================================
-        // 🏅 TOP USUARIOS
-        // ======================================================
         void ComposeTopUsers(IContainer container)
         {
             container.Column(col =>
@@ -131,7 +123,6 @@ namespace api.BusinessLogic.Services.Reports
                             columns.RelativeColumn(1);
                         });
 
-                        // Encabezado
                         table.Header(header =>
                         {
                             header.Cell().Background("#2E7D32")
@@ -146,7 +137,6 @@ namespace api.BusinessLogic.Services.Reports
                                 .Text("Total Hours").FontColor(Colors.White).Bold();
                         });
 
-                        // Filas
                         int index = 1;
                         foreach (var u in Data.TopUsers)
                         {
@@ -175,9 +165,6 @@ namespace api.BusinessLogic.Services.Reports
             });
         }
 
-        // ======================================================
-        // 📊 GRÁFICOS
-        // ======================================================
         void ComposeCharts(IContainer container)
         {
             container.Column(col =>
@@ -215,9 +202,6 @@ namespace api.BusinessLogic.Services.Reports
             });
         }
 
-        // ======================================================
-        // 📊 Gráfico de Barras (Alta Calidad)
-        // ======================================================
         [SupportedOSPlatform("windows")]
         private byte[] GenerateBarChart(List<TopUser> users)
         {
@@ -225,7 +209,6 @@ namespace api.BusinessLogic.Services.Reports
             using var bmp = new Bitmap(width, height);
             using var g = Graphics.FromImage(bmp);
             
-            // Configuración de alta calidad
             g.SmoothingMode = SmoothingMode.AntiAlias;
             g.InterpolationMode = InterpolationMode.HighQualityBicubic;
             g.PixelOffsetMode = PixelOffsetMode.HighQuality;
@@ -246,7 +229,6 @@ namespace api.BusinessLogic.Services.Reports
             int barWidth = 120, spacing = 60, startX = 80, baseY = height - 100;
             int chartHeight = 400;
 
-            // Dibujar líneas de grid
             using var penGrid = new Pen(SDColor.FromArgb(230, 230, 230), 1);
             for (int i = 0; i <= 5; i++)
             {
@@ -258,14 +240,12 @@ namespace api.BusinessLogic.Services.Reports
                 g.DrawString(label, fontGrid, Brushes.Gray, 10, y - 8);
             }
 
-            // Dibujar barras
             for (int i = 0; i < users.Count; i++)
             {
                 var user = users[i];
                 int barHeight = (int)((user.TotalHours / max) * chartHeight);
                 int x = startX + i * (barWidth + spacing);
 
-                // Gradiente para la barra
                 var rect = new Rectangle(x, baseY - barHeight, barWidth, barHeight);
                 using var brush = new LinearGradientBrush(
                     rect,
@@ -276,11 +256,9 @@ namespace api.BusinessLogic.Services.Reports
                 
                 g.FillRectangle(brush, rect);
                 
-                // Borde de la barra
                 using var penBorder = new Pen(SDColor.FromArgb(46, 125, 50), 2);
                 g.DrawRectangle(penBorder, rect);
 
-                // Nombre del usuario
                 using var fontName = new Font("Arial", 11, FontStyle.Bold);
                 string userName = user.UserName.Split('@')[0];
                 if (userName.Length > 12) userName = userName.Substring(0, 10) + "..";
@@ -289,7 +267,6 @@ namespace api.BusinessLogic.Services.Reports
                 g.DrawString(userName, fontName, Brushes.Black, 
                     x + (barWidth - nameSize.Width) / 2, baseY + 10);
 
-                // Valor encima de la barra
                 using var fontValue = new Font("Arial", 12, FontStyle.Bold);
                 string valueText = $"{user.TotalHours}h";
                 var valueSize = g.MeasureString(valueText, fontValue);
@@ -302,9 +279,7 @@ namespace api.BusinessLogic.Services.Reports
             return stream.ToArray();
         }
 
-        // ======================================================
-        // 🥧 Gráfico de Pastel (Alta Calidad)
-        // ======================================================
+
         [SupportedOSPlatform("windows")]
         private byte[] GeneratePieChart(int approved, int rejected)
         {
@@ -312,7 +287,6 @@ namespace api.BusinessLogic.Services.Reports
             using var bmp = new Bitmap(width, height);
             using var g = Graphics.FromImage(bmp);
             
-            // Configuración de alta calidad
             g.SmoothingMode = SmoothingMode.AntiAlias;
             g.InterpolationMode = InterpolationMode.HighQualityBicubic;
             g.PixelOffsetMode = PixelOffsetMode.HighQuality;
@@ -332,29 +306,24 @@ namespace api.BusinessLogic.Services.Reports
             int diameter = 400;
             var pieRect = new Rectangle(centerX - diameter / 2, centerY - diameter / 2, diameter, diameter);
 
-            // Sombra
             using var shadowBrush = new SolidBrush(SDColor.FromArgb(50, 0, 0, 0));
             g.FillEllipse(shadowBrush, pieRect.X + 5, pieRect.Y + 5, diameter, diameter);
 
-            // Dibujar segmentos
             using var brushApproved = new SolidBrush(SDColor.FromArgb(76, 175, 80));
             using var brushRejected = new SolidBrush(SDColor.FromArgb(244, 67, 54));
             
             g.FillPie(brushApproved, pieRect, -90, angleApproved);
             g.FillPie(brushRejected, pieRect, -90 + angleApproved, 360 - angleApproved);
 
-            // Borde blanco entre segmentos
             using var penWhite = new Pen(SDColor.White, 4);
             g.DrawPie(penWhite, pieRect, -90, angleApproved);
             g.DrawPie(penWhite, pieRect, -90 + angleApproved, 360 - angleApproved);
 
-            // Círculo interior (efecto donut)
             int innerDiameter = 180;
             var innerRect = new Rectangle(centerX - innerDiameter / 2, centerY - innerDiameter / 2, 
                 innerDiameter, innerDiameter);
             g.FillEllipse(Brushes.White, innerRect);
 
-            // Total en el centro
             using var fontTotal = new Font("Arial", 32, FontStyle.Bold);
             string totalText = total.ToString("F0");
             var totalSize = g.MeasureString(totalText, fontTotal);
@@ -367,18 +336,15 @@ namespace api.BusinessLogic.Services.Reports
             g.DrawString(labelText, fontLabel, Brushes.Gray, 
                 centerX - labelSize.Width / 2, centerY + 20);
 
-            // Leyenda
             int legendY = height - 120;
             int legendX = 50;
             
             using var fontLegend = new Font("Arial", 16, FontStyle.Bold);
             
-            // Aprobadas
             g.FillRectangle(brushApproved, legendX, legendY, 40, 40);
             g.DrawString($"Approved: {approved} ({percentApproved:F1}%)", 
                 fontLegend, Brushes.Black, legendX + 50, legendY + 8);
             
-            // Rechazadas
             g.FillRectangle(brushRejected, legendX + 350, legendY, 40, 40);
             g.DrawString($"Rejected: {rejected} ({percentRejected:F1}%)", 
                 fontLegend, Brushes.Black, legendX + 400, legendY + 8);

@@ -25,7 +25,6 @@ namespace api.Data
                 e.Property(x => x.PasswordHash).HasMaxLength(255).IsRequired().HasColumnName("password_hash");
             });
 
-            // ===== users =====
             b.Entity<User>(e =>
             {
                 e.ToTable("users");
@@ -43,7 +42,6 @@ namespace api.Data
                  .OnDelete(DeleteBehavior.Restrict);
             });
 
-            // ===== overtime_requests =====
             b.Entity<OvertimeRequest>(e =>
             {
                 e.ToTable("overtime_requests");
@@ -67,7 +65,6 @@ namespace api.Data
                  .OnDelete(DeleteBehavior.Restrict);
             });
 
-            // ===== overtime_approvals =====
             b.Entity<Approval>(e =>
             {
                 e.ToTable("overtime_approvals");
@@ -93,7 +90,6 @@ namespace api.Data
                  .OnDelete(DeleteBehavior.Restrict);
             });
 
-            // ===== roles =====
             b.Entity<Role>(e =>
             {
                 e.ToTable("roles");
@@ -102,7 +98,6 @@ namespace api.Data
                 e.Property(x => x.Permissions).HasColumnType("text");
             });
 
-            // ===== notifications =====
             b.Entity<Notification>(e =>
             {
                 e.ToTable("notifications");

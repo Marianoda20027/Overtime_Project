@@ -46,7 +46,6 @@ namespace api.Controllers
             string email = request.Username.ToLower();
             string role = "Employee";
 
-            // Verificar en Users
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Email.ToLower() == email);
             if (user != null)
             {
@@ -57,7 +56,6 @@ namespace api.Controllers
             }
             else
             {
-                // Verificar en Managers
                 var manager = await _context.Managers.FirstOrDefaultAsync(m => m.Email.ToLower() == email);
                 if (manager == null)
                     return Unauthorized(new { message = "User not found." });

@@ -11,7 +11,6 @@ namespace api.Domain
         public bool IsActive { get; set; }
         public decimal Salary { get; set; }
 
-        // 🔹 FK hacia Manager
         public int? ManagerId { get; set; }
         public Manager? Manager { get; set; }
 

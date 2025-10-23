@@ -5,7 +5,7 @@ namespace api.DTOs;
         public TimeSpan StartTime { get; set; }
         public TimeSpan EndTime { get; set; }
         public string Justification { get; set; }
-        public decimal TotalHours { get; set; }  // Cambié de string a decimal
+        public decimal TotalHours { get; set; }  
         public string Email { get; set; }
     }
 

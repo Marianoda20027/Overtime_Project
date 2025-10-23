@@ -20,7 +20,6 @@ namespace api.Controllers
             _emailService = emailService;
         }
 
-        // ✅ APROBAR SOLICITUD
         [HttpPost("approve/{overtimeId}")]
         public async Task<IActionResult> ApproveRequest(Guid overtimeId, [FromBody] ApprovalRequestDto dto)
         {
@@ -34,7 +33,6 @@ namespace api.Controllers
             if (manager == null)
                 return Unauthorized(new { message = "Manager no encontrado" });
 
-            // 🔹 Buscar la solicitud
             var request = await _context.OvertimeRequests
                 .Include(r => r.User)
                 .FirstOrDefaultAsync(r => r.OvertimeId == overtimeId && r.Status == OvertimeStatus.Pending);
@@ -42,11 +40,9 @@ namespace api.Controllers
             if (request == null)
                 return NotFound(new { message = "Solicitud no encontrada o ya procesada" });
 
-            // 🔹 Verificar que el manager esté autorizado
             if (request.User.ManagerId != manager.ManagerId)
                 return Unauthorized(new { message = "No autorizado para aprobar esta solicitud" });
 
-            // ✅ Aprobar
             request.Status = OvertimeStatus.Approved;
             request.UpdatedAt = DateTime.UtcNow;
 
@@ -77,21 +73,18 @@ namespace api.Controllers
             return Ok(new { message = "Solicitud aprobada correctamente" });
         }
 
-        // ❌ RECHAZAR SOLICITUD
         [HttpPost("reject/{overtimeId}")]
         public async Task<IActionResult> RejectRequest(Guid overtimeId, [FromBody] RejectRequestDto dto)
         {
             if (string.IsNullOrEmpty(dto.ManagerEmail))
                 return BadRequest(new { message = "Email del manager requerido" });
 
-            // 🔹 Buscar manager por email
             var manager = await _context.Managers
                 .FirstOrDefaultAsync(m => m.Email.ToLower() == dto.ManagerEmail.ToLower());
 
             if (manager == null)
                 return Unauthorized(new { message = "Manager no encontrado" });
 
-            // 🔹 Buscar la solicitud
             var request = await _context.OvertimeRequests
                 .Include(r => r.User)
                 .FirstOrDefaultAsync(r => r.OvertimeId == overtimeId && r.Status == OvertimeStatus.Pending);
@@ -99,11 +92,9 @@ namespace api.Controllers
             if (request == null)
                 return NotFound(new { message = "Solicitud no encontrada o ya procesada" });
 
-            // 🔹 Verificar que el manager esté autorizado
             if (request.User.ManagerId != manager.ManagerId)
                 return Unauthorized(new { message = "No autorizado para rechazar esta solicitud" });
 
-            // ❌ Rechazar
             request.Status = OvertimeStatus.Rejected;
             request.UpdatedAt = DateTime.UtcNow;
 
@@ -121,7 +112,6 @@ namespace api.Controllers
             _context.OvertimeApprovals.Add(rejection);
             await _context.SaveChangesAsync();
 
-            // 📧 Enviar email al usuario
             await _emailService.SendOvertimeNotificationAsync(
                 request.User.Email,
                 "Solicitud de Horas Extra RECHAZADA",

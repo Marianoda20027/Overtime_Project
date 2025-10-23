@@ -18,7 +18,6 @@ namespace api.BusinessLogic.Services
 
         public async Task<(bool success, string message, string role)> AuthenticateUserAsync(string email, string password)
         {
-            // Buscar en Users
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Email.ToLower() == email.ToLower());
             if (user != null)
             {
@@ -35,7 +34,6 @@ namespace api.BusinessLogic.Services
                 return (true, "Login successful. OTP sent.", "Employee");
             }
 
-            // Buscar en Managers
             var manager = await _context.Managers.FirstOrDefaultAsync(m => m.Email.ToLower() == email.ToLower());
             if (manager != null)
             {
