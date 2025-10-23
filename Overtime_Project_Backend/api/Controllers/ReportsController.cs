@@ -6,7 +6,7 @@ namespace api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [AllowAnonymous] // 🔓 Permitir acceso sin token JWT (solo para pruebas o entornos de desarrollo)
+    [AllowAnonymous] 
     public class ReportsController : ControllerBase
     {
         private readonly ReportsService _reports;
@@ -16,9 +16,6 @@ namespace api.Controllers
             _reports = reports;
         }
 
-        // ======================================================
-        // 🧾 GET: Generar reporte PDF
-        // ======================================================
         [HttpGet("generate")]
         public async Task<IActionResult> GenerateReport()
         {
@@ -41,9 +38,6 @@ namespace api.Controllers
             }
         }
 
-        // ======================================================
-        // ✉️ POST: Enviar reporte al correo (adjunto PDF)
-        // ======================================================
         [HttpPost("send")]
         public async Task<IActionResult> SendReport([FromBody] ReportEmailRequest request)
         {

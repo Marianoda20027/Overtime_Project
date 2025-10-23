@@ -7,7 +7,6 @@ using Microsoft.Extensions.Logging;
 
 namespace api.BusinessLogic.Services
 {
-    // ------------------- Interfaces -------------------
     public interface IEmailService
     {
         Task<bool> SendTwoFactorCodeAsync(string email, string code);
@@ -332,7 +331,6 @@ namespace api.BusinessLogic.Services
             }
         }
 
-        // 📬 Overtime notification (approved or rejected)
         public async Task<bool> SendOvertimeNotificationAsync(string email, string subject, string message)
         {
             try
@@ -370,7 +368,6 @@ namespace api.BusinessLogic.Services
             }
         }
 
-        // 📎 NEW → Send email with attachment (used by ReportsService)
         public async Task<bool> SendEmailWithAttachment(string email, string subject, string message, string attachmentPath, string attachmentName)
         {
             try

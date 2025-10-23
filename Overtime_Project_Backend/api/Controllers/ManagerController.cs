@@ -15,30 +15,26 @@ namespace api.Controllers
             _context = context;
         }
 
-        // 🔥 Ahora busca por el email del manager, no por su ID
         [HttpGet("{email}")]
         public async Task<IActionResult> GetByManagerEmail(string email)
         {
             if (string.IsNullOrEmpty(email))
                 return BadRequest(new { message = "Email del manager requerido" });
 
-            // Busca el manager por email
             var manager = await _context.Managers
                 .FirstOrDefaultAsync(m => m.Email.ToLower() == email.ToLower());
 
             if (manager == null)
                 return NotFound(new { message = "Manager no encontrado" });
 
-            // Busca los usuarios asignados a ese manager
             var userIds = await _context.Users
                 .Where(u => u.ManagerId == manager.ManagerId)
                 .Select(u => u.UserId)
                 .ToListAsync();
 
             if (!userIds.Any())
-                return Ok(new List<object>()); // sin empleados
-
-            // Busca solicitudes de esos usuarios
+                return Ok(new List<object>()); 
+                
             var requests = await _context.OvertimeRequests
                 .Include(r => r.User)
                 .Where(r => userIds.Contains(r.UserId))

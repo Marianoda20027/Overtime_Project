@@ -33,8 +33,7 @@ namespace api.Controllers
                 return Unauthorized(new { message = "User not found." });
             }
 
-            // Usamos directamente TotalHours enviado desde el frontend
-            var cost = (int)(overtimeCreateDto.TotalHours * user.Salary);  // Convertido a int aquí
+            var cost = (int)(overtimeCreateDto.TotalHours * user.Salary); 
 
             var overtimeRequest = new OvertimeRequest
             {

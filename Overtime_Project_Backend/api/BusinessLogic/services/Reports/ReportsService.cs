@@ -21,9 +21,6 @@ namespace api.BusinessLogic.Services.Reports
             _templateService = templateService;
         }
 
-        // ======================================================
-        // 🧾 Generate PDF Report
-        // ======================================================
         public async Task<string> GenerateReportAsync()
         {
             var data = await _context.OvertimeRequests
@@ -60,20 +57,15 @@ namespace api.BusinessLogic.Services.Reports
             return filePath;
         }
 
-        // ======================================================
-        // ✉️ Send PDF Report via Email with styled template
-        // ======================================================
         public async Task<bool> SendReportAsync(string email)
         {
             var pdfPath = await GenerateReportAsync();
             var subject = "📊 Overtime Report - Monthly Analytics";
             
-            // ✅ Use the beautiful styled template from EmailTemplateService
             var message = _templateService.GenerateReportEmail();
 
             try
             {
-                // ✅ Send email with styled HTML and PDF attachment
                 await _emailService.SendEmailWithAttachment(
                     email,
                     subject,

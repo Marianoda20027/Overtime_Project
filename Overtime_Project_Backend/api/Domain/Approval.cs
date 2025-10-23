@@ -11,7 +11,6 @@ namespace api.Domain
         public string? Comments { get; set; }
         public string? RejectionReason { get; set; }
 
-        // Navigation properties
         public OvertimeRequest? Overtime { get; set; }
         public Manager? Manager { get; set; }
     }
