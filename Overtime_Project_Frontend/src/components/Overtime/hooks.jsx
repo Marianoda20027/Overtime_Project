@@ -1,4 +1,4 @@
-// src/pages/Overtime/hooks.js
+
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import OvertimeService from '../../services/overtime.service';
 
@@ -14,7 +14,7 @@ export const useOvertimeForm = () => {
   const [okMsg, setOkMsg] = useState(null);
   const [requests, setRequests] = useState([]);
 
-  // Calcular las horas totales
+
   const totalHours = useMemo(() => {
     if (!form.startTime || !form.endTime) return 0;
     const [sh, sm] = form.startTime.split(':').map(Number);
@@ -25,7 +25,7 @@ export const useOvertimeForm = () => {
     return diff > 0 ? diff.toFixed(2) : 0;
   }, [form.startTime, form.endTime]);
 
-  //verifica que las horas sean validas
+  
   const isInvalidTime = useMemo(() => {
     if (!form.startTime || !form.endTime) return false;
     const [sh, sm] = form.startTime.split(':').map(Number);
@@ -35,12 +35,12 @@ export const useOvertimeForm = () => {
     return end <= start;
   }, [form.startTime, form.endTime]);
 
-  // Manejar cambios en el formulario
+  
   const update = useCallback((key, value) => {
     setForm((prevForm) => ({ ...prevForm, [key]: value }));
   }, []);
 
-  // Enviar la solicitud de horas extra
+  
   const submit = useCallback(async (e) => {
     e.preventDefault();
     setError(null);
@@ -59,20 +59,20 @@ export const useOvertimeForm = () => {
     setLoading(true);
 
     try {
-      // Obtener el JWT de las cookies y decodificarlo
+      
       const tokenData = await OvertimeService.getJwtData();
-      const email = tokenData?.sub; // El correo está en el 'sub' del JWT
+      const email = tokenData?.sub; 
 
       if (!email) {
         setError('Usuario no autenticado');
         return;
       }
 
-      // Enviar la solicitud de horas extra con el correo y otros datos
+      
       await OvertimeService.create({
         ...form,
         totalHours,
-        email, // Agregar el correo del usuario al payload
+        email, 
       });
       setOkMsg('Solicitud enviada correctamente');
       setForm({ date: '', startTime: '', endTime: '', justification: '' });
@@ -83,7 +83,7 @@ export const useOvertimeForm = () => {
     }
   }, [form, totalHours]);
 
-  // Obtener solicitudes de horas extra al cargar el componente
+  
   useEffect(() => {
     async function fetchRequests() {
       const data = await OvertimeService.myRequests();

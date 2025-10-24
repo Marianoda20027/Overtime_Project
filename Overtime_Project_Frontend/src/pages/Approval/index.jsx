@@ -8,9 +8,9 @@ const ApprovalPage = () => {
   const { requests, acceptRequest, rejectRequest, loading } = useRequests();
   const [showModal, setShowModal] = useState(false);
   const [selectedRequest, setSelectedRequest] = useState(null);
-  const [actionType, setActionType] = useState(''); // 'accept' or 'reject'
-  const [reason, setReason] = useState(''); // Reason for rejection
-  const [comments, setComments] = useState(''); // Comments for approval/rejection
+  const [actionType, setActionType] = useState(''); 
+  const [reason, setReason] = useState(''); 
+  const [comments, setComments] = useState(''); 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleAccept = (request) => {
@@ -41,17 +41,17 @@ const ApprovalPage = () => {
 
     try {
       // Calculate the overtime cost
-      const cost = selectedRequest.totalHours * selectedRequest.salary; // Salary * total hours
+      const cost = selectedRequest.totalHours * selectedRequest.salary; 
 
       if (actionType === 'accept') {
-        await acceptRequest(selectedRequest.id, comments, cost); // Accept request with comments and cost
+        await acceptRequest(selectedRequest.id, comments, cost);  
       } else if (actionType === 'reject') {
         if (!reason.trim()) {
           alert('Please provide a reason for rejection');
           setIsSubmitting(false);
           return;
         }
-        await rejectRequest(selectedRequest.id, reason.trim(), comments, cost); // Reject request with reason, comments, and cost
+        await rejectRequest(selectedRequest.id, reason.trim(), comments, cost); 
       }
 
       handleClose();

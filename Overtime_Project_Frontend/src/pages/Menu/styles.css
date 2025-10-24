@@ -28,11 +28,11 @@
 
 .button-center:hover {
   background-color: #67C28A; /* Un tono más oscuro al hacer hover */
-  transform: translate(-50%, -3px); /* Sutil animación */
+  transform: translate(-50%, -3px); 
   box-shadow: 0 8px 25px rgba(245, 166, 35, 0.4);
 }
 
-/* Estilo para la sección de contenido */
+
 .content-container {
   text-align: center;
   margin-top: 80px;
@@ -46,9 +46,9 @@
   align-items: center;
 }
 
-/* Títulos - EXTRA GRANDES */
+
 .content-container h2 {
-  font-size: 50px; /* Súper grande */
+  font-size: 50px; 
   font-weight: 700;
   color: #67C28D;
   margin-bottom: 30px;
@@ -56,22 +56,22 @@
 }
 
 .content-container p {
-  font-size: 32px; /* Grande y legible */
+  font-size: 32px; 
   color: #555;
   margin-bottom: 80px;
   line-height: 1.6;
   font-weight: 500;
 }
 
-/* Estilo para los botones - SIMETRÍA PERFECTA */
+
 .buttons-container {
   display: flex;
   justify-content: center; /* Centramos el contenedor */
   align-items: center;
   width: 100%;
   max-width: 1400px; /* Más ancho para mejor separación */
-  margin-bottom: 60px; /* Reducimos para dar más espacio arriba */
-  margin-top: auto; /* Empujamos los botones hacia la parte inferior del contenedor */
+  margin-bottom: 60px; 
+  margin-top: auto; 
   position: relative;
   padding: 0 40px; /* Padding para evitar que los botones toquen los bordes */
 }
@@ -93,7 +93,6 @@ button {
   white-space: nowrap; /* Evita que el texto se rompa */
 }
 
-/* Botón izquierdo - "View My Request" - POSICIÓN EXACTA */
 .button-left {
   background-color: #452b79ff;
   color: white;
@@ -107,7 +106,7 @@ button {
   box-shadow: 0 8px 25px rgba(69, 43, 121, 0.4);
 }
 
-/* Botón derecho - "Submit Request" - POSICIÓN EXACTA */
+
 .button-right {
   background-color: #50B95D;
   color: white;
@@ -121,7 +120,6 @@ button {
   box-shadow: 0 8px 25px rgba(80, 185, 93, 0.4);
 }
 
-/* Footer que RELLENA TODO EL ESPACIO DE ABAJO */
 .buttons-page footer {
   width: 100%;
   background-color: #452b79ff;
@@ -149,7 +147,7 @@ footer a:hover {
   text-decoration: underline;
 }
 
-/* Responsive Design Perfecto */
+
 @media (max-width: 1200px) {
   .buttons-container {
     max-width: 1000px;
@@ -187,4 +185,5 @@ footer a:hover {
     margin-bottom: 60px;
   }
 
+}
 }

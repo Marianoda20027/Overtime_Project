@@ -1,7 +1,6 @@
-/* src/components/Login/styles.css */
 
 body {
-  font-family: 'Open Sans', sans-serif; /* Cambiado a Open Sans según la biblia */
+  font-family: 'Open Sans', sans-serif; 
   background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
   margin: 0;
   padding: 0;
@@ -18,42 +17,42 @@ body {
 
 .login-form {
   background: #ffffff;
-  padding: 60px; /* Aumentado el padding para más espacio */
-  border-radius: 12px; /* Bordes más grandes */
-  box-shadow: 0 15px 40px rgba(50, 50, 93, 0.1), 0 8px 20px rgba(0, 0, 0, 0.1); /* Sombra más grande */
+  padding: 60px; 
+  border-radius: 12px; 
+  box-shadow: 0 15px 40px rgba(50, 50, 93, 0.1), 0 8px 20px rgba(0, 0, 0, 0.1); 
   width: 100%;
-  max-width: 900px; /* Aumentado el tamaño máximo del formulario para aprovechar más el ancho */
+  max-width: 900px; 
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
 }
 
 .login-form h1 {
-  font-size: 40px; /* Aumentado el tamaño del título */
-  font-weight: 700; /* Más peso para el título */
-  color: #50B95D; /* Verde más profesional */
-  margin-bottom: 40px; /* Más margen debajo del título */
+  font-size: 40px; 
+  font-weight: 700; 
+  color: #50B95D; 
+  margin-bottom: 40px; 
   text-align: center;
 }
 
 .input-group {
-  margin-bottom: 30px; /* Aumentado el margen entre los campos */
+  margin-bottom: 30px; 
 }
 
 .input-group label {
-  font-size: 16px; /* Etiquetas más grandes */
+  font-size: 16px; 
   color: #555;
-  margin-bottom: 8px; /* Más espacio debajo de las etiquetas */
+  margin-bottom: 8px; 
   display: block;
   font-weight: 500;
 }
 
 .input-group input {
-  width: 100%; /* Aseguramos que los inputs ocupen todo el ancho disponible */
-  padding: 18px; /* Aumentado el padding en los campos */
-  font-size: 20px; /* Fuente más grande */
+  width: 100%; 
+  padding: 18px; 
+  font-size: 20px; 
   border: 1px solid #ddd;
-  border-radius: 10px; /* Bordes más suaves */
+  border-radius: 10px; 
   background-color: #f9f9f9;
   color: #333;
   transition: all 0.3s;
@@ -68,7 +67,7 @@ body {
 
 .error-message {
   color: #e74c3c;
-  font-size: 16px; /* Mensajes un poco más grandes */
+  font-size: 16px; 
   text-align: center;
   margin: 20px 0;
   padding: 16px;
@@ -79,8 +78,8 @@ body {
 .login-btn {
   height: 5%;
   width: 100%;
-  padding: 20px; /* Botón más grande */
-  font-size: 15px; /* Fuente más grande en el botón */
+  padding: 20px; 
+  font-size: 15px; 
   font-weight: 700;
   background-color: #50B95D;
   color: white;
@@ -91,7 +90,7 @@ body {
 }
 
 .login-btn:hover {
-  background-color: #45a56f; /* Verde más oscuro */
+  background-color: #45a56f; 
 }
 
 .login-btn:disabled {
@@ -101,20 +100,20 @@ body {
 
 @media (max-width: 480px) {
   .login-form {
-    padding: 40px; /* Aumento de padding en dispositivos pequeños */
+    padding: 40px; 
   }
 
   .login-form h1 {
-    font-size: 32px; /* Título más grande en pantallas pequeñas */
+    font-size: 32px; 
   }
 
   .input-group input {
-    font-size: 16px; /* Fuente más grande en dispositivos pequeños */
+    font-size: 16px; 
   }
 
   .login-btn {
-    padding: 18px; /* Botón más grande en dispositivos pequeños */
-    font-size: 16px; /* Fuente más grande en el botón */
+    padding: 18px; 
+    font-size: 16px; 
   }
   
 }

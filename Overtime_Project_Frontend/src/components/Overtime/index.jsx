@@ -1,17 +1,17 @@
-// src/pages/Overtime/index.jsx
+
 import React from 'react';
 import { useOvertimeForm } from './hooks.jsx';
-import './styles.css'; // Importando los estilos actualizados
+import './styles.css'; 
 import { useNavigate } from 'react-router-dom';
 
 const OvertimeRequest = () => {
   const { form, update, loading, error, okMsg, submit } = useOvertimeForm();
 
-  const navigate = useNavigate(); // Aquí es donde obtenemos la función navigate
+  const navigate = useNavigate(); 
 
-  // Función para manejar la acción del botón "Ver Solicitudes"
+  
   const handleViewRequests = () => {
-      navigate('/request'); // Navegamos a la página OvertimeRequest
+      navigate('/request'); 
   };
 
   return (

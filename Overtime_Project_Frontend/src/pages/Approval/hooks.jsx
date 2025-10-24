@@ -38,7 +38,7 @@ export const useRequests = () => {
 
       const data = await response.json();
       
-      // 🔥 FILTRAR solo Pending
+  
       const pendingRequests = data.filter(req => req.status === "Pending");
       setRequests(pendingRequests);
       
@@ -50,7 +50,7 @@ export const useRequests = () => {
     }
   };
 
-  // ✅ APROBAR SOLICITUD
+  
   const acceptRequest = async (overtimeId, comments) => {
     try {
       const token = Cookies.get("jwt");
@@ -88,7 +88,7 @@ export const useRequests = () => {
     }
   };
 
-  // ❌ RECHAZAR SOLICITUD
+  
   const rejectRequest = async (overtimeId, reason, comments) => {
     try {
       const token = Cookies.get("jwt");
