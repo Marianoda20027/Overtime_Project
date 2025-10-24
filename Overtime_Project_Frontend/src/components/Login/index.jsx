@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import './styles.css';
 
 const Login = () => {
-  const [username, setUsername] = useState(''); // email
+  const [username, setUsername] = useState(''); 
   const [password, setPassword] = useState('');
   const [otp, setOtp] = useState('');
   const [show2FA, setShow2FA] = useState(false);
@@ -16,7 +16,7 @@ const Login = () => {
 
   const navigate = useNavigate();
 
-  // ------------------ Paso 1: Login ------------------
+  
   const handleLogin = async (e) => {
     e.preventDefault();
     setErrorMessage('');
@@ -42,7 +42,7 @@ const Login = () => {
     }
   };
 
-  // ------------------ Paso 2: Verificación 2FA ------------------
+  
   const handle2FA = async (e) => {
     e.preventDefault();
     setErrorMessage('');
@@ -54,15 +54,15 @@ const Login = () => {
     }
 
     setIsLoading(true);
-    const response = await verify2FA({ Username: emailSentTo, OTP: otp }); // coincide con backend
+    const response = await verify2FA({ Username: emailSentTo, OTP: otp }); 
     setIsLoading(false);
 
     if (response.error) {
       setErrorMessage(response.error);
     } else {
       if (response.token) {
-        Cookies.set('jwt', response.token, { expires: 1 }); // expira en 1 día
-        navigate('/home'); // redirigir al dashboard
+        Cookies.set('jwt', response.token, { expires: 1 }); 
+        navigate('/home'); 
       }
     }
   };

@@ -28,7 +28,7 @@ const TwoButtonsPage = () => {
 
         <div className="buttons-container">
           {role === "Manager" ? (
-            // 👔 Si es manager, solo ve este botón
+            
             <button
               className="button-center"
               onClick={handleManagerRequests}
@@ -38,7 +38,7 @@ const TwoButtonsPage = () => {
               Employees Requests
             </button>
           ) : (
-            // 👷 Si no es manager, ve los dos botones normales
+        
             <>
               <button
                 className="button-left"

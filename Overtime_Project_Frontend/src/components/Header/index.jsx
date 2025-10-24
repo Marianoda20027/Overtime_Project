@@ -6,8 +6,8 @@ const Header = () => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    Cookies.remove('jwt'); // Eliminar token
-    navigate('/'); // Redirigir a la página de login interna
+    Cookies.remove('jwt'); 
+    navigate('/'); 
   };
 
   return (
@@ -24,12 +24,12 @@ const Header = () => {
   className="logout"
   style={{
     display: 'flex',
-    justifyContent: 'flex-end',  // alinea a la derecha
-    alignItems: 'center',        // centra verticalmente respecto al header
-    flex: 1,                      // ocupa el espacio restante del header
-    height: '100%',               // igual altura que el header
+    justifyContent: 'flex-end',  
+    alignItems: 'center',        
+    flex: 1,                      
+    height: '100%',               
     width: '100%',
-    paddingLeft: '10px',          // opcional, separación del logo
+    paddingLeft: '10px',          
   }}
 >
  

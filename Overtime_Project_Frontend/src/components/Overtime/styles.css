@@ -1,6 +1,4 @@
-/* src/pages/Overtime/styles.css */
 
-/* Eliminar cualquier posible margen no deseado del body */
 body {
   font-family: 'Open Sans', sans-serif;
   background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
@@ -24,7 +22,7 @@ h1 {
   padding: 0;
 }
 
-/* Evitar que el contenido se desborde de la página */
+
 .ot-page {
   display: flex;
   justify-content: center;
@@ -36,30 +34,30 @@ h1 {
 
 .ot-card {
   background: #ffffff;
-  padding: 30px; /* Aumentamos el padding para más espacio interno */
+  padding: 30px; 
   border-radius: 6px;
   box-shadow: 0 6px 20px rgba(50, 50, 93, 0.1), 0 3px 8px rgba(0, 0, 0, 0.07);
   width: 100%;
-  max-width: 1200px; /* Aumentamos el ancho máximo del formulario para que sea mucho más ancho */
-  margin: 30px 0; /* Aumentamos el margen superior e inferior */
+  max-width: 1200px; 
+  margin: 30px 0; 
 }
 
 .ot-card h3 {
-  font-size: 24px; /* Aumentamos el tamaño del título */
+  font-size: 24px; 
   font-weight: 600;
   color: #50B95D;
-  margin-bottom: 30px; /* Aumentamos el margen debajo del título */
+  margin-bottom: 30px; 
   text-align: center;
 }
 
 .input-group {
-  margin-bottom: 20px; /* Aumentado el margen entre los campos */
+  margin-bottom: 20px; 
 }
 
 .input-group label {
-  font-size: 14px; /* Etiquetas más grandes */
+  font-size: 14px; 
   color: #555;
-  margin-bottom: 10px; /* Más espacio debajo de las etiquetas */
+  margin-bottom: 10px; 
   display: block;
   font-weight: 500;
 }
@@ -67,8 +65,8 @@ h1 {
 .input-group input,
 .input-group textarea {
   width: 100%;
-  padding: 16px; /* Aumentamos el padding en los campos */
-  font-size: 16px; /* Fuente más grande */
+  padding: 16px; 
+  font-size: 16px; 
   border: 1px solid #ddd;
   border-radius: 10px;
   background-color: #f9f9f9;
@@ -85,7 +83,7 @@ h1 {
 
 .error-message,
 .success-message {
-  font-size: 14px; /* Mensajes un poco más grandes */
+  font-size: 14px; 
   text-align: center;
   margin: 20px 0;
   padding: 16px;
@@ -104,8 +102,8 @@ h1 {
 
 .ot-btn {
   width: 100%;
-  padding: 20px; /* Botón más grande */
-  font-size: 18px; /* Fuente más grande en el botón */
+  padding: 20px; 
+  font-size: 18px; 
   font-weight: 700;
   background-color: #50B95D;
   color: white;
@@ -116,7 +114,7 @@ h1 {
 }
 
 .ot-btn:hover {
-  background-color: #45a56f; /* Verde más oscuro */
+  background-color: #45a56f; 
 }
 
 .ot-btn:disabled {
@@ -124,23 +122,22 @@ h1 {
   cursor: not-allowed;
 }
 
-/* Nuevo botón para ver solicitudes previas */
 .view-requests-btn {
   width: 100%;
-  padding: 16px; /* Botón más grande */
-  font-size: 18px; /* Fuente más grande */
+  padding: 16px; 
+  font-size: 18px; 
   font-weight: 700;
-  background-color: #452b79ff; /* Morado para el botón de "Ver Solicitudes" */
+  background-color: #452b79ff; 
   color: white;
   border: none;
   border-radius: 10px;
   cursor: pointer;
   transition: background-color 0.3s;
-  margin-top: 15px; /* Espacio entre los dos botones */
+  margin-top: 15px; 
 }
 
 .view-requests-btn:hover {
-  background-color: #351f5d; /* Morado más oscuro */
+  background-color: #351f5d; 
 }
 
 .view-requests-btn:disabled {
@@ -150,27 +147,27 @@ h1 {
 
 @media (max-width: 480px) {
   .ot-card {
-    padding: 20px; /* Menos relleno en dispositivos pequeños */
-    max-width: 90%; /* Ajustamos el max-width en dispositivos pequeños */
+    padding: 20px; 
+    max-width: 90%; 
   }
   
   .ot-card h3 {
-    font-size: 18px; /* Título más pequeño en pantallas pequeñas */
+    font-size: 18px; 
     margin-bottom: 20px;
   }
   
   .input-group input,
   .input-group textarea {
-    font-size: 14px; /* Fuente más pequeña en dispositivos pequeños */
+    font-size: 14px; 
   }
 
   .ot-btn {
-    padding: 18px; /* Botón más grande en dispositivos pequeños */
-    font-size: 16px; /* Fuente más grande en el botón */
+    padding: 18px; 
+    font-size: 16px; 
   }
 
   .view-requests-btn {
-    padding: 18px; /* Botón más grande en dispositivos pequeños */
-    font-size: 16px; /* Fuente más grande en el botón */
+    padding: 18px; 
+    font-size: 16px; 
   }
 }

@@ -1,6 +1,5 @@
 /* src/pages/styles.css */
 
-/* Aseguramos que la página tenga fondo blanco */
 .overtime-page {
   background-color: #ffffff; /* Fondo blanco */
   font-family: 'Open Sans', sans-serif;
@@ -8,12 +7,11 @@
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
-  min-height: 100vh; /* Asegura que ocupe toda la altura */
+  min-height: 100vh; 
   margin: 0;
   padding: 0;
 }
 
-/* Estilo para el Header */
 .overtime-header {
   display: flex;
   flex-direction: column;
@@ -23,10 +21,10 @@
   box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1); /* Sombra más suave y compacta */
   width: 100%;
   max-width: 100%; /* Header abarca todo el ancho */
-  margin-bottom: 40px; /* Aumentamos el espacio después del header */
+  margin-bottom: 40px; 
 }
 
-/* Logo y título del header */
+
 .overtime-header .logo-container {
   display: flex;
   flex-direction: column;
@@ -35,7 +33,7 @@
 }
 
 .horizontal-logo {
-  width: 250px; /* Ajustamos el tamaño del logo horizontal para hacerlo más compacto */
+  width: 250px; 
 }
 
 /* Estilo para el Footer */
