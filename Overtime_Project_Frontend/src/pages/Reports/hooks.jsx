@@ -27,14 +27,14 @@ export const useReport = () => {
         throw new Error('Error generating PDF');
       }
 
-      // Release previous URL if exists
+      
       if (pdfUrl) URL.revokeObjectURL(pdfUrl);
 
       const blob = await pdfResponse.blob();
       const url = URL.createObjectURL(blob);
       setPdfUrl(url);
 
-      // ✉️ 2️⃣ Send report via email (EXACTLY like your curl)
+
       const emailResponse = await fetch('http://localhost:5100/api/reports/send', {
         method: 'POST',
         headers: {
@@ -47,10 +47,10 @@ export const useReport = () => {
         throw new Error('Error sending email');
       }
 
-      setMessage(`✅ Report generated and sent successfully to ${email}`);
+      setMessage(`Report generated and sent successfully to ${email}`);
     } catch (err) {
       console.error("Error generating or sending report:", err);
-      setError("❌ Error generating or sending the report. Please try again.");
+      setError("Error generating or sending the report. Please try again.");
     } finally {
       setLoading(false);
     }

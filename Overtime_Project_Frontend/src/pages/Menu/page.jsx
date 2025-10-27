@@ -10,7 +10,6 @@ import { decodeJWT } from '../../hooks/decodeJWT.JSX';
 const TwoButtonsPage = () => {
   const navigate = useNavigate();
 
-  // ✅ Leer token de las cookies
   const token = Cookies.get("jwt");
   const decoded = decodeJWT(token);
   const role = decoded?.["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];

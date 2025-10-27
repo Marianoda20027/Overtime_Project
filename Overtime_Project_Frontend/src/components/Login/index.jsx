@@ -3,9 +3,10 @@ import { login, verify2FA } from './hooks';
 import Cookies from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
 import './styles.css';
+import { decodeJWT } from '../../hooks/decodeJWT.JSX';
 
 const Login = () => {
-  const [username, setUsername] = useState(''); 
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [otp, setOtp] = useState('');
   const [show2FA, setShow2FA] = useState(false);
@@ -16,7 +17,6 @@ const Login = () => {
 
   const navigate = useNavigate();
 
-  
   const handleLogin = async (e) => {
     e.preventDefault();
     setErrorMessage('');
@@ -34,15 +34,16 @@ const Login = () => {
     if (response.error) {
       setErrorMessage(response.error);
     } else if (response.message === 'Login successful. OTP sent.') {
-      setEmailSentTo(username); 
-      setInfoMessage(`Login exitoso! Se ha enviado un código de verificación a tu correo: ${username}`);
+      setEmailSentTo(username);
+      setInfoMessage(
+        `Login exitoso! Se ha enviado un código de verificación a tu correo: ${username}`
+      );
       setShow2FA(true);
     } else {
       setInfoMessage(response.message);
     }
   };
 
-  
   const handle2FA = async (e) => {
     e.preventDefault();
     setErrorMessage('');
@@ -54,15 +55,21 @@ const Login = () => {
     }
 
     setIsLoading(true);
-    const response = await verify2FA({ Username: emailSentTo, OTP: otp }); 
+    const response = await verify2FA({ Username: emailSentTo, OTP: otp });
     setIsLoading(false);
 
     if (response.error) {
       setErrorMessage(response.error);
     } else {
       if (response.token) {
-        Cookies.set('jwt', response.token, { expires: 1 }); 
-        navigate('/home'); 
+        Cookies.set('jwt', response.token, { expires: 1 });
+        const decoded = decodeJWT(response.token);
+        const role = decoded?.['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
+        if (role === 'Employee' || role === 'Manager') {
+          navigate('/home');
+        } else {
+          navigate('/reports');
+        }
       }
     }
   };
