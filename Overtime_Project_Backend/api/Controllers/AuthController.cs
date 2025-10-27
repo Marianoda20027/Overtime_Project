@@ -57,13 +57,24 @@ namespace api.Controllers
             else
             {
                 var manager = await _context.Managers.FirstOrDefaultAsync(m => m.Email.ToLower() == email);
-                if (manager == null)
-                    return Unauthorized(new { message = "User not found." });
+                if (manager != null)
+                {
+                    if (!OTPStore.ValidateOTP(manager.Email, request.OTP))
+                        return Unauthorized(new { message = "Invalid or expired OTP." });
 
-                if (!OTPStore.ValidateOTP(manager.Email, request.OTP))
-                    return Unauthorized(new { message = "Invalid or expired OTP." });
+                    role = "Manager";
+                }
+                else
+                {
+                    var hr = await _context.HumanResources.FirstOrDefaultAsync(h => h.Email.ToLower() == email);
+                    if (hr == null)
+                        return Unauthorized(new { message = "User not found." });
 
-                role = "Manager";
+                    if (!OTPStore.ValidateOTP(hr.Email, request.OTP))
+                        return Unauthorized(new { message = "Invalid or expired OTP." });
+
+                    role = "Human_Resource";
+                }
             }
 
             var tokenCreator = new TokenCreator(_config);

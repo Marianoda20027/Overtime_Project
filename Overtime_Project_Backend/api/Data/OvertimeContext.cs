@@ -13,10 +13,10 @@ namespace api.Data
         public DbSet<Approval> OvertimeApprovals => Set<Approval>();
         public DbSet<Role> Roles => Set<Role>();
         public DbSet<Notification> Notifications => Set<Notification>();
+        public DbSet<HumanResource> HumanResources => Set<HumanResource>();
 
         protected override void OnModelCreating(ModelBuilder b)
         {
-            // ===== managers =====
             b.Entity<Manager>(e =>
             {
                 e.ToTable("managers");
@@ -35,7 +35,6 @@ namespace api.Data
                 e.Property(x => x.Role).HasMaxLength(50).IsRequired();
                 e.Property(x => x.IsActive).HasDefaultValue(true);
                 e.Property(x => x.Salary).HasColumnType("decimal(10,2)");
-
                 e.HasOne(x => x.Manager)
                  .WithMany(m => m.Users!)
                  .HasForeignKey(x => x.ManagerId)
@@ -58,7 +57,6 @@ namespace api.Data
                 e.Property(x => x.UpdatedAt).HasColumnType("datetime2").HasDefaultValueSql("GETUTCDATE()");
                 e.Property(x => x.Cost).HasColumnType("decimal(10,2)");
                 e.Property(x => x.TotalHours).HasColumnType("decimal(5,2)").HasDefaultValue(0);
-
                 e.HasOne(x => x.User)
                  .WithMany(u => u.OvertimeRequests!)
                  .HasForeignKey(x => x.UserId)
@@ -78,12 +76,10 @@ namespace api.Data
                  .HasDefaultValue(OvertimeStatus.Approved);
                 e.Property(x => x.Comments).HasColumnType("text");
                 e.Property(x => x.RejectionReason).HasColumnType("text");
-
                 e.HasOne(x => x.Overtime)
                  .WithMany(r => r.Approvals!)
                  .HasForeignKey(x => x.OvertimeId)
                  .OnDelete(DeleteBehavior.Cascade);
-
                 e.HasOne(x => x.Manager)
                  .WithMany()
                  .HasForeignKey(x => x.ManagerId)
@@ -105,11 +101,23 @@ namespace api.Data
                 e.Property(x => x.Message).HasColumnType("text").IsRequired();
                 e.Property(x => x.DateSent).HasColumnType("datetime2").HasDefaultValueSql("GETUTCDATE()");
                 e.Property(x => x.Status).HasMaxLength(20).HasDefaultValue("sent");
-
                 e.HasOne(x => x.User)
                  .WithMany(u => u.Notifications!)
                  .HasForeignKey(x => x.UserId)
                  .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            b.Entity<HumanResource>(e =>
+            {
+                e.ToTable("human_resources");
+                e.HasKey(x => x.HumanResourceId);
+                e.Property(x => x.HumanResourceId).ValueGeneratedOnAdd();
+                e.HasIndex(x => x.Email).IsUnique();
+                e.Property(x => x.Email).HasMaxLength(255).IsRequired();
+                e.Property(x => x.PasswordHash)
+                .HasMaxLength(255)
+                .IsRequired()
+                .HasColumnName("password_hash");
             });
         }
 
@@ -128,7 +136,6 @@ namespace api.Data
         private void TouchTimestamps()
         {
             var now = DateTime.UtcNow;
-
             foreach (var e in ChangeTracker.Entries<OvertimeRequest>())
             {
                 if (e.State == EntityState.Added)

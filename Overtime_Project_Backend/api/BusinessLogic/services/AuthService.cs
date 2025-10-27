@@ -18,7 +18,9 @@ namespace api.BusinessLogic.Services
 
         public async Task<(bool success, string message, string role)> AuthenticateUserAsync(string email, string password)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email.ToLower() == email.ToLower());
+            email = email.ToLower();
+
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email.ToLower() == email);
             if (user != null)
             {
                 if (user.PasswordHash != password)
@@ -34,7 +36,7 @@ namespace api.BusinessLogic.Services
                 return (true, "Login successful. OTP sent.", "Employee");
             }
 
-            var manager = await _context.Managers.FirstOrDefaultAsync(m => m.Email.ToLower() == email.ToLower());
+            var manager = await _context.Managers.FirstOrDefaultAsync(m => m.Email.ToLower() == email);
             if (manager != null)
             {
                 if (manager.PasswordHash != password)
@@ -50,7 +52,23 @@ namespace api.BusinessLogic.Services
                 return (true, "Login successful. OTP sent.", "Manager");
             }
 
-            return (false, "User or Manager not found", "");
+            var hr = await _context.HumanResources.FirstOrDefaultAsync(h => h.Email.ToLower() == email);
+            if (hr != null)
+            {
+                if (hr.PasswordHash != password)
+                    return (false, "Invalid password", "");
+
+                var otp = GenerateOTP();
+                OTPStore.SetOTP(hr.Email, otp, 10);
+                var emailSent = await _emailService.SendTwoFactorCodeAsync(hr.Email, otp);
+
+                if (!emailSent)
+                    return (false, "Failed to send OTP email", "");
+
+                return (true, "Login successful. OTP sent.", "Human_Resource");
+            }
+
+            return (false, "User, Manager or Human Resource not found", "");
         }
 
         private string GenerateOTP()

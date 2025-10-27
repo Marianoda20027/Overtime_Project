@@ -89,7 +89,7 @@ export default function App() {
         <Router>
           <Routes>
             {/* Ruta para la página de solicitudes de horas extra */}
-            <Route path="/" element={<LoginPage />} />
+            <Route path="/" element={<LoginPage />} />   {/*ruta defecto*/}
             <Route path="/Overtime-Request" element={<OvertimePage />} />
             <Route path="/home" element={<Menu />} />
             <Route path="/Request" element={<Request />} />

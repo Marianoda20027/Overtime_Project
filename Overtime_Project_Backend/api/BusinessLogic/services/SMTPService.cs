@@ -143,9 +143,6 @@ namespace api.BusinessLogic.Services
 </head>
 <body>
   <div class='email-container'>
-    <div class='header'>
-      <h1>Request {statusText}</h1>
-    </div>
     <div class='content'>
       {message}
     </div>
