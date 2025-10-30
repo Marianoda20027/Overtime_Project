@@ -17,6 +17,7 @@ namespace api.Data
 
         protected override void OnModelCreating(ModelBuilder b)
         {
+            // Managers
             b.Entity<Manager>(e =>
             {
                 e.ToTable("managers");
@@ -25,6 +26,7 @@ namespace api.Data
                 e.Property(x => x.PasswordHash).HasMaxLength(255).IsRequired().HasColumnName("password_hash");
             });
 
+            // Users
             b.Entity<User>(e =>
             {
                 e.ToTable("users");
@@ -41,6 +43,7 @@ namespace api.Data
                  .OnDelete(DeleteBehavior.Restrict);
             });
 
+            // Overtime Requests
             b.Entity<OvertimeRequest>(e =>
             {
                 e.ToTable("overtime_requests");
@@ -50,19 +53,21 @@ namespace api.Data
                 e.Property(x => x.EndTime).HasColumnType("time");
                 e.Property(x => x.Justification).HasColumnType("text");
                 e.Property(x => x.Status)
-                 .HasConversion<string>()
-                 .HasMaxLength(20)
-                 .HasDefaultValue(OvertimeStatus.Pending);
+                    .HasConversion<string>()
+                    .HasMaxLength(20)
+                    .HasDefaultValue(OvertimeStatus.Pending);
                 e.Property(x => x.CreatedAt).HasColumnType("datetime2").HasDefaultValueSql("GETUTCDATE()");
                 e.Property(x => x.UpdatedAt).HasColumnType("datetime2").HasDefaultValueSql("GETUTCDATE()");
                 e.Property(x => x.Cost).HasColumnType("decimal(10,2)");
                 e.Property(x => x.TotalHours).HasColumnType("decimal(5,2)").HasDefaultValue(0);
+
                 e.HasOne(x => x.User)
-                 .WithMany(u => u.OvertimeRequests!)
-                 .HasForeignKey(x => x.UserId)
-                 .OnDelete(DeleteBehavior.Restrict);
+                    .WithMany(u => u.OvertimeRequests!)
+                    .HasForeignKey(x => x.UserId)
+                    .OnDelete(DeleteBehavior.Restrict);
             });
 
+            // Approvals
             b.Entity<Approval>(e =>
             {
                 e.ToTable("overtime_approvals");
@@ -71,21 +76,19 @@ namespace api.Data
                 e.Property(x => x.ApprovedHours).HasColumnType("decimal(5,2)");
                 e.Property(x => x.ApprovalDate).HasColumnType("datetime2").HasDefaultValueSql("GETUTCDATE()");
                 e.Property(x => x.Status)
-                 .HasConversion<string>()
-                 .HasMaxLength(20)
-                 .HasDefaultValue(OvertimeStatus.Approved);
+                    .HasConversion<string>()
+                    .HasMaxLength(20)
+                    .HasDefaultValue(OvertimeStatus.Approved);
                 e.Property(x => x.Comments).HasColumnType("text");
                 e.Property(x => x.RejectionReason).HasColumnType("text");
+
                 e.HasOne(x => x.Overtime)
-                 .WithMany(r => r.Approvals!)
-                 .HasForeignKey(x => x.OvertimeId)
-                 .OnDelete(DeleteBehavior.Cascade);
-                e.HasOne(x => x.Manager)
-                 .WithMany()
-                 .HasForeignKey(x => x.ManagerId)
-                 .OnDelete(DeleteBehavior.Restrict);
+                    .WithMany(r => r.Approvals!)
+                    .HasForeignKey(x => x.OvertimeId)
+                    .OnDelete(DeleteBehavior.Cascade);
             });
 
+            // Roles
             b.Entity<Role>(e =>
             {
                 e.ToTable("roles");
@@ -94,6 +97,7 @@ namespace api.Data
                 e.Property(x => x.Permissions).HasColumnType("text");
             });
 
+            // Notifications
             b.Entity<Notification>(e =>
             {
                 e.ToTable("notifications");
@@ -101,12 +105,9 @@ namespace api.Data
                 e.Property(x => x.Message).HasColumnType("text").IsRequired();
                 e.Property(x => x.DateSent).HasColumnType("datetime2").HasDefaultValueSql("GETUTCDATE()");
                 e.Property(x => x.Status).HasMaxLength(20).HasDefaultValue("sent");
-                e.HasOne(x => x.User)
-                 .WithMany(u => u.Notifications!)
-                 .HasForeignKey(x => x.UserId)
-                 .OnDelete(DeleteBehavior.Cascade);
             });
 
+            // Human Resources
             b.Entity<HumanResource>(e =>
             {
                 e.ToTable("human_resources");
@@ -114,10 +115,7 @@ namespace api.Data
                 e.Property(x => x.HumanResourceId).ValueGeneratedOnAdd();
                 e.HasIndex(x => x.Email).IsUnique();
                 e.Property(x => x.Email).HasMaxLength(255).IsRequired();
-                e.Property(x => x.PasswordHash)
-                .HasMaxLength(255)
-                .IsRequired()
-                .HasColumnName("password_hash");
+                e.Property(x => x.PasswordHash).HasMaxLength(255).IsRequired().HasColumnName("password_hash");
             });
         }
 

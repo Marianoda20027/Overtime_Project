@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using api.Data;
 
@@ -11,9 +12,11 @@ using api.Data;
 namespace Overtime_Project_Backend.Migrations
 {
     [DbContext(typeof(OvertimeContext))]
-    partial class OvertimeContextModelSnapshot : ModelSnapshot
+    [Migration("20251029022302_UpdateOvertimeModel")]
+    partial class UpdateOvertimeModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -121,9 +124,6 @@ namespace Overtime_Project_Backend.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
                     b.Property<DateTime>("DateSent")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
@@ -132,9 +132,6 @@ namespace Overtime_Project_Backend.Migrations
                     b.Property<string>("Message")
                         .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<Guid?>("OvertimeId")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -274,7 +271,7 @@ namespace Overtime_Project_Backend.Migrations
                     b.HasOne("api.Domain.Manager", "Manager")
                         .WithMany()
                         .HasForeignKey("ManagerId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("api.Domain.OvertimeRequest", "Overtime")
