@@ -132,6 +132,23 @@ namespace api.BusinessLogic.Services
   .content {{
     padding: 35px 30px;
   }}
+  .info-row {{
+    display: flex;
+    padding: 12px 0;
+    border-bottom: 1px solid #e0e0e0;
+  }}
+  .info-row:last-child {{
+    border-bottom: none;
+  }}
+  .info-label {{
+    font-weight: 600;
+    color: #555;
+    min-width: 150px;
+  }}
+  .info-value {{
+    color: #333;
+    flex: 1;
+  }}
   .footer {{
     background: #2c3e50;
     color: #ecf0f1;
@@ -143,6 +160,9 @@ namespace api.BusinessLogic.Services
 </head>
 <body>
   <div class='email-container'>
+    <div class='header'>
+      <h1>REQUEST {statusText}</h1>
+    </div>
     <div class='content'>
       {message}
     </div>
@@ -338,7 +358,9 @@ namespace api.BusinessLogic.Services
                 var host = smtpConfig["Host"];
                 var port = int.Parse(smtpConfig["Port"] ?? "587");
 
-                var isApproved = subject.Contains("Approved", StringComparison.OrdinalIgnoreCase);
+                // 👇 CAMBIO CRÍTICO: Detecta "Aprobada" en español también
+                var isApproved = subject.Contains("Approved", StringComparison.OrdinalIgnoreCase) || 
+                                 subject.Contains("Aprobada", StringComparison.OrdinalIgnoreCase);
 
                 using var mailMessage = new MailMessage
                 {
