@@ -1,14 +1,13 @@
-
 export const decodeJWT = (token) => {
   try {
     if (!token || typeof token !== "string") {
-      console.warn("Token inválido o vacío");
+      console.warn("Invalid or empty token");
       return null;
     }
 
     const base64Url = token.split('.')[1]; // segunda parte del JWT
     if (!base64Url) {
-      console.warn("Formato de JWT inválido");
+      console.warn("Invalid JWT format");
       return null;
     }
 
@@ -22,7 +21,7 @@ export const decodeJWT = (token) => {
 
     return JSON.parse(jsonPayload);
   } catch (error) {
-    console.error("Error al decodificar JWT:", error);
+    console.error("Error decoding JWT:", error);
     return null;
   }
 };

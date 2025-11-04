@@ -1,24 +1,36 @@
 import { useState, useEffect } from 'react';
 import Cookies from 'js-cookie';
+import toast from 'react-hot-toast';
 import { decodeJWT } from '../../hooks/decodeJWT.JSX';
 
 export const useRequests = () => {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const API_BASE = "http://localhost:5100";
 
   const fetchRequests = async () => {
     setLoading(true);
-    setError(null);
 
     try {
       const token = Cookies.get("jwt");
-      if (!token) throw new Error("No se encontró el token.");
+      if (!token) {
+        toast.error("Session expired. Please log in again.", {
+          icon: '🔒',
+          duration: 5000,
+        });
+        throw new Error("No token found");
+      }
 
       const decoded = decodeJWT(token);
       const email = decoded?.sub;
-      if (!email) throw new Error("No se pudo obtener el email del usuario.");
+      
+      if (!email) {
+        toast.error("Could not retrieve user information. Please log in again.", {
+          icon: '⚠️',
+          duration: 5000,
+        });
+        throw new Error("No email found in token");
+      }
 
       const response = await fetch(`${API_BASE}/api/overtime/user/${email}`, {
         headers: {
@@ -28,16 +40,35 @@ export const useRequests = () => {
       });
 
       if (!response.ok) {
-        const text = await response.text();
-        throw new Error(text || "Error al obtener solicitudes.");
+        const errorData = await response.json().catch(() => ({}));
+        const errorMessage = errorData.message || "Failed to load requests";
+        
+        // No mostramos toast aquí, solo en la carga inicial si hay error crítico
+        throw new Error(errorMessage);
       }
 
       const data = await response.json();
       setRequests(data);
 
+      // Solo mostrar mensaje si realmente hay un problema
+      if (data.length === 0 && !loading) {
+        // No toast, solo estado vacío que se maneja en el componente
+      }
+
     } catch (err) {
-      console.error("Error al obtener solicitudes:", err);
-      setError(err.message || "Error desconocido al cargar solicitudes.");
+      console.error("Error fetching requests:", err);
+      
+      // Solo mostrar toast para errores críticos (no para "no hay datos")
+      if (!err.message.includes("token") && !err.message.includes("email")) {
+        // Error de red o servidor
+        if (err.message.includes('fetch')) {
+          toast.error("Cannot connect to server. Please check your connection.", {
+            icon: '🌐',
+            duration: 5000,
+          });
+        }
+      }
+      
       setRequests([]);
     } finally {
       setLoading(false);
@@ -48,5 +79,5 @@ export const useRequests = () => {
     fetchRequests();
   }, []);
 
-  return { requests, loading, error, refetch: fetchRequests };
+  return { requests, loading, refetch: fetchRequests };
 };

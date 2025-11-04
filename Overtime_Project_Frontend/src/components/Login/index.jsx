@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { login, verify2FA } from './hooks';
 import Cookies from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import './styles.css';
 import { decodeJWT } from '../../hooks/decodeJWT.JSX';
 
@@ -11,19 +12,18 @@ const Login = () => {
   const [otp, setOtp] = useState('');
   const [show2FA, setShow2FA] = useState(false);
   const [emailSentTo, setEmailSentTo] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
-  const [infoMessage, setInfoMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setErrorMessage('');
-    setInfoMessage('');
 
+    // Validación básica con toast
     if (!username || !password) {
-      setErrorMessage('Email and password are required');
+      toast.error('Email and password are required', {
+        icon: '⚠️',
+      });
       return;
     }
 
@@ -31,26 +31,28 @@ const Login = () => {
     const response = await login(username, password);
     setIsLoading(false);
 
-    if (response.error) {
-      setErrorMessage(response.error);
-    } else if (response.message === 'Login successful. OTP sent.') {
+    // Si no hay error y el mensaje es correcto, mostrar 2FA
+    if (!response.error && response.message === 'Login successful. OTP sent.') {
       setEmailSentTo(username);
-      setInfoMessage(
-        `Login exitoso! Se ha enviado un código de verificación a tu correo: ${username}`
-      );
       setShow2FA(true);
-    } else {
-      setInfoMessage(response.message);
     }
   };
 
   const handle2FA = async (e) => {
     e.preventDefault();
-    setErrorMessage('');
-    setInfoMessage('');
 
+    // Validación del OTP con toast
     if (!otp) {
-      setErrorMessage('Por favor ingresa el código recibido en tu correo.');
+      toast.error('Please enter the verification code', {
+        icon: '⚠️',
+      });
+      return;
+    }
+
+    if (otp.length !== 6) {
+      toast.error('Verification code must be 6 digits', {
+        icon: '⚠️',
+      });
       return;
     }
 
@@ -58,19 +60,20 @@ const Login = () => {
     const response = await verify2FA({ Username: emailSentTo, OTP: otp });
     setIsLoading(false);
 
-    if (response.error) {
-      setErrorMessage(response.error);
-    } else {
-      if (response.token) {
-        Cookies.set('jwt', response.token, { expires: 1 });
-        const decoded = decodeJWT(response.token);
-        const role = decoded?.['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
+    // Si todo salió bien, navegar
+    if (!response.error && response.token) {
+      Cookies.set('jwt', response.token, { expires: 1 });
+      const decoded = decodeJWT(response.token);
+      const role = decoded?.['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
+      
+      // Pequeño delay para que el usuario vea el toast de éxito
+      setTimeout(() => {
         if (role === 'Employee' || role === 'Manager') {
           navigate('/home');
         } else {
           navigate('/reports');
         }
-      }
+      }, 1000);
     }
   };
 
@@ -87,6 +90,7 @@ const Login = () => {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 placeholder="initial.lastname@arkoselabs.com"
+                disabled={isLoading}
               />
             </div>
 
@@ -97,11 +101,9 @@ const Login = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter your password"
+                disabled={isLoading}
               />
             </div>
-
-            {errorMessage && <div className="error-message">{errorMessage}</div>}
-            {infoMessage && <div className="info-message">{infoMessage}</div>}
 
             <button type="submit" className="login-btn" disabled={isLoading}>
               {isLoading ? 'Loading...' : 'Login'}
@@ -110,18 +112,20 @@ const Login = () => {
         ) : (
           <form onSubmit={handle2FA}>
             <h1>Two-Factor Authentication</h1>
-            <p>{infoMessage}</p>
+            <p className="info-text">
+              A verification code has been sent to <strong>{emailSentTo}</strong>
+            </p>
             <div className="input-group">
               <label>2FA Code</label>
               <input
                 type="text"
                 value={otp}
                 onChange={(e) => setOtp(e.target.value)}
-                placeholder="Enter your code"
+                placeholder="Enter your 6-digit code"
+                maxLength={6}
+                disabled={isLoading}
               />
             </div>
-
-            {errorMessage && <div className="error-message">{errorMessage}</div>}
 
             <button type="submit" className="login-btn" disabled={isLoading}>
               {isLoading ? 'Verifying...' : 'Verify'}

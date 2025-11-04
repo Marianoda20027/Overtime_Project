@@ -31,26 +31,26 @@ const createApiInstance = (baseURL) => {
       const code = error.response?.data?.code || '';
       const dataMessage = error.response?.data?.message || '';
 
-      let friendlyMessage = 'Ocurrió un error desconocido';
+      let friendlyMessage = 'An unknown error occurred';
 
       switch (status) {
         case 400:
-          friendlyMessage = dataMessage || 'Datos incorrectos o solicitud inválida';
+          friendlyMessage = dataMessage || 'Invalid data or request';
           break;
         case 401:
-          friendlyMessage = dataMessage || 'Usuario no autorizado';
+          friendlyMessage = dataMessage || 'Unauthorized user';
           break;
         case 403:
-          friendlyMessage = 'No tienes permisos para esta acción';
+          friendlyMessage = 'You do not have permission for this action';
           break;
         case 404:
-          friendlyMessage = 'Recurso no encontrado';
+          friendlyMessage = 'Resource not found';
           break;
         case 500:
-          friendlyMessage = 'Error del servidor, intenta nuevamente más tarde';
+          friendlyMessage = 'Server error, please try again later';
           break;
         default:
-          friendlyMessage = dataMessage || error.message || 'Error desconocido';
+          friendlyMessage = dataMessage || error.message || 'Unknown error';
       }
 
       return Promise.reject({ status, message: friendlyMessage });

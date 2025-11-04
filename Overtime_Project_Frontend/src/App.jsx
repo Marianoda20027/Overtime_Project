@@ -1,13 +1,12 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Toaster } from 'react-hot-toast';
 
 import OvertimePage from './pages/Overtime/page';
 import LoginPage from './pages/Login/page';
 import Menu from './pages/Menu/page';
 import Request from './pages/Request';
 import ApprovalPage from './pages/Approval';
-
 import ReportsPage from './pages/Reports';
-
 
 import { ConfigProvider, theme } from 'antd';
 
@@ -81,6 +80,68 @@ export default function App() {
 
   return (
     <ConfigProvider theme={customTheme}>
+      {/* 🔔 Toast Notifications - Configurado globalmente */}
+      <Toaster 
+        position="top-right"
+        reverseOrder={false}
+        gutter={8}
+        containerStyle={{
+          top: 20,
+          right: 20,
+        }}
+        toastOptions={{
+          // Configuración por defecto para todos los toasts
+          duration: 4000,
+          style: {
+            background: '#363636',
+            color: '#fff',
+            padding: '16px',
+            borderRadius: '8px',
+            fontSize: '14px',
+            fontFamily: 'Open Sans, sans-serif',
+            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+          },
+          // Success toast
+          success: {
+            duration: 3000,
+            style: {
+              background: '#ffffff',
+              color: '#333333',
+              border: '1px solid #50B95D',
+            },
+            iconTheme: {
+              primary: '#50B95D',
+              secondary: '#ffffff',
+            },
+          },
+          // Error toast
+          error: {
+            duration: 5000,
+            style: {
+              background: '#ffffff',
+              color: '#333333',
+              border: '1px solid #dc3545',
+            },
+            iconTheme: {
+              primary: '#dc3545',
+              secondary: '#ffffff',
+            },
+          },
+          // Loading toast
+          loading: {
+            style: {
+              background: '#ffffff',
+              color: '#333333',
+              border: '1px solid #50B95D',
+            },
+            iconTheme: {
+              primary: '#50B95D',
+              secondary: '#ffffff',
+            },
+          },
+        }}
+      />
+
       <div style={{ 
         backgroundColor: '#ffffff', 
         minHeight: '100vh',

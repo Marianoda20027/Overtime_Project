@@ -12,7 +12,7 @@ export const useRequests = () => {
     try {
       const token = Cookies.get("jwt");
       if (!token) {
-        console.warn("No hay token en las cookies.");
+        console.warn("No token found in cookies.");
         setLoading(false);
         return;
       }
@@ -21,7 +21,7 @@ export const useRequests = () => {
       const email = decoded?.sub;
 
       if (!email) {
-        console.warn("No se pudo obtener el email del token");
+        console.warn("Could not retrieve email from token");
         setLoading(false);
         return;
       }
@@ -34,7 +34,7 @@ export const useRequests = () => {
         },
       });
 
-      if (!response.ok) throw new Error("Error al obtener solicitudes");
+      if (!response.ok) throw new Error("Error fetching requests");
 
       const data = await response.json();
       
@@ -43,7 +43,7 @@ export const useRequests = () => {
       setRequests(pendingRequests);
       
     } catch (error) {
-      console.error("Error al obtener solicitudes:", error);
+      console.error("Error fetching requests:", error);
       setRequests([]);
     } finally {
       setLoading(false);
@@ -59,7 +59,7 @@ export const useRequests = () => {
       const decoded = decodeJWT(token);
       const managerEmail = decoded?.sub;
 
-      if (!managerEmail) throw new Error("No se pudo obtener el email del manager");
+      if (!managerEmail) throw new Error("Could not retrieve manager email");
 
       const response = await fetch(`${API_BASE}/api/overtime/approve/${overtimeId}`, {
         method: 'POST',
@@ -75,7 +75,7 @@ export const useRequests = () => {
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.message || "Error al aprobar");
+        throw new Error(error.message || "Error approving request");
       }
 
       // Refrescar la lista
@@ -83,7 +83,7 @@ export const useRequests = () => {
       return true;
 
     } catch (error) {
-      console.error("Error al aprobar solicitud:", error);
+      console.error("Error approving request:", error);
       throw error;
     }
   };
@@ -97,7 +97,7 @@ export const useRequests = () => {
       const decoded = decodeJWT(token);
       const managerEmail = decoded?.sub;
 
-      if (!managerEmail) throw new Error("No se pudo obtener el email del manager");
+      if (!managerEmail) throw new Error("Could not retrieve manager email");
 
       const response = await fetch(`${API_BASE}/api/overtime/reject/${overtimeId}`, {
         method: 'POST',
@@ -114,7 +114,7 @@ export const useRequests = () => {
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.message || "Error al rechazar");
+        throw new Error(error.message || "Error rejecting request");
       }
 
       // Refrescar la lista
@@ -122,7 +122,7 @@ export const useRequests = () => {
       return true;
 
     } catch (error) {
-      console.error("Error al rechazar solicitud:", error);
+      console.error("Error rejecting request:", error);
       throw error;
     }
   };

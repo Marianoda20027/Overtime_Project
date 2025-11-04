@@ -1,5 +1,5 @@
-
 import { useState, useEffect, useMemo, useCallback } from 'react';
+import toast from 'react-hot-toast';
 import OvertimeService from '../../services/overtime.service';
 
 export const useOvertimeForm = () => {
@@ -10,10 +10,7 @@ export const useOvertimeForm = () => {
     justification: '',
   });
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [okMsg, setOkMsg] = useState(null);
   const [requests, setRequests] = useState([]);
-
 
   const totalHours = useMemo(() => {
     if (!form.startTime || !form.endTime) return 0;
@@ -25,7 +22,6 @@ export const useOvertimeForm = () => {
     return diff > 0 ? diff.toFixed(2) : 0;
   }, [form.startTime, form.endTime]);
 
-  
   const isInvalidTime = useMemo(() => {
     if (!form.startTime || !form.endTime) return false;
     const [sh, sm] = form.startTime.split(':').map(Number);
@@ -35,62 +31,88 @@ export const useOvertimeForm = () => {
     return end <= start;
   }, [form.startTime, form.endTime]);
 
-  
   const update = useCallback((key, value) => {
     setForm((prevForm) => ({ ...prevForm, [key]: value }));
   }, []);
 
-  
   const submit = useCallback(async (e) => {
     e.preventDefault();
-    setError(null);
-    setOkMsg(null);
 
-     if (isInvalidTime) {
-      setError('La hora final debe ser posterior a la hora de inicio');
+    // ⚠️ Validaciones - Mensajes en DOM (más sutiles)
+    if (isInvalidTime) {
+      toast.error('End time must be after start time', {
+        icon: '⏰',
+        duration: 4000,
+      });
       return;
     }
 
     if (totalHours <= 0) {
-      setError('Las horas deben ser mayores que 0');
+      toast.error('Hours must be greater than 0', {
+        icon: '⏰',
+        duration: 4000,
+      });
       return;
     }
 
     setLoading(true);
 
     try {
-      
       const tokenData = await OvertimeService.getJwtData();
-      const email = tokenData?.sub; 
+      const email = tokenData?.sub;
 
       if (!email) {
-        setError('Usuario no autenticado');
+        toast.error('Session expired. Please log in again.', {
+          icon: '🔒',
+          duration: 5000,
+        });
+        setLoading(false);
         return;
       }
 
-      
       await OvertimeService.create({
         ...form,
         totalHours,
-        email, 
+        email,
       });
-      setOkMsg('Solicitud enviada correctamente');
+
+      // ✅ Toast de éxito - Acción importante completada
+      toast.success('Overtime request submitted successfully!', {
+        icon: '✅',
+        duration: 3000,
+      });
+
+      // Limpiar formulario
       setForm({ date: '', startTime: '', endTime: '', justification: '' });
+
+      // Refrescar lista de solicitudes
+      const data = await OvertimeService.myRequests();
+      setRequests(data);
+
     } catch (err) {
-      setError(err.message || 'Error al enviar la solicitud');
+      // ❌ Toast de error - Algo salió mal
+      const errorMessage = err.message || 'Failed to submit request. Please try again.';
+      toast.error(errorMessage, {
+        icon: '❌',
+        duration: 5000,
+      });
     } finally {
       setLoading(false);
     }
-  }, [form, totalHours]);
+  }, [form, totalHours, isInvalidTime]);
 
-  
   useEffect(() => {
     async function fetchRequests() {
-      const data = await OvertimeService.myRequests();
-      setRequests(data);
+      try {
+        const data = await OvertimeService.myRequests();
+        setRequests(data);
+      } catch (err) {
+        console.error('Error fetching requests:', err);
+        // No mostramos toast aquí porque es un error silencioso al cargar
+      }
     }
     fetchRequests();
   }, []);
 
-  return { form, update, totalHours, loading, error, okMsg, submit, requests, isInvalidTime };
+  return { form, update, totalHours, loading, submit, requests, isInvalidTime };
 };

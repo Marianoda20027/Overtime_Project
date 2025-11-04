@@ -1,17 +1,14 @@
-
 import React from 'react';
 import { useOvertimeForm } from './hooks.jsx';
-import './styles.css'; 
+import './styles.css';
 import { useNavigate } from 'react-router-dom';
 
 const OvertimeRequest = () => {
-  const { form, update, loading, error, okMsg, submit } = useOvertimeForm();
+  const { form, update, totalHours, loading, submit, isInvalidTime } = useOvertimeForm();
+  const navigate = useNavigate();
 
-  const navigate = useNavigate(); 
-
-  
   const handleViewRequests = () => {
-      navigate('/request'); 
+    navigate('/request');
   };
 
   return (
@@ -19,7 +16,6 @@ const OvertimeRequest = () => {
       <div className="ot-card">
         <h3>Overtime Request</h3>
 
-        {/* Formulario de solicitud de horas extra */}
         <form onSubmit={submit}>
           <div className="input-group">
             <label>Date</label>
@@ -28,6 +24,7 @@ const OvertimeRequest = () => {
               value={form.date}
               onChange={(e) => update('date', e.target.value)}
               required
+              disabled={loading}
             />
           </div>
 
@@ -38,6 +35,7 @@ const OvertimeRequest = () => {
               value={form.startTime}
               onChange={(e) => update('startTime', e.target.value)}
               required
+              disabled={loading}
             />
           </div>
 
@@ -48,8 +46,26 @@ const OvertimeRequest = () => {
               value={form.endTime}
               onChange={(e) => update('endTime', e.target.value)}
               required
+              disabled={loading}
             />
           </div>
+
+          {/* 💡 Mensaje en DOM - Feedback contextual inmediato */}
+          {form.startTime && form.endTime && (
+            <div className={`time-info ${isInvalidTime ? 'invalid' : 'valid'}`}>
+              {isInvalidTime ? (
+                <>
+                  <span className="icon">⚠️</span>
+                  <span>End time must be after start time</span>
+                </>
+              ) : (
+                <>
+                  <span className="icon">✓</span>
+                  <span>Total hours: <strong>{totalHours}</strong></span>
+                </>
+              )}
+            </div>
+          )}
 
           <div className="input-group">
             <label>Justification</label>
@@ -57,23 +73,27 @@ const OvertimeRequest = () => {
               rows={4}
               value={form.justification}
               onChange={(e) => update('justification', e.target.value)}
+              placeholder="Explain the reason for your overtime request..."
               required
+              disabled={loading}
             />
           </div>
 
-          {/* Botón para enviar la solicitud */}
-          <button className="ot-btn" type="submit" disabled={loading}>
-            {loading ? 'Sending...' : 'Submit Request'}
+          <button className="ot-btn" type="submit" disabled={loading || isInvalidTime}>
+            {loading ? (
+              <>
+                <span className="spinner"></span>
+                Submitting...
+              </>
+            ) : (
+              'Submit Request'
+            )}
           </button>
         </form>
 
-        {/* Botón para ver solicitudes anteriores */}
         <button className="ot-btn view-requests-btn" onClick={handleViewRequests}>
           View My Requests
         </button>
-
-        {error && <div className="error-message">{error}</div>}
-        {okMsg && <div className="success-message">{okMsg}</div>}
       </div>
     </div>
   );
