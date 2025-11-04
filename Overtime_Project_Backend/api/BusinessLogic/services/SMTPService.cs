@@ -358,9 +358,8 @@ namespace api.BusinessLogic.Services
                 var host = smtpConfig["Host"];
                 var port = int.Parse(smtpConfig["Port"] ?? "587");
 
-                // 👇 CAMBIO CRÍTICO: Detecta "Aprobada" en español también
-                var isApproved = subject.Contains("Approved", StringComparison.OrdinalIgnoreCase) || 
-                                 subject.Contains("Aprobada", StringComparison.OrdinalIgnoreCase);
+                // Detection for approved status (English only now)
+                var isApproved = subject.Contains("Approved", StringComparison.OrdinalIgnoreCase);
 
                 using var mailMessage = new MailMessage
                 {

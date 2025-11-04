@@ -24,17 +24,17 @@ namespace api.Controllers
                 var path = await _reports.GenerateReportAsync();
 
                 if (!System.IO.File.Exists(path))
-                    return NotFound(new { message = "❌ No se pudo generar el archivo PDF (posiblemente no hay solicitudes registradas)." });
+                    return NotFound(new { message = "❌ Could not generate PDF file (possibly no requests registered)." });
 
                 var bytes = await System.IO.File.ReadAllBytesAsync(path);
                 System.IO.File.Delete(path);
 
-                return File(bytes, "application/pdf", "ReporteHorasExtra.pdf");
+                return File(bytes, "application/pdf", "OvertimeReport.pdf");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error generando reporte: {ex.Message}");
-                return StatusCode(500, new { message = $"Error generando el reporte: {ex.Message}" });
+                Console.WriteLine($"Error generating report: {ex.Message}");
+                return StatusCode(500, new { message = $"Error generating report: {ex.Message}" });
             }
         }
 
@@ -44,19 +44,19 @@ namespace api.Controllers
             try
             {
                 if (string.IsNullOrWhiteSpace(request.Email))
-                    return BadRequest(new { message = "El correo electrónico es obligatorio." });
+                    return BadRequest(new { message = "Email address is required." });
 
                 var ok = await _reports.SendReportAsync(request.Email);
 
                 if (ok)
-                    return Ok(new { message = $"✅ Reporte enviado correctamente a {request.Email}" });
+                    return Ok(new { message = $"✅ Report sent successfully to {request.Email}" });
                 else
-                    return StatusCode(500, new { message = "❌ Error enviando el reporte." });
+                    return StatusCode(500, new { message = "❌ Error sending report." });
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error enviando reporte: {ex.Message}");
-                return StatusCode(500, new { message = $"Error enviando el reporte: {ex.Message}" });
+                Console.WriteLine($"Error sending report: {ex.Message}");
+                return StatusCode(500, new { message = $"Error sending report: {ex.Message}" });
             }
         }
     }

@@ -19,13 +19,13 @@ namespace api.Controllers
         public async Task<IActionResult> GetByManagerEmail(string email)
         {
             if (string.IsNullOrEmpty(email))
-                return BadRequest(new { message = "Email del manager requerido" });
+                return BadRequest(new { message = "Manager email required" });
 
             var manager = await _context.Managers
                 .FirstOrDefaultAsync(m => m.Email.ToLower() == email.ToLower());
 
             if (manager == null)
-                return NotFound(new { message = "Manager no encontrado" });
+                return NotFound(new { message = "Manager not found" });
 
             var userIds = await _context.Users
                 .Where(u => u.ManagerId == manager.ManagerId)
