@@ -11,8 +11,6 @@ namespace api.Data
         public DbSet<Manager> Managers => Set<Manager>();
         public DbSet<OvertimeRequest> OvertimeRequests => Set<OvertimeRequest>();
         public DbSet<Approval> OvertimeApprovals => Set<Approval>();
-        public DbSet<Role> Roles => Set<Role>();
-        public DbSet<Notification> Notifications => Set<Notification>();
         public DbSet<HumanResource> HumanResources => Set<HumanResource>();
 
         protected override void OnModelCreating(ModelBuilder b)
@@ -86,25 +84,6 @@ namespace api.Data
                     .WithMany(r => r.Approvals!)
                     .HasForeignKey(x => x.OvertimeId)
                     .OnDelete(DeleteBehavior.Cascade);
-            });
-
-            // Roles
-            b.Entity<Role>(e =>
-            {
-                e.ToTable("roles");
-                e.HasKey(x => x.RoleId);
-                e.Property(x => x.RoleName).HasMaxLength(50).IsRequired();
-                e.Property(x => x.Permissions).HasColumnType("text");
-            });
-
-            // Notifications
-            b.Entity<Notification>(e =>
-            {
-                e.ToTable("notifications");
-                e.HasKey(x => x.NotificationId);
-                e.Property(x => x.Message).HasColumnType("text").IsRequired();
-                e.Property(x => x.DateSent).HasColumnType("timestamp").HasDefaultValueSql("NOW()");
-                e.Property(x => x.Status).HasMaxLength(20).HasDefaultValue("sent");
             });
 
             // Human Resources
