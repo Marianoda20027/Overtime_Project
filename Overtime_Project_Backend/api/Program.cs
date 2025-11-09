@@ -29,10 +29,10 @@ builder.Services.AddScoped<ReportsService>();
 QuestPDF.Settings.License = LicenseType.Community;
 
 // =======================
-// 🧠 BASE DE DATOS
+// 🧠 BASE DE DATOS - CAMBIADO A POSTGRESQL
 // =======================
 builder.Services.AddDbContext<OvertimeContext>(opt =>
-    opt.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
+    opt.UseNpgsql(builder.Configuration.GetConnectionString("Default")));
 
 // =======================
 // 🌍 CORS

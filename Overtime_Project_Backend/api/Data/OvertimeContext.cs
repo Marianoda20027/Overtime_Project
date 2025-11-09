@@ -56,8 +56,8 @@ namespace api.Data
                     .HasConversion<string>()
                     .HasMaxLength(20)
                     .HasDefaultValue(OvertimeStatus.Pending);
-                e.Property(x => x.CreatedAt).HasColumnType("datetime2").HasDefaultValueSql("GETUTCDATE()");
-                e.Property(x => x.UpdatedAt).HasColumnType("datetime2").HasDefaultValueSql("GETUTCDATE()");
+                e.Property(x => x.CreatedAt).HasColumnType("timestamp").HasDefaultValueSql("NOW()");
+                e.Property(x => x.UpdatedAt).HasColumnType("timestamp").HasDefaultValueSql("NOW()");
                 e.Property(x => x.Cost).HasColumnType("decimal(10,2)");
                 e.Property(x => x.TotalHours).HasColumnType("decimal(5,2)").HasDefaultValue(0);
 
@@ -74,7 +74,7 @@ namespace api.Data
                 e.HasKey(x => x.ApprovalId);
                 e.Property(x => x.ManagerId).HasColumnType("int");
                 e.Property(x => x.ApprovedHours).HasColumnType("decimal(5,2)");
-                e.Property(x => x.ApprovalDate).HasColumnType("datetime2").HasDefaultValueSql("GETUTCDATE()");
+                e.Property(x => x.ApprovalDate).HasColumnType("timestamp").HasDefaultValueSql("NOW()");
                 e.Property(x => x.Status)
                     .HasConversion<string>()
                     .HasMaxLength(20)
@@ -103,7 +103,7 @@ namespace api.Data
                 e.ToTable("notifications");
                 e.HasKey(x => x.NotificationId);
                 e.Property(x => x.Message).HasColumnType("text").IsRequired();
-                e.Property(x => x.DateSent).HasColumnType("datetime2").HasDefaultValueSql("GETUTCDATE()");
+                e.Property(x => x.DateSent).HasColumnType("timestamp").HasDefaultValueSql("NOW()");
                 e.Property(x => x.Status).HasMaxLength(20).HasDefaultValue("sent");
             });
 

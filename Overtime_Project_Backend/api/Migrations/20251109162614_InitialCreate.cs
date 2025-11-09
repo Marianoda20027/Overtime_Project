@@ -1,24 +1,39 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
 namespace Overtime_Project_Backend.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialClean : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "human_resources",
+                columns: table => new
+                {
+                    HumanResourceId = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Email = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    password_hash = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_human_resources", x => x.HumanResourceId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "managers",
                 columns: table => new
                 {
-                    ManagerId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Email = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    password_hash = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false)
+                    ManagerId = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Email = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    password_hash = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -29,8 +44,8 @@ namespace Overtime_Project_Backend.Migrations
                 name: "roles",
                 columns: table => new
                 {
-                    RoleId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    RoleName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    RoleId = table.Column<Guid>(type: "uuid", nullable: false),
+                    RoleName = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     Permissions = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
@@ -42,13 +57,13 @@ namespace Overtime_Project_Backend.Migrations
                 name: "users",
                 columns: table => new
                 {
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    password_hash = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    Role = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
-                    Salary = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
-                    ManagerId = table.Column<int>(type: "int", nullable: true)
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Email = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    password_hash = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    Role = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    IsActive = table.Column<bool>(type: "boolean", nullable: false, defaultValue: true),
+                    Salary = table.Column<decimal>(type: "numeric(10,2)", nullable: false),
+                    ManagerId = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -65,11 +80,13 @@ namespace Overtime_Project_Backend.Migrations
                 name: "notifications",
                 columns: table => new
                 {
-                    NotificationId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    NotificationId = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
                     Message = table.Column<string>(type: "text", nullable: false),
-                    DateSent = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()"),
-                    Status = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false, defaultValue: "sent")
+                    DateSent = table.Column<DateTime>(type: "timestamp", nullable: false, defaultValueSql: "NOW()"),
+                    Status = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false, defaultValue: "sent"),
+                    OvertimeId = table.Column<Guid>(type: "uuid", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -86,17 +103,17 @@ namespace Overtime_Project_Backend.Migrations
                 name: "overtime_requests",
                 columns: table => new
                 {
-                    OvertimeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    OvertimeId = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
                     Date = table.Column<DateTime>(type: "date", nullable: false),
                     StartTime = table.Column<TimeSpan>(type: "time", nullable: false),
                     EndTime = table.Column<TimeSpan>(type: "time", nullable: false),
                     Justification = table.Column<string>(type: "text", nullable: false),
-                    Status = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false, defaultValue: "Pending"),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()"),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()"),
-                    TotalHours = table.Column<decimal>(type: "decimal(5,2)", nullable: false, defaultValue: 0m),
-                    Cost = table.Column<decimal>(type: "decimal(10,2)", nullable: false)
+                    Status = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false, defaultValue: "Pending"),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp", nullable: false, defaultValueSql: "NOW()"),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp", nullable: false, defaultValueSql: "NOW()"),
+                    TotalHours = table.Column<decimal>(type: "numeric(5,2)", nullable: false, defaultValue: 0m),
+                    Cost = table.Column<decimal>(type: "numeric(10,2)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -113,12 +130,12 @@ namespace Overtime_Project_Backend.Migrations
                 name: "overtime_approvals",
                 columns: table => new
                 {
-                    ApprovalId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    OvertimeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ApprovalId = table.Column<Guid>(type: "uuid", nullable: false),
+                    OvertimeId = table.Column<Guid>(type: "uuid", nullable: false),
                     ManagerId = table.Column<int>(type: "int", nullable: false),
-                    ApprovedHours = table.Column<decimal>(type: "decimal(5,2)", nullable: false),
-                    ApprovalDate = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()"),
-                    Status = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false, defaultValue: "Approved"),
+                    ApprovedHours = table.Column<decimal>(type: "numeric(5,2)", nullable: false),
+                    ApprovalDate = table.Column<DateTime>(type: "timestamp", nullable: false, defaultValueSql: "NOW()"),
+                    Status = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false, defaultValue: "Approved"),
                     Comments = table.Column<string>(type: "text", nullable: true),
                     RejectionReason = table.Column<string>(type: "text", nullable: true)
                 },
@@ -130,7 +147,7 @@ namespace Overtime_Project_Backend.Migrations
                         column: x => x.ManagerId,
                         principalTable: "managers",
                         principalColumn: "ManagerId",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_overtime_approvals_overtime_requests_OvertimeId",
                         column: x => x.OvertimeId,
@@ -138,6 +155,12 @@ namespace Overtime_Project_Backend.Migrations
                         principalColumn: "OvertimeId",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_human_resources_Email",
+                table: "human_resources",
+                column: "Email",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_notifications_UserId",
@@ -174,6 +197,9 @@ namespace Overtime_Project_Backend.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "human_resources");
+
             migrationBuilder.DropTable(
                 name: "notifications");
 
