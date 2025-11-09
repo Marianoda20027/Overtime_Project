@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Overtime_Project_Backend.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class CleanSchema : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -41,19 +41,6 @@ namespace Overtime_Project_Backend.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "roles",
-                columns: table => new
-                {
-                    RoleId = table.Column<Guid>(type: "uuid", nullable: false),
-                    RoleName = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
-                    Permissions = table.Column<string>(type: "text", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_roles", x => x.RoleId);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "users",
                 columns: table => new
                 {
@@ -77,22 +64,22 @@ namespace Overtime_Project_Backend.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "notifications",
+                name: "Notification",
                 columns: table => new
                 {
                     NotificationId = table.Column<Guid>(type: "uuid", nullable: false),
                     UserId = table.Column<Guid>(type: "uuid", nullable: false),
                     Message = table.Column<string>(type: "text", nullable: false),
-                    DateSent = table.Column<DateTime>(type: "timestamp", nullable: false, defaultValueSql: "NOW()"),
-                    Status = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false, defaultValue: "sent"),
+                    DateSent = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Status = table.Column<string>(type: "text", nullable: false),
                     OvertimeId = table.Column<Guid>(type: "uuid", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_notifications", x => x.NotificationId);
+                    table.PrimaryKey("PK_Notification", x => x.NotificationId);
                     table.ForeignKey(
-                        name: "FK_notifications_users_UserId",
+                        name: "FK_Notification_users_UserId",
                         column: x => x.UserId,
                         principalTable: "users",
                         principalColumn: "UserId",
@@ -163,8 +150,8 @@ namespace Overtime_Project_Backend.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_notifications_UserId",
-                table: "notifications",
+                name: "IX_Notification_UserId",
+                table: "Notification",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
@@ -201,13 +188,10 @@ namespace Overtime_Project_Backend.Migrations
                 name: "human_resources");
 
             migrationBuilder.DropTable(
-                name: "notifications");
+                name: "Notification");
 
             migrationBuilder.DropTable(
                 name: "overtime_approvals");
-
-            migrationBuilder.DropTable(
-                name: "roles");
 
             migrationBuilder.DropTable(
                 name: "overtime_requests");

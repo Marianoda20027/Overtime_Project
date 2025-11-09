@@ -125,9 +125,7 @@ namespace Overtime_Project_Backend.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime>("DateSent")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp")
-                        .HasDefaultValueSql("NOW()");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Message")
                         .IsRequired()
@@ -138,10 +136,7 @@ namespace Overtime_Project_Backend.Migrations
 
                     b.Property<string>("Status")
                         .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(20)
-                        .HasColumnType("character varying(20)")
-                        .HasDefaultValue("sent");
+                        .HasColumnType("text");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
@@ -150,7 +145,7 @@ namespace Overtime_Project_Backend.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("notifications", (string)null);
+                    b.ToTable("Notification");
                 });
 
             modelBuilder.Entity("api.Domain.OvertimeRequest", b =>
@@ -205,25 +200,6 @@ namespace Overtime_Project_Backend.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("overtime_requests", (string)null);
-                });
-
-            modelBuilder.Entity("api.Domain.Role", b =>
-                {
-                    b.Property<Guid>("RoleId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Permissions")
-                        .HasColumnType("text");
-
-                    b.Property<string>("RoleName")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
-
-                    b.HasKey("RoleId");
-
-                    b.ToTable("roles", (string)null);
                 });
 
             modelBuilder.Entity("api.Domain.User", b =>
