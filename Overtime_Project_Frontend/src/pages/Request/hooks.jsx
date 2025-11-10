@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import Cookies from 'js-cookie';
 import toast from 'react-hot-toast';
-import { decodeJWT } from '../../hooks/decodeJWT.JSX';
+import { decodeJWT } from '../../hooks/decodeJWT.jsx';
 
 export const useRequests = () => {
   const [requests, setRequests] = useState([]);

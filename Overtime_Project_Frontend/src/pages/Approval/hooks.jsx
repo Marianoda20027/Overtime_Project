@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import Cookies from 'js-cookie';
-import { decodeJWT } from '../../hooks/decodeJWT.JSX';
+import { decodeJWT } from '../../hooks/decodeJWT.jsx';
 
 export const useRequests = () => {
   const [requests, setRequests] = useState([]);

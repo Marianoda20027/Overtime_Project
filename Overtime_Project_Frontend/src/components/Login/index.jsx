@@ -4,7 +4,7 @@ import Cookies from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import './styles.css';
-import { decodeJWT } from '../../hooks/decodeJWT.JSX';
+import { decodeJWT } from '../../hooks/decodeJWT.jsx';
 
 const Login = () => {
   const [username, setUsername] = useState('');

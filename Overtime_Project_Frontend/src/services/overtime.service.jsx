@@ -1,7 +1,7 @@
 // src/services/overtime.service.js
 import { httpService } from './http.service';
 import Cookies from 'js-cookie';
-import { decodeJWT } from '../hooks/decodeJWT.JSX';
+import { decodeJWT } from '../hooks/decodeJWT.jsx';
 
 class OvertimeService {
   base = 'api/overtime';
