@@ -6,7 +6,9 @@ import { decodeJWT } from '../../hooks/decodeJWT.JSX';
 export const useRequests = () => {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
-  const API_BASE = "http://localhost:5100";
+
+  // 🚀 Cambiá esta URL al dominio público de Railway
+  const API_BASE = "https://overtimeproject-production.up.railway.app";
 
   const fetchRequests = async () => {
     setLoading(true);
@@ -42,25 +44,16 @@ export const useRequests = () => {
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         const errorMessage = errorData.message || "Failed to load requests";
-        
-        // No mostramos toast aquí, solo en la carga inicial si hay error crítico
         throw new Error(errorMessage);
       }
 
       const data = await response.json();
       setRequests(data);
 
-      // Solo mostrar mensaje si realmente hay un problema
-      if (data.length === 0 && !loading) {
-        // No toast, solo estado vacío que se maneja en el componente
-      }
-
     } catch (err) {
       console.error("Error fetching requests:", err);
-      
-      // Solo mostrar toast para errores críticos (no para "no hay datos")
+
       if (!err.message.includes("token") && !err.message.includes("email")) {
-        // Error de red o servidor
         if (err.message.includes('fetch')) {
           toast.error("Cannot connect to server. Please check your connection.", {
             icon: '🌐',
@@ -68,7 +61,7 @@ export const useRequests = () => {
           });
         }
       }
-      
+
       setRequests([]);
     } finally {
       setLoading(false);
