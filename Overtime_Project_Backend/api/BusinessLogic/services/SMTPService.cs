@@ -1,12 +1,16 @@
 using System;
+using System.IO;
 using System.Net;
 using System.Net.Mail;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using SendGrid;
+using SendGrid.Helpers.Mail;
 
 namespace api.BusinessLogic.Services
 {
+    // ------------------- Interfaces -------------------
     public interface IEmailService
     {
         Task<bool> SendTwoFactorCodeAsync(string email, string code);
@@ -35,61 +39,53 @@ namespace api.BusinessLogic.Services
 <style>
   body {{
     font-family: 'Open Sans', sans-serif;
-    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    background: #f4f4f4;
     margin: 0;
     padding: 0;
   }}
-  .email-container {{
+  .container {{
     max-width: 600px;
-    margin: 0 auto;
+    margin: 30px auto;
     background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     padding: 40px;
-    border-radius: 12px;
-    box-shadow: 0 15px 40px rgba(50,50,93,0.1), 0 8px 20px rgba(0,0,0,0.1);
   }}
   h1 {{
-    font-size: 32px;
-    font-weight: 700;
-    color: #50B95D;
     text-align: center;
+    color: #50B95D;
+  }}
+  .code {{
+    background: #f0f0f0;
+    font-size: 30px;
+    text-align: center;
+    padding: 15px;
+    border-radius: 8px;
+    font-weight: bold;
+    letter-spacing: 6px;
   }}
   p {{
-    font-size: 16px;
     color: #333;
-    line-height: 1.6;
-  }}
-  .otp-box {{
-    background-color: #f9f9f9;
-    padding: 20px;
-    text-align: center;
-    font-size: 28px;
-    font-weight: bold;
-    letter-spacing: 5px;
-    margin: 20px 0;
-    border-radius: 10px;
-    color: #50B95D;
   }}
   .footer {{
-    font-size: 12px;
-    color: #7f8c8d;
     text-align: center;
-    margin-top: 20px;
+    color: #aaa;
+    font-size: 12px;
+    margin-top: 30px;
   }}
 </style>
 </head>
 <body>
-  <div class='email-container'>
+  <div class='container'>
     <h1>Authentication Code</h1>
     <p>Hello,</p>
     <p>Your verification code is:</p>
-    <div class='otp-box'>{code}</div>
-    <p><strong>This code will expire in 10 minutes.</strong></p>
-    <p>If you didn't request this code, please ignore this email.</p>
-    <div class='footer'>This is an automated email, please do not reply.</div>
+    <div class='code'>{code}</div>
+    <p>This code will expire in 10 minutes.</p>
+    <div class='footer'>This is an automated message, please do not reply.</div>
   </div>
 </body>
-</html>
-";
+</html>";
         }
 
         public string GenerateOvertimeNotificationEmail(string title, string message, bool isApproved)
@@ -107,64 +103,45 @@ namespace api.BusinessLogic.Services
   body {{
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background: #f4f4f4;
-    margin: 0;
     padding: 20px;
   }}
-  .email-container {{
+  .email {{
     max-width: 650px;
     margin: 0 auto;
-    background: #ffffff;
+    background: #fff;
     border-radius: 8px;
     overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
   }}
   .header {{
     background: {color};
     color: white;
-    padding: 35px 30px;
     text-align: center;
+    padding: 25px;
   }}
   .header h1 {{
-    font-size: 26px;
-    margin: 0 0 12px 0;
-    font-weight: 600;
+    margin: 0;
   }}
   .content {{
-    padding: 35px 30px;
-  }}
-  .info-row {{
-    display: flex;
-    padding: 12px 0;
-    border-bottom: 1px solid #e0e0e0;
-  }}
-  .info-row:last-child {{
-    border-bottom: none;
-  }}
-  .info-label {{
-    font-weight: 600;
-    color: #555;
-    min-width: 150px;
-  }}
-  .info-value {{
+    padding: 30px;
     color: #333;
-    flex: 1;
   }}
   .footer {{
     background: #2c3e50;
     color: #ecf0f1;
-    padding: 25px 30px;
     text-align: center;
+    padding: 15px;
     font-size: 12px;
   }}
 </style>
 </head>
 <body>
-  <div class='email-container'>
+  <div class='email'>
     <div class='header'>
       <h1>REQUEST {statusText}</h1>
     </div>
     <div class='content'>
-      {message}
+      <p>{message}</p>
     </div>
     <div class='footer'>
       <strong>Overtime Management System</strong><br/>
@@ -175,130 +152,10 @@ namespace api.BusinessLogic.Services
 </html>";
         }
 
-        public string GenerateReportEmail()
-        {
-            return @"
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset='utf-8'>
-<title>Overtime Report</title>
-<style>
-  body {
-    font-family: 'Open Sans', sans-serif;
-    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-    margin: 0;
-    padding: 0;
-  }
-  .email-container {
-    max-width: 600px;
-    margin: 0 auto;
-    background: #fff;
-    padding: 40px;
-    border-radius: 12px;
-    box-shadow: 0 15px 40px rgba(50,50,93,0.1), 0 8px 20px rgba(0,0,0,0.1);
-  }
-  h1 {
-    font-size: 32px;
-    font-weight: 700;
-    color: #50B95D;
-    text-align: center;
-    margin: 0 0 10px 0;
-  }
-  .subtitle {
-    font-size: 16px;
-    color: #666;
-    text-align: center;
-    margin: 0 0 30px 0;
-  }
-  p {
-    font-size: 16px;
-    color: #333;
-    line-height: 1.6;
-    margin: 0 0 15px 0;
-  }
-  .report-box {
-    background-color: #f9f9f9;
-    padding: 25px;
-    margin: 25px 0;
-    border-radius: 10px;
-    border-left: 4px solid #50B95D;
-  }
-  .report-box h2 {
-    font-size: 20px;
-    color: #50B95D;
-    margin: 0 0 15px 0;
-    font-weight: 600;
-  }
-  .report-box p {
-    margin: 0 0 10px 0;
-    font-size: 15px;
-    color: #555;
-  }
-  .report-box p:last-child {
-    margin: 0;
-  }
-  ul {
-    color: #555;
-    line-height: 1.8;
-    padding-left: 20px;
-    margin: 15px 0;
-  }
-  ul li {
-    margin-bottom: 8px;
-  }
-  .footer {
-    font-size: 12px;
-    color: #7f8c8d;
-    text-align: center;
-    margin-top: 30px;
-    padding-top: 20px;
-    border-top: 1px solid #e0e0e0;
-  }
-  .footer strong {
-    display: block;
-    font-size: 14px;
-    color: #333;
-    margin-bottom: 5px;
-  }
-</style>
-</head>
-<body>
-  <div class='email-container'>
-    <h1>📊 Overtime Report</h1>
-    <p class='subtitle'>Your monthly metrics and analytics</p>
-    
-    <p>Hello,</p>
-    <p>We're pleased to share your <strong>Overtime Management Report</strong>. The attached PDF contains detailed metrics and insights for this period.</p>
-    
-    <div class='report-box'>
-      <h2>📎 Attached Document</h2>
-      <p><strong>OvertimeReport.pdf</strong></p>
-      <p>Complete analysis of overtime requests, approvals, costs, and trends.</p>
-    </div>
-
-    <p><strong>This report includes:</strong></p>
-    <ul>
-      <li>Total requests submitted and processed</li>
-      <li>Approval and rejection statistics</li>
-      <li>Average response time analysis</li>
-      <li>Total cost breakdown</li>
-      <li>Top users by overtime hours</li>
-    </ul>
-
-    <p>If you have any questions or need additional information, please don't hesitate to reach out to our support team.</p>
-    
-    <div class='footer'>
-      <strong>Overtime Management System</strong>
-      <p>This is an automated email, please do not reply.</p>
-    </div>
-  </div>
-</body>
-</html>";
-        }
+        public string GenerateReportEmail() => "<p>Report template placeholder.</p>";
     }
 
-    // ------------------- SMTP Service -------------------
+    // ------------------- SendGrid Email Service -------------------
     public class SMTPService : IEmailService
     {
         private readonly IConfiguration _configuration;
@@ -312,121 +169,115 @@ namespace api.BusinessLogic.Services
             _templateService = templateService;
         }
 
-        // 🔐 Send 2FA code
-        public async Task<bool> SendTwoFactorCodeAsync(string email, string code)
+        private async Task<bool> SendViaSendGridAsync(string to, string subject, string html, string attachmentPath = null, string attachmentName = null)
+        {
+            var apiKey = _configuration["SENDGRID_API_KEY"];
+var fromEmail = _configuration["SENDGRID_FROM"] ?? "no-reply@overtimeproject.com";
+            var fromName = _configuration["SENDGRID_FROM_NAME"] ?? "Overtime System";
+
+            if (string.IsNullOrEmpty(apiKey))
+            {
+                _logger.LogWarning("Falta la clave SENDGRID_API_KEY en configuración.");
+                return false;
+            }
+
+            try
+            {
+                var client = new SendGridClient(apiKey);
+                var from = new EmailAddress(fromEmail, fromName);
+                var toAddress = new EmailAddress(to);
+                var msg = MailHelper.CreateSingleEmail(from, toAddress, subject, plainTextContent: null, htmlContent: html);
+
+                if (!string.IsNullOrEmpty(attachmentPath) && File.Exists(attachmentPath))
+                {
+                    var bytes = await File.ReadAllBytesAsync(attachmentPath);
+                    var fileBase64 = Convert.ToBase64String(bytes);
+                    msg.AddAttachment(attachmentName ?? Path.GetFileName(attachmentPath), fileBase64);
+                }
+
+                var response = await client.SendEmailAsync(msg);
+                if (response.IsSuccessStatusCode)
+                {
+                    _logger.LogInformation("Correo enviado correctamente via SendGrid a {To}", to);
+                    return true;
+                }
+
+                _logger.LogWarning("Error al enviar correo via SendGrid. Código: {StatusCode}", response.StatusCode);
+                return false;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error enviando correo via SendGrid");
+                return false;
+            }
+        }
+
+        // SMTP de respaldo (opcional)
+        private async Task<bool> SendViaSMTPAsync(string email, string subject, string html)
         {
             try
             {
-                var smtpConfig = _configuration.GetSection("SmtpSettings");
-                var fromEmail = smtpConfig["Email"];
-                var password = smtpConfig["Password"];
-                var host = smtpConfig["Host"];
-                var port = int.Parse(smtpConfig["Port"] ?? "587");
+                var smtp = _configuration.GetSection("SmtpSettings");
+                var fromEmail = smtp["Email"];
+                var password = smtp["Password"];
+                var host = smtp["Host"];
+                var port = int.Parse(smtp["Port"] ?? "587");
 
-                using var mailMessage = new MailMessage
+                using var msg = new MailMessage
                 {
                     From = new MailAddress(fromEmail!, "Overtime System"),
-                    Subject = "Authentication Code",
-                    Body = _templateService.GenerateTwoFactorEmail(code),
+                    Subject = subject,
+                    Body = html,
                     IsBodyHtml = true
                 };
-                mailMessage.To.Add(email);
+                msg.To.Add(email);
 
-                using var smtpClient = new SmtpClient(host, port)
+                using var client = new SmtpClient(host, port)
                 {
                     Credentials = new NetworkCredential(fromEmail, password),
                     EnableSsl = true
                 };
 
-                await smtpClient.SendMailAsync(mailMessage);
+                await client.SendMailAsync(msg);
+                _logger.LogInformation("Correo enviado via SMTP a {Email}", email);
                 return true;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error sending OTP");
+                _logger.LogError(ex, "Error enviando correo via SMTP");
                 return false;
             }
+        }
+
+        // ------------------- Métodos Públicos -------------------
+        public async Task<bool> SendTwoFactorCodeAsync(string email, string code)
+        {
+            var html = _templateService.GenerateTwoFactorEmail(code);
+            var subject = "Authentication Code";
+
+            if (await SendViaSendGridAsync(email, subject, html))
+                return true;
+
+            return await SendViaSMTPAsync(email, subject, html);
         }
 
         public async Task<bool> SendOvertimeNotificationAsync(string email, string subject, string message)
         {
-            try
-            {
-                var smtpConfig = _configuration.GetSection("SmtpSettings");
-                var fromEmail = smtpConfig["Email"];
-                var password = smtpConfig["Password"];
-                var host = smtpConfig["Host"];
-                var port = int.Parse(smtpConfig["Port"] ?? "587");
+            var isApproved = subject.Contains("Approved", StringComparison.OrdinalIgnoreCase);
+            var html = _templateService.GenerateOvertimeNotificationEmail(subject, message, isApproved);
 
-                // Detection for approved status (English only now)
-                var isApproved = subject.Contains("Approved", StringComparison.OrdinalIgnoreCase);
-
-                using var mailMessage = new MailMessage
-                {
-                    From = new MailAddress(fromEmail!, "Overtime System"),
-                    Subject = subject,
-                    Body = _templateService.GenerateOvertimeNotificationEmail(subject, message, isApproved),
-                    IsBodyHtml = true
-                };
-                mailMessage.To.Add(email);
-
-                using var smtpClient = new SmtpClient(host, port)
-                {
-                    Credentials = new NetworkCredential(fromEmail, password),
-                    EnableSsl = true
-                };
-
-                await smtpClient.SendMailAsync(mailMessage);
+            if (await SendViaSendGridAsync(email, subject, html))
                 return true;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error sending overtime notification");
-                return false;
-            }
+
+            return await SendViaSMTPAsync(email, subject, html);
         }
 
         public async Task<bool> SendEmailWithAttachment(string email, string subject, string message, string attachmentPath, string attachmentName)
         {
-            try
-            {
-                var smtpConfig = _configuration.GetSection("SmtpSettings");
-                var fromEmail = smtpConfig["Email"];
-                var password = smtpConfig["Password"];
-                var host = smtpConfig["Host"];
-                var port = int.Parse(smtpConfig["Port"] ?? "587");
-
-                using var mailMessage = new MailMessage
-                {
-                    From = new MailAddress(fromEmail!, "Overtime System"),
-                    Subject = subject,
-                    Body = message,
-                    IsBodyHtml = true
-                };
-                mailMessage.To.Add(email);
-
-                if (File.Exists(attachmentPath))
-                {
-                    var attachment = new Attachment(attachmentPath);
-                    attachment.Name = attachmentName;
-                    mailMessage.Attachments.Add(attachment);
-                }
-
-                using var smtpClient = new SmtpClient(host, port)
-                {
-                    Credentials = new NetworkCredential(fromEmail, password),
-                    EnableSsl = true
-                };
-
-                await smtpClient.SendMailAsync(mailMessage);
-                _logger.LogInformation("Email sent with attachment to {Email}", email);
+            if (await SendViaSendGridAsync(email, subject, message, attachmentPath, attachmentName))
                 return true;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error sending email with attachment to {Email}", email);
-                return false;
-            }
+
+            return await SendViaSMTPAsync(email, subject, message);
         }
     }
 }
