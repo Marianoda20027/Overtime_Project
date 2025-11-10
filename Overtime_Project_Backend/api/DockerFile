@@ -1,8 +1,10 @@
-# Imagen base con SDK .NET
+# -----------------------------
+# Stage 1: Build
+# -----------------------------
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
-# Instalar dependencias nativas necesarias para SkiaSharp
+# Instalar librerías nativas necesarias para SkiaSharp / QuestPDF
 RUN apt-get update && apt-get install -y \
     libfontconfig1 libfreetype6 libpng16-16 libx11-6 libxext6 libxrender1 libxcb1 libc6 \
     libglib2.0-0 libgdk-pixbuf2.0-0 libcairo2 libpango-1.0-0 libharfbuzz0b \
@@ -10,16 +12,21 @@ RUN apt-get update && apt-get install -y \
     libatk1.0-0 libatk-bridge2.0-0 \
     && rm -rf /var/lib/apt/lists/*
 
-# Copia y publica
+# Copiar proyecto y restaurar dependencias
 COPY . .
 RUN dotnet restore "./Overtime_Project_Backend.csproj"
-RUN dotnet publish "./Overtime_Project_Backend.csproj" -c Release -o /app/publish /p:TreatWarningsAsErrors=false
 
-# Imagen runtime
+# Publicar la app
+RUN dotnet publish "./Overtime_Project_Backend.csproj" \
+    -c Release -o /app/publish /p:TreatWarningsAsErrors=false
+
+# -----------------------------
+# Stage 2: Runtime
+# -----------------------------
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
 
-# Instalar las mismas dependencias en runtime
+# Instalar las mismas librerías nativas en runtime
 RUN apt-get update && apt-get install -y \
     libfontconfig1 libfreetype6 libpng16-16 libx11-6 libxext6 libxrender1 libxcb1 libc6 \
     libglib2.0-0 libgdk-pixbuf2.0-0 libcairo2 libpango-1.0-0 libharfbuzz0b \
@@ -27,6 +34,9 @@ RUN apt-get update && apt-get install -y \
     libatk1.0-0 libatk-bridge2.0-0 \
     && rm -rf /var/lib/apt/lists/*
 
+# Copiar la app publicada desde el stage de build
 COPY --from=build /app/publish .
+
+# Puerto expuesto y entrypoint
 EXPOSE 8080
 ENTRYPOINT ["dotnet", "Overtime_Project_Backend.dll"]
