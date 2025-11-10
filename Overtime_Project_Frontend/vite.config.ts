@@ -6,7 +6,11 @@ export default defineConfig({
   preview: {
     port: parseInt(process.env.PORT || '4173'),
     host: true,
-    strictPort: true
+    strictPort: true,
+    allowedHosts: [
+      'overtimeprojectfrontend-production.up.railway.app',
+      '.railway.app'
+    ]
   },
   server: {
     port: 5173,
