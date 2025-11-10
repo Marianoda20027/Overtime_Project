@@ -5,7 +5,9 @@ import { decodeJWT } from '../../hooks/decodeJWT.JSX';
 export const useRequests = () => {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
-  const API_BASE = "http://localhost:5100";
+
+  // 🔥 Cambiá el base URL al dominio de Railway
+  const API_BASE = "https://overtimeproject-production.up.railway.app";
 
   const fetchRequests = async () => {
     setLoading(true);
@@ -37,8 +39,6 @@ export const useRequests = () => {
       if (!response.ok) throw new Error("Error fetching requests");
 
       const data = await response.json();
-      
-  
       const pendingRequests = data.filter(req => req.status === "Pending");
       setRequests(pendingRequests);
       
@@ -50,7 +50,6 @@ export const useRequests = () => {
     }
   };
 
-  
   const acceptRequest = async (overtimeId, comments) => {
     try {
       const token = Cookies.get("jwt");
@@ -78,8 +77,7 @@ export const useRequests = () => {
         throw new Error(error.message || "Error approving request");
       }
 
-      // Refrescar la lista
-      await fetchRequests();
+      await fetchRequests(); // refrescar lista
       return true;
 
     } catch (error) {
@@ -88,7 +86,6 @@ export const useRequests = () => {
     }
   };
 
-  
   const rejectRequest = async (overtimeId, reason, comments) => {
     try {
       const token = Cookies.get("jwt");
@@ -117,8 +114,7 @@ export const useRequests = () => {
         throw new Error(error.message || "Error rejecting request");
       }
 
-      // Refrescar la lista
-      await fetchRequests();
+      await fetchRequests(); // refrescar lista
       return true;
 
     } catch (error) {
