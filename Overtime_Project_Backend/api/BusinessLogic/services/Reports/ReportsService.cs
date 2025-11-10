@@ -1,10 +1,11 @@
-using api.BusinessLogic.Services; 
+using api.BusinessLogic.Services;
 using api.Data;
 using api.Domain;
 using Microsoft.EntityFrameworkCore;
-using QuestPDF.Fluent;
 using QuestPDF.Infrastructure;
 using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace api.BusinessLogic.Services.Reports
 {
@@ -50,7 +51,6 @@ namespace api.BusinessLogic.Services.Reports
             };
 
             var filePath = Path.Combine(Path.GetTempPath(), $"OvertimeReport_{DateTime.Now:yyyyMMddHHmmss}.pdf");
-
             var document = new OvertimeReport(report);
             document.GeneratePdf(filePath);
 
@@ -61,7 +61,6 @@ namespace api.BusinessLogic.Services.Reports
         {
             var pdfPath = await GenerateReportAsync();
             var subject = "📊 Overtime Report - Monthly Analytics";
-            
             var message = _templateService.GenerateReportEmail();
 
             try
@@ -87,5 +86,22 @@ namespace api.BusinessLogic.Services.Reports
                 return false;
             }
         }
+    }
+
+    // ====== Supporting Models ======
+    public class ReportData
+    {
+        public int TotalRequests { get; set; }
+        public int Approved { get; set; }
+        public int Rejected { get; set; }
+        public double AvgResponseTime { get; set; }
+        public double TotalCost { get; set; }
+        public List<TopUser> TopUsers { get; set; } = new();
+    }
+
+    public class TopUser
+    {
+        public string UserName { get; set; } = string.Empty;
+        public double TotalHours { get; set; }
     }
 }
