@@ -4,12 +4,10 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
-# Instalar librerías nativas necesarias para SkiaSharp / QuestPDF
+# Instalar librerías nativas CRÍTICAS para SkiaSharp
 RUN apt-get update && apt-get install -y \
-    libfontconfig1 libfreetype6 libpng16-16 libx11-6 libxext6 libxrender1 libxcb1 libc6 \
-    libglib2.0-0 libgdk-pixbuf2.0-0 libcairo2 libpango-1.0-0 libharfbuzz0b \
-    libxcomposite1 libxdamage1 libxi6 libxrandr2 libxfixes3 libxcursor1 libxtst6 \
-    libatk1.0-0 libatk-bridge2.0-0 \
+    libfontconfig1 \
+    libgomp1 \
     && rm -rf /var/lib/apt/lists/*
 
 # Copiar proyecto y restaurar dependencias
@@ -26,12 +24,10 @@ RUN dotnet publish "./Overtime_Project_Backend.csproj" \
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
 
-# Instalar las mismas librerías nativas en runtime
+# Instalar librerías CRÍTICAS para SkiaSharp en runtime
 RUN apt-get update && apt-get install -y \
-    libfontconfig1 libfreetype6 libpng16-16 libx11-6 libxext6 libxrender1 libxcb1 libc6 \
-    libglib2.0-0 libgdk-pixbuf2.0-0 libcairo2 libpango-1.0-0 libharfbuzz0b \
-    libxcomposite1 libxdamage1 libxi6 libxrandr2 libxfixes3 libxcursor1 libxtst6 \
-    libatk1.0-0 libatk-bridge2.0-0 \
+    libfontconfig1 \
+    libgomp1 \
     && rm -rf /var/lib/apt/lists/*
 
 # Copiar la app publicada desde el stage de build
