@@ -5,7 +5,8 @@ import Cookies from 'js-cookie';
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import './styles.css';
-import { decodeJWT } from '../../hooks/decodeJWT.JSX';
+import { decodeJWT } from '../../hooks/decodeJWT.jsx';
+
 
 const TwoButtonsPage = () => {
   const navigate = useNavigate();
