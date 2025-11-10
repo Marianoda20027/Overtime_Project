@@ -225,7 +225,7 @@ var fromEmail = _configuration["SENDGRID_FROM"] ?? "no-reply@overtimeproject.com
 
                 using var msg = new MailMessage
                 {
-                    From = new MailAddress(fromEmail!, "Overtime System"),
+From = new MailAddress(fromEmail ?? "no-reply@overtimeproject.com", "Overtime System"),
                     Subject = subject,
                     Body = html,
                     IsBodyHtml = true
