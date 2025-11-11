@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using api.Domain;
 
 namespace api.Data
@@ -54,8 +55,11 @@ namespace api.Data
                     .HasConversion<string>()
                     .HasMaxLength(20)
                     .HasDefaultValue(OvertimeStatus.Pending);
-                e.Property(x => x.CreatedAt).HasColumnType("timestamp").HasDefaultValueSql("NOW()");
-                e.Property(x => x.UpdatedAt).HasColumnType("timestamp").HasDefaultValueSql("NOW()");
+
+                // ✅ timestamptz para compatibilidad con UTC
+                e.Property(x => x.CreatedAt).HasColumnType("timestamptz").HasDefaultValueSql("NOW()");
+                e.Property(x => x.UpdatedAt).HasColumnType("timestamptz").HasDefaultValueSql("NOW()");
+
                 e.Property(x => x.Cost).HasColumnType("decimal(10,2)");
                 e.Property(x => x.TotalHours).HasColumnType("decimal(5,2)").HasDefaultValue(0);
 
@@ -72,7 +76,10 @@ namespace api.Data
                 e.HasKey(x => x.ApprovalId);
                 e.Property(x => x.ManagerId).HasColumnType("int");
                 e.Property(x => x.ApprovedHours).HasColumnType("decimal(5,2)");
-                e.Property(x => x.ApprovalDate).HasColumnType("timestamp").HasDefaultValueSql("NOW()");
+
+                // ✅ también timestamptz
+                e.Property(x => x.ApprovalDate).HasColumnType("timestamptz").HasDefaultValueSql("NOW()");
+
                 e.Property(x => x.Status)
                     .HasConversion<string>()
                     .HasMaxLength(20)
