@@ -152,14 +152,14 @@ namespace api.BusinessLogic.Services
 </html>";
         }
 
-       public string GenerateReportEmail()
+      public string GenerateReportEmail()
 {
     return @"
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset='utf-8'>
-<title>Reporte del Sistema</title>
+<title>System Report</title>
 <style>
   body {
     font-family: 'Open Sans', sans-serif;
@@ -233,30 +233,30 @@ namespace api.BusinessLogic.Services
 <body>
   <div class='container'>
     <div class='header'>
-      <h1>📊 Reporte del Sistema</h1>
+      <h1>📊 System Report</h1>
     </div>
     <div class='content'>
-      <h2>Resumen General</h2>
+      <h2>Summary</h2>
       <p>
-        Estimado usuario,<br><br>
-        Este es un resumen automático generado por el <strong>Sistema de Gestión de Horas Extra</strong>.
-        El reporte contiene información relevante sobre solicitudes, aprobaciones y actividad reciente.
+        Dear user,<br><br>
+        This is an automatically generated summary from the <strong>Overtime Management System</strong>.
+        The report provides key information about recent requests, approvals, and overall activity.
       </p>
 
       <div class='report-summary'>
-        <p><strong>Fecha de generación:</strong> " + DateTime.Now.ToString("dd/MM/yyyy HH:mm") + @"</p>
-        <p><strong>Estado general:</strong> Envío exitoso</p>
-        <p><strong>Detalles:</strong> El archivo adjunto contiene el desglose completo de la información.</p>
+        <p><strong>Generated on:</strong> " + DateTime.Now.ToString("MMMM dd, yyyy HH:mm") + @"</p>
+        <p><strong>Status:</strong> Successfully delivered</p>
+        <p><strong>Details:</strong> Please find the attached file for a complete breakdown of the report data.</p>
       </div>
 
       <p style='margin-top:25px;'>
-        Si tiene alguna duda o necesita asistencia, comuníquese con el administrador del sistema.
+        If you have any questions or need assistance, please contact your system administrator.
       </p>
     </div>
 
     <div class='footer'>
       <strong>Overtime Management System</strong><br>
-      Este es un mensaje automático, por favor no responda.
+      This is an automated message, please do not reply.
     </div>
   </div>
 </body>
