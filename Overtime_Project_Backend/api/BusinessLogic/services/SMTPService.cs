@@ -152,7 +152,117 @@ namespace api.BusinessLogic.Services
 </html>";
         }
 
-        public string GenerateReportEmail() => "<p>Report template placeholder.</p>";
+       public string GenerateReportEmail()
+{
+    return @"
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset='utf-8'>
+<title>Reporte del Sistema</title>
+<style>
+  body {
+    font-family: 'Open Sans', sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+  }
+
+  .container {
+    max-width: 700px;
+    margin: 40px auto;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    overflow: hidden;
+  }
+
+  .header {
+    background-color: #452b79ff;
+    color: white;
+    text-align: center;
+    padding: 30px 20px;
+  }
+
+  .header h1 {
+    margin: 0;
+    font-size: 32px;
+    font-weight: 700;
+  }
+
+  .content {
+    padding: 30px 40px;
+    color: #333333;
+  }
+
+  .content h2 {
+    color: #50B95D;
+    font-size: 22px;
+    margin-bottom: 10px;
+  }
+
+  .content p {
+    font-size: 16px;
+    line-height: 1.6;
+    color: #495057;
+  }
+
+  .report-summary {
+    margin-top: 25px;
+    background-color: #f8f9fa;
+    border-left: 5px solid #452b79ff;
+    padding: 20px;
+    border-radius: 6px;
+  }
+
+  .report-summary p {
+    margin: 0;
+    color: #333;
+    font-size: 15px;
+  }
+
+  .footer {
+    background-color: #2c3e50;
+    color: #ecf0f1;
+    text-align: center;
+    font-size: 12px;
+    padding: 20px;
+  }
+</style>
+</head>
+<body>
+  <div class='container'>
+    <div class='header'>
+      <h1>📊 Reporte del Sistema</h1>
+    </div>
+    <div class='content'>
+      <h2>Resumen General</h2>
+      <p>
+        Estimado usuario,<br><br>
+        Este es un resumen automático generado por el <strong>Sistema de Gestión de Horas Extra</strong>.
+        El reporte contiene información relevante sobre solicitudes, aprobaciones y actividad reciente.
+      </p>
+
+      <div class='report-summary'>
+        <p><strong>Fecha de generación:</strong> " + DateTime.Now.ToString("dd/MM/yyyy HH:mm") + @"</p>
+        <p><strong>Estado general:</strong> Envío exitoso</p>
+        <p><strong>Detalles:</strong> El archivo adjunto contiene el desglose completo de la información.</p>
+      </div>
+
+      <p style='margin-top:25px;'>
+        Si tiene alguna duda o necesita asistencia, comuníquese con el administrador del sistema.
+      </p>
+    </div>
+
+    <div class='footer'>
+      <strong>Overtime Management System</strong><br>
+      Este es un mensaje automático, por favor no responda.
+    </div>
+  </div>
+</body>
+</html>";
+}
+
     }
 
     // ------------------- SendGrid Email Service -------------------
